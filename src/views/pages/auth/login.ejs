@@ -1,0 +1,109 @@
+<%
+/*
+ * auth/login.ejs — Tela de login da Ágora.
+ * Rota: GET /login (pública). O envio é um POST /login.
+ * Variáveis opcionais enviadas pela rota:
+ *   erro      (string)  mensagem de falha, ex.: credenciais inválidas
+ *   bloqueado (boolean) true após 5 tentativas erradas (RN-09, 10 minutos)
+ *   email     (string)  e-mail digitado, para não obrigar a redigitar
+ *   sucesso   (string)  aviso vindo do cadastro, ex.: conta criada
+ * Estilos: /public/css/pages/auth.css
+ * Regra de segurança: usar apenas a tag de saída escapada do EJS
+ * (igual ao sinal de igual) para dados dinâmicos; nunca a tag sem escape.
+ */
+const titulo = locals.titulo || 'Entrar — Ágora';
+const erro = locals.erro || '';
+const sucesso = locals.sucesso || '';
+const bloqueado = Boolean(locals.bloqueado);
+const email = locals.email || '';
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Entre na Ágora para perguntar, responder e acompanhar as dúvidas da sua turma.">
+  <title><%= titulo %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/pages/auth.css">
+</head>
+<body class="auth">
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="topo">
+    <a class="marca" href="/" aria-label="Ágora, página inicial">Ágo<span>ra</span></a>
+    <nav class="topo__nav" aria-label="Principal">
+      <a class="btn btn--contorno" href="/cadastro">Criar conta</a>
+    </nav>
+  </header>
+
+  <main id="conteudo" class="auth__main">
+    <section class="auth__cartao" aria-labelledby="titulo-login">
+      <h1 id="titulo-login">Entrar na Ágora</h1>
+      <p class="auth__sub">Use o e-mail e a senha cadastrados para ver as dúvidas da sua turma.</p>
+
+      <div class="auth__avisos" role="status" aria-live="polite">
+        <% if (sucesso) { %>
+          <p class="alerta alerta--sucesso"><span aria-hidden="true">✔</span> <%= sucesso %></p>
+        <% } %>
+
+        <% if (bloqueado) { %>
+          <p class="alerta alerta--aviso">
+            <span aria-hidden="true">⏱</span>
+            Muitas tentativas incorretas. O acesso fica bloqueado por 10 minutos. Tente novamente depois desse prazo.
+          </p>
+        <% } else if (erro) { %>
+          <p class="alerta alerta--erro" role="alert">
+            <span aria-hidden="true">✖</span> <%= erro %>
+          </p>
+        <% } %>
+      </div>
+
+      <form class="form" action="/login" method="post" novalidate>
+        <div class="campo">
+          <label class="campo__rotulo" for="email">E-mail</label>
+          <input
+            class="campo__input"
+            type="email"
+            id="email"
+            name="email"
+            value="<%= email %>"
+            autocomplete="email"
+            inputmode="email"
+            maxlength="100"
+            required
+            <%= bloqueado ? 'disabled' : '' %>
+          >
+        </div>
+
+        <div class="campo">
+          <label class="campo__rotulo" for="senha">Senha</label>
+          <input
+            class="campo__input"
+            type="password"
+            id="senha"
+            name="senha"
+            autocomplete="current-password"
+            required
+            <%= bloqueado ? 'disabled' : '' %>
+          >
+        </div>
+
+        <button class="btn btn--bloco" type="submit" <%= bloqueado ? 'disabled' : '' %>>Entrar</button>
+      </form>
+
+      <p class="auth__troca">
+        Ainda não tem conta? <a href="/cadastro">Cadastre-se com o código da turma</a>
+      </p>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <p>Ágora · Fórum escolar de perguntas e respostas</p>
+    <p class="rodape__nota">Coletamos o mínimo de dados pessoais, conforme a LGPD.</p>
+  </footer>
+</body>
+</html>
