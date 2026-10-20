@@ -1,9 +1,11 @@
 <%
 /*
- * landing.ejs — Landing page pública da Ágora.
- * Rota sugerida: GET / (sem autenticação; as demais rotas exigem login — RN-01).
+ * home/index.ejs — Landing page pública da Ágora.
+ * Rota: GET / (sem autenticação; as demais rotas exigem login — RN-01).
+ * Se houver JWT válido, a rota redireciona para o feed (perguntas/index).
  * Estilos: /public/css/pages/landing.css
- * Regra de segurança: apenas <%= %> (nunca <%- %>) para dados dinâmicos.
+ * Regra de segurança: usar apenas a tag de saída escapada do EJS
+ * (igual ao sinal de igual) para dados dinâmicos; nunca a tag sem escape.
  */
 const passos = [
   { titulo: 'Pergunte pela disciplina', texto: 'Escolha a matéria, escreva sua dúvida e veja se alguém já perguntou algo parecido antes de publicar.' },
