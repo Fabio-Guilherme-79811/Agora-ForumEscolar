@@ -48,7 +48,7 @@ app.use(express.static('public'));
  * "Entrar/Cadastrar" ou o menu do usuário logado). Não bloqueia rotas
  * públicas — para isso, usar `isAuthenticated` na rota específica.
  */
-app.use(carregarUsuarioOpcional);
+//app.use(carregarUsuarioOpcional);
 
 /*Rota para as páginas*/
 app.use('/', routes);
