@@ -2,10 +2,10 @@ import { ErroDeRegraDeNegocio, lancarSeInvalido } from './erros';
 import { paraData } from './tipos';
 
 export interface DuvidaCompartilhadaProps {
-  id?: number;
+  id?: number | undefined;
   usuarioId: number;
   perguntaId: number;
-  criadoEm?: Date | string;
+  criadoEm?: Date | string | undefined;
 }
 
 /**
