@@ -10,7 +10,7 @@ export const LIMITE_TAMBEM_TENHO_DESTAQUE = 5;
 export type StatusPergunta = 'aberta' | 'respondida' | 'validada';
 
 export interface PerguntaProps {
-  id?: number;
+  id?: number | undefined;
   titulo: string;
   descricao: string;
   materiaId: number;
