@@ -17,7 +17,7 @@
   
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --cree: #2a2024; --papel: #3A2D32; --tinta: #FFE3DC;
+      --creme: #2a2024; --papel: #3A2D32; --tinta: #FFE3DC;
       --suave: #DBB4AD; --linha: #55434a; --rosa: #ff4fa8;
     }
   }
