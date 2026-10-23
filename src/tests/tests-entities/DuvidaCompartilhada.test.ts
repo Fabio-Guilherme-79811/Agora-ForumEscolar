@@ -1,5 +1,5 @@
 import { DuvidaCompartilhada } from '../../entities/DuvidaCompartilhada';
-import { ErroDeRegraDeNegocio } from '../../entities/erros';
+import { ErroDeRegraDeNegocio, ErroDeValidacao } from '../../entities/erros';
 
 describe('DuvidaCompartilhada', () => {
   describe('constructor', () => {
@@ -88,19 +88,31 @@ describe('DuvidaCompartilhada', () => {
       expect(() => DuvidaCompartilhada.criar(1, 2, 1)).toThrow(/própria pergunta/);
     });
 
-    it('deve lançar erro quando usuarioId é inválido', () => {
-      expect(() => DuvidaCompartilhada.criar(0, 2, 3)).toThrow(ErroDeRegraDeNegocio);
+    it('deve lançar ErroDeValidacao quando usuarioId é inválido', () => {
+      expect(() => DuvidaCompartilhada.criar(0, 2, 3)).toThrow(ErroDeValidacao);
       expect(() => DuvidaCompartilhada.criar(0, 2, 3)).toThrow(/Usuário inválido/);
     });
 
-    it('deve lançar erro quando perguntaId é inválido', () => {
-      expect(() => DuvidaCompartilhada.criar(1, 0, 3)).toThrow(ErroDeRegraDeNegocio);
+    it('deve lançar ErroDeValidacao quando perguntaId é inválido', () => {
+      expect(() => DuvidaCompartilhada.criar(1, 0, 3)).toThrow(ErroDeValidacao);
       expect(() => DuvidaCompartilhada.criar(1, 0, 3)).toThrow(/Pergunta inválida/);
     });
 
     it('deve reportar os dois erros quando usuarioId e perguntaId são inválidos', () => {
       expect(() => DuvidaCompartilhada.criar(0, 0, 3)).toThrow(/Usuário inválido/);
       expect(() => DuvidaCompartilhada.criar(0, 0, 3)).toThrow(/Pergunta inválida/);
+    });
+
+    it('deve expor a lista de erros em ErroDeValidacao', () => {
+      try {
+        DuvidaCompartilhada.criar(0, 0, 3);
+        throw new Error('Deveria ter lançado ErroDeValidacao');
+      } catch (e) {
+        expect(e).toBeInstanceOf(ErroDeValidacao);
+        expect((e as ErroDeValidacao).erros).toEqual(
+          expect.arrayContaining(['Usuário inválido.', 'Pergunta inválida.']),
+        );
+      }
     });
   });
 
@@ -111,17 +123,17 @@ describe('DuvidaCompartilhada', () => {
       expect(() => d.validar()).not.toThrow();
     });
 
-    it('deve lançar erro quando usuarioId é 0', () => {
+    it('deve lançar ErroDeValidacao quando usuarioId é 0', () => {
       const d = new DuvidaCompartilhada({ usuarioId: 0, perguntaId: 2 });
 
-      expect(() => d.validar()).toThrow(ErroDeRegraDeNegocio);
+      expect(() => d.validar()).toThrow(ErroDeValidacao);
       expect(() => d.validar()).toThrow(/Usuário inválido/);
     });
 
-    it('deve lançar erro quando perguntaId é 0', () => {
+    it('deve lançar ErroDeValidacao quando perguntaId é 0', () => {
       const d = new DuvidaCompartilhada({ usuarioId: 1, perguntaId: 0 });
 
-      expect(() => d.validar()).toThrow(ErroDeRegraDeNegocio);
+      expect(() => d.validar()).toThrow(ErroDeValidacao);
       expect(() => d.validar()).toThrow(/Pergunta inválida/);
     });
 
