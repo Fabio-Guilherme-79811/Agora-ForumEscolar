@@ -1,0 +1,64 @@
+{
+  "name": "projeto_integrador_ti",
+  "version": "1.0.0",
+  "description": "Repositório de Back-end + Web para o projeto *[PLACEHOLDER: Nome do Projeto]*, projeto o qual possui o objetivo de [PLACEHOLDER: descrição em 2-3 frases — a equipe ainda não convergiu para um único enunciado de problema; ver seção \"Situação Atual\" no fim deste README].",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "dev": "ts-node-dev --respawn src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "prepare": "husky",  
+    "migrate": "tsx src/database/run-migrations.ts",
+    "seed": "tsx src/database/run-seeds.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fabio-Guilherme-79811/Projeto_Integrador_TI.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Fabio-Guilherme-79811/Projeto_Integrador_TI/issues"
+  },
+  "homepage": "https://github.com/Fabio-Guilherme-79811/Projeto_Integrador_TI#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^18.0.4",
+    "ejs": "^6.0.1",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.4.0",
+    "mysql2": "^3.24.4"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/bcrypt": "^6.0.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.3.0",
+    "@types/node": "^26.6.4",
+    "@types/supertest": "^7.2.1",
+    "eslint": "^10.11.0",
+    "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
+    "jest": "^30.5.2",
+    "lint-staged": "^17.6.0",
+    "prettier": "^3.9.9",
+    "supertest": "^7.3.0",
+    "ts-jest": "^29.4.14",
+    "ts-node-dev": "^2.0.0",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.71.0"
+  }
+}

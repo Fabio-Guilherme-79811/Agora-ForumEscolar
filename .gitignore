@@ -1,0 +1,69 @@
+# Node.js
+node_modules/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.npm
+.eslintcache
+.yarn-integrity
+*.tgz
+
+# Build e testes
+dist/
+build/
+coverage/
+.nyc_output/
+*.tsbuildinfo
+
+# Variáveis de ambiente (nunca versionar segredos)
+.env
+.env.*
+!.env.example
+
+# Certificados e segredos
+*.pem
+*.pfx
+*.p12
+*.key
+
+# Prisma (banco local de desenvolvimento)
+prisma/*.db
+prisma/*.db-journal
+
+# Docker (apenas o override local; o .dockerignore é versionado)
+docker-compose.override.yml
+
+# Python (ferramentas auxiliares; evitar respingo no repo)
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Editores e IDEs (configs locais; nada versionado)
+.vscode/
+.vscode/*
+.idea/
+.idea/*
+*.swp
+
+# Sistemas operacionais
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*~
+
+# Agentes de IA locais (Antigravity/Claude/Gemini)
+.antigravitycli/
+.claude/
+.gemini/
+CLAUDE.md
+GEMINI.md
