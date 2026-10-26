@@ -40,3 +40,22 @@
   font-size: .9rem;
 }
 .pergunta-card__duvida { font-weight: 700; color: var(--rosa); }
+.cartao-nav {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  background: var(--papel);
+  border: 1px solid var(--linha);
+  border-top: 4px solid var(--rosa);
+  border-radius: 14px;
+  padding: 18px;
+}
+.cartao-nav:hover { border-color: var(--rosa); }
+.cartao-nav:focus-within { outline: 3px solid var(--rosa); outline-offset: 3px; }
+.cartao-nav .cartao-nav__titulo { font-size: 1.2rem; margin: 0; }
+.cartao-nav__titulo a { color: var(--tinta); text-decoration: none; }
+.cartao-nav__titulo a::after { content: ""; position: absolute; inset: 0; border-radius: 14px; }
+.cartao-nav .cartao-nav__meta,
+.cartao-nav .cartao-nav__duvidas { margin: 0; font-size: .9rem; }
+.cartao-nav__meta { color: var(--suave); }
+.cartao-nav__duvidas { font-weight: 700; color: var(--rosa); }
