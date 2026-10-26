@@ -1,0 +1,74 @@
+<%
+/*
+ * disciplinas/detalhes.ejs — Uma disciplina e seus tópicos.
+ * Rota: GET /disciplinas/:id (exige login — RN-01). A rota deve responder
+ * 404 se a disciplina não existir.
+ * Variáveis enviadas pela rota:
+ *   usuario    (objeto) nome e perfil
+ *   disciplina (objeto) id e nome
+ *   topicos    (array)  itens com id, nome, totalPerguntas e totalAbertas
+ * Estilos: /css/pages/disciplinas.css, /css/components/navbar.css e cards.css
+ * Regra de segurança: apenas a tag de saída escapada do EJS. A tag sem
+ * escape aparece só nos includes, que inserem templates do projeto.
+ */
+const usuario = locals.usuario || null;
+const topicos = locals.topicos || [];
+const titulo = locals.titulo || disciplina.nome + ' — Ágora';
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Tópicos e dúvidas abertas da disciplina na Ágora.">
+  <title><%= titulo %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/components/navbar.css">
+  <link rel="stylesheet" href="/css/components/cards.css">
+  <link rel="stylesheet" href="/css/pages/disciplinas.css">
+</head>
+<body class="disciplinas">
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <%- include('../../partials/header', { usuario: usuario, ativo: 'disciplinas' }) %>
+
+  <main id="conteudo" class="pagina__main">
+    <%- include('../../partials/nav', {
+      trilha: [
+        { rotulo: 'Disciplinas', href: '/disciplinas' },
+        { rotulo: disciplina.nome }
+      ]
+    }) %>
+
+    <div class="pagina__cabeca">
+      <div>
+        <h1><%= disciplina.nome %></h1>
+        <p class="pagina__sub">Escolha um tópico para ver as perguntas da turma.</p>
+      </div>
+      <div class="pagina__acoes">
+        <a class="pagina__link" href="/perguntas?materia=<%= disciplina.id %>">Ver todas as perguntas</a>
+        <a class="btn" href="/perguntas/nova?materia=<%= disciplina.id %>">Perguntar em <%= disciplina.nome %></a>
+      </div>
+    </div>
+
+    <% if (topicos.length > 0) { %>
+      <ul class="grade">
+        <% topicos.forEach(function (t) { %>
+          <li><%- include('../../components/topico-card', { topico: t, disciplinaId: disciplina.id }) %></li>
+        <% }); %>
+      </ul>
+    <% } else { %>
+      <div class="vazio">
+        <h2>Esta disciplina ainda não tem tópicos</h2>
+        <p>Você já pode fazer uma pergunta. Ela aparece no feed da turma.</p>
+        <a class="btn" href="/perguntas/nova?materia=<%= disciplina.id %>">Fazer uma pergunta</a>
+      </div>
+    <% } %>
+  </main>
+
+  <%- include('../../partials/footer') %>
+</body>
+</html>
