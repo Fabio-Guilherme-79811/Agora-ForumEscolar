@@ -1,0 +1,22 @@
+<%
+/*
+ * partials/nav.ejs — Trilha de navegação Disciplina > Tópico > Pergunta.
+ * Parâmetro: trilha, um array de itens com rotulo e href. O último item é a
+ * página atual e é exibido sem link.
+ * Regra de segurança: apenas a tag de saída escapada do EJS.
+ */
+const trilha = locals.trilha || [];
+%>
+<nav class="trilha" aria-label="Trilha de navegação">
+  <ol>
+    <% trilha.forEach(function (item, i) { %>
+      <li>
+        <% if (item.href && i < trilha.length - 1) { %>
+          <a href="<%= item.href %>"><%= item.rotulo %></a>
+        <% } else { %>
+          <span aria-current="page"><%= item.rotulo %></span>
+        <% } %>
+      </li>
+    <% }); %>
+  </ol>
+</nav>

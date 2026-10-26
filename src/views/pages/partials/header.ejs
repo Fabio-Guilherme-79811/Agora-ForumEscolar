@@ -1,0 +1,34 @@
+<%
+/*
+ * partials/header.ejs — Topo das páginas logadas da Ágora.
+ * Parâmetros: usuario (nome e perfil) e ativo ('perguntas', 'disciplinas'
+ * ou 'termometro'), que marca o link da página atual.
+ * O link do painel só aparece para Professor e Admin (RN-30).
+ * Regra de segurança: apenas a tag de saída escapada do EJS.
+ */
+const usuario = locals.usuario || null;
+const ativo = locals.ativo || '';
+const podeVerPainel = Boolean(usuario) && ['Professor', 'Admin'].includes(usuario.perfil);
+const links = [
+  { chave: 'perguntas', href: '/perguntas', rotulo: 'Perguntas' },
+  { chave: 'disciplinas', href: '/disciplinas', rotulo: 'Disciplinas' },
+  { chave: 'termometro', href: '/termometro', rotulo: 'Termômetro' }
+];
+%>
+<header class="topo topo--logado">
+  <a class="marca" href="/perguntas" aria-label="Ágora, feed de perguntas">Ágo<span>ra</span></a>
+  <nav class="topo__nav" aria-label="Principal">
+    <% links.forEach(function (l) { %>
+      <a href="<%= l.href %>" aria-current="<%= l.chave === ativo ? 'page' : 'false' %>"><%= l.rotulo %></a>
+    <% }); %>
+    <% if (podeVerPainel) { %>
+      <a href="/admin">Painel</a>
+    <% } %>
+    <% if (usuario) { %>
+      <a href="/perfil"><%= usuario.nome %></a>
+      <form action="/logout" method="post">
+        <button class="btn btn--contorno" type="submit">Sair</button>
+      </form>
+    <% } %>
+  </nav>
+</header>
