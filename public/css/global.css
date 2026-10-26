@@ -1,5 +1,5 @@
 
- :root {
+  :root {
     --rosa: #D30C7B;
     --creme: #FFE3DC;
     --blush: #DBB4AD;
@@ -8,14 +8,16 @@
     --papel: #fff9f7;
     --suave: #6d5a60;
     --linha: #e8cbc4;
+    --barra: #3A2D32;
+    --barra-texto: #FFE3DC;
     --fonte-titulo: Fraunces, Georgia, serif;
     --fonte-texto: Figtree, system-ui, sans-serif;
     box-sizing: border-box;
     padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
-  
-  @media (prefers-color-scheme: dark) {
+
+  @media (prefers-color-scheme: light) {
     :root:not([data-theme="light"]) {
       --creme: #2a2024; --papel: #3A2D32; --tinta: #FFE3DC;
       --suave: #DBB4AD; --linha: #55434a; --rosa: #ff4fa8;
@@ -64,7 +66,7 @@
     position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
     display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
     padding: 12px clamp(16px, 5vw, 56px);
-    background: var(--tinta); color: #FFE3DC;
+    background: var(--barra); color: var(--barra-texto);
   }
   .marca { font: 700 1.6rem var(--fonte-titulo); color: #FFE3DC; text-decoration: none; }
   .marca span { color: var(--rosa); }
@@ -127,7 +129,7 @@
   .cta .btn--claro { color: #3A2D32; margin-top: 8px; }
   
   /* Rodapé */
-  .rodape { background: var(--tinta); color: #FFE3DC; text-align: center; padding: 28px 16px; font-size: .9rem; }
+  .rodape { background: var(--barra); color: var(--barra-texto); text-align: center; padding: 28px 16px; font-size: .9rem; }
   .rodape p { margin: 0 0 4px; }
   .rodape__nota { color: var(--blush); }
   

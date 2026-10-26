@@ -1,0 +1,42 @@
+/*
+ * components/cards.css — Cartões reutilizáveis (pergunta-card; resposta-card entra depois).
+ * Carregar depois do CSS da página.
+ */
+.pergunta-card {
+  display: grid;
+  gap: 8px;
+  background: var(--papel);
+  border: 1px solid var(--linha);
+  border-radius: 14px;
+  padding: 18px;
+}
+.pergunta-card--validada { border: 2px solid var(--salvia); }
+.pergunta-card--destaque { border-left: 6px solid var(--rosa); }
+
+.pergunta-card .pergunta-card__meta,
+.pergunta-card .pergunta-card__selos,
+.pergunta-card .pergunta-card__rodape { margin: 0; }
+
+.pergunta-card .pergunta-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  align-items: center;
+  font-size: .875rem;
+  color: var(--suave);
+}
+.pergunta-card .pergunta-card__titulo { font-size: 1.2rem; margin: 0; }
+.pergunta-card__titulo a { color: var(--tinta); text-decoration: none; }
+.pergunta-card__titulo a:hover { color: var(--rosa); text-decoration: underline; }
+
+.pergunta-card__selos { display: flex; flex-wrap: wrap; gap: 8px; }
+.selo--resolvida { background: var(--blush); color: #3A2D32; }
+.selo--destaque { background: var(--rosa); color: #fff; }
+
+.pergunta-card__rodape {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  font-size: .9rem;
+}
+.pergunta-card__duvida { font-weight: 700; color: var(--rosa); }

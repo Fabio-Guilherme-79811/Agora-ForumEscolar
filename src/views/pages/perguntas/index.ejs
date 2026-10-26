@@ -1,0 +1,169 @@
+<%
+/*
+ * perguntas/index.ejs — Feed de perguntas da turma (Tela 2).
+ * Rota: GET /perguntas (exige login — RN-01). A busca e os filtros são um GET
+ * comum, então funcionam mesmo sem JavaScript.
+ * Variáveis enviadas pela rota:
+ *   usuario   (objeto)  nome e perfil (Aluno, Monitor, Professor ou Admin)
+ *   perguntas (array)   já ordenadas pela RN-10 e só da turma do usuário (RN-02)
+ *   materias  (array)   itens com id e nome, para o filtro de disciplina
+ *   filtros   (objeto)  q, materia, status e minhas (RN-11 e RN-13)
+ * Cada cartão é renderizado por components/pergunta-card (RN-12).
+ * Estilos: /css/pages/perguntas.css e /css/components/cards.css
+ * Regra de segurança: dados de usuário só com a tag de saída escapada do EJS
+ * (igual ao sinal de igual). A tag sem escape é usada apenas no include,
+ * que insere um template nosso e não texto digitado por alguém.
+ */
+const titulo = locals.titulo || 'Perguntas da turma — Ágora';
+const usuario = locals.usuario || null;
+const perguntas = locals.perguntas || [];
+const materias = locals.materias || [];
+const filtros = locals.filtros || {};
+const q = filtros.q || '';
+const materiaSel = String(filtros.materia || '');
+const statusSel = filtros.status || '';
+const minhas = Boolean(filtros.minhas);
+const temFiltro = Boolean(q || materiaSel || statusSel || minhas);
+const podeVerPainel = Boolean(usuario) && ['Professor', 'Admin'].includes(usuario.perfil);
+const statusOpcoes = [
+  { valor: 'aberta', rotulo: 'Aberta' },
+  { valor: 'respondida', rotulo: 'Respondida' },
+  { valor: 'validada', rotulo: 'Validada' }
+];
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Perguntas da sua turma na Ágora, organizadas por disciplina.">
+  <title><%= titulo %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/pages/perguntas.css">
+  <link rel="stylesheet" href="/css/components/cards.css">
+</head>
+<body class="feed">
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="topo">
+    <a class="marca" href="/perguntas" aria-label="Ágora, feed de perguntas">Ágo<span>ra</span></a>
+    <nav class="topo__nav" aria-label="Principal">
+      <a href="/perguntas" aria-current="page">Perguntas</a>
+      <a href="/termometro">Termômetro</a>
+      <% if (podeVerPainel) { %>
+        <a href="/admin">Painel</a>
+      <% } %>
+      <% if (usuario) { %>
+        <a href="/perfil"><%= usuario.nome %></a>
+        <form action="/logout" method="post">
+          <button class="btn btn--contorno" type="submit">Sair</button>
+        </form>
+      <% } %>
+    </nav>
+  </header>
+
+  <main id="conteudo" class="feed__main">
+    <div class="feed__cabeca">
+      <div>
+        <h1>Perguntas da turma</h1>
+        <p class="feed__sub">Quem não tem resposta validada aparece primeiro.</p>
+      </div>
+      <a class="btn" href="/perguntas/nova">Nova pergunta</a>
+    </div>
+
+    <form
+      class="filtros"
+      id="form-filtros"
+      action="/perguntas"
+      method="get"
+      role="search"
+      data-busca-url="/perguntas"
+      data-alvo="lista-perguntas"
+      data-resumo="resumo"
+    >
+      <div class="filtros__campo filtros__busca">
+        <label class="filtros__rotulo" for="q">Buscar no título e na descrição</label>
+        <input
+          class="filtros__input"
+          type="search"
+          id="q"
+          name="q"
+          value="<%= q %>"
+          placeholder="Ex.: diferença entre INNER JOIN e LEFT JOIN"
+          maxlength="120"
+          autocomplete="off"
+        >
+      </div>
+
+      <div class="filtros__campo">
+        <label class="filtros__rotulo" for="materia">Disciplina</label>
+        <select class="filtros__input" id="materia" name="materia">
+          <option value="">Todas as disciplinas</option>
+          <% materias.forEach(function (m) { %>
+            <option value="<%= m.id %>" <%= String(m.id) === materiaSel ? 'selected' : '' %>><%= m.nome %></option>
+          <% }); %>
+        </select>
+      </div>
+
+      <div class="filtros__campo">
+        <label class="filtros__rotulo" for="status">Status</label>
+        <select class="filtros__input" id="status" name="status">
+          <option value="">Todos os status</option>
+          <% statusOpcoes.forEach(function (s) { %>
+            <option value="<%= s.valor %>" <%= s.valor === statusSel ? 'selected' : '' %>><%= s.rotulo %></option>
+          <% }); %>
+        </select>
+      </div>
+
+      <div class="filtros__campo">
+        <span class="filtros__rotulo">Autoria</span>
+        <label class="filtros__check" for="minhas">
+          <input type="checkbox" id="minhas" name="minhas" value="1" <%= minhas ? 'checked' : '' %>>
+          Minhas perguntas
+        </label>
+      </div>
+
+      <div class="filtros__acoes">
+        <button class="btn" type="submit">Filtrar</button>
+        <% if (temFiltro) { %>
+          <a class="filtros__limpar" href="/perguntas">Limpar filtros</a>
+        <% } %>
+      </div>
+    </form>
+
+    <p class="feed__resumo" id="resumo" role="status" aria-live="polite">
+      <%= perguntas.length %> <%= perguntas.length === 1 ? 'pergunta encontrada' : 'perguntas encontradas' %>
+    </p>
+
+    <div id="lista-perguntas">
+      <% if (perguntas.length > 0) { %>
+        <ul class="lista">
+          <% perguntas.forEach(function (p) { %>
+            <li><%- include('../../components/pergunta-card', { pergunta: p }) %></li>
+          <% }); %>
+        </ul>
+      <% } else { %>
+        <div class="vazio">
+          <h2><%= temFiltro ? 'Nenhuma pergunta com esses filtros' : 'Ainda não há perguntas na sua turma' %></h2>
+          <p>
+            <%= temFiltro
+              ? 'Tente outros termos ou limpe os filtros. Se ninguém perguntou isso ainda, a dúvida pode ser sua.'
+              : 'Seja a primeira pessoa a perguntar. Escolha a disciplina e escreva sua dúvida.' %>
+          </p>
+          <a class="btn" href="/perguntas/nova">Fazer uma pergunta</a>
+        </div>
+      <% } %>
+    </div>
+  </main>
+
+  <footer class="rodape">
+    <p>Ágora · Fórum escolar de perguntas e respostas</p>
+    <p class="rodape__nota">Coletamos o mínimo de dados pessoais, conforme a LGPD.</p>
+  </footer>
+
+  <script src="/js/search-debounce.js" defer></script>
+</body>
+</html>

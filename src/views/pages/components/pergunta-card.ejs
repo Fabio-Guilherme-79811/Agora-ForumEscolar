@@ -1,0 +1,73 @@
+<%
+/*
+ * components/pergunta-card.ejs — Cartão de uma pergunta no feed (RN-12).
+ * Uso: include('../../components/pergunta-card', { pergunta: p })
+ * Campos esperados em pergunta:
+ *   id, titulo, materia (nome), autor (nome), criadaEm (data),
+ *   totalRespostas, totalTambemTenho,
+ *   status (Aberta, Respondida, Resolvida ou Validada),
+ *   destaque (boolean, true com 5 marcações sem validação — RN-28)
+ * A validação é indicada por ícone e texto, nunca só por cor.
+ * Regra de segurança: apenas a tag de saída escapada do EJS.
+ */
+const p = pergunta;
+
+function tempoDesde(valor) {
+  const data = new Date(valor);
+  if (Number.isNaN(data.getTime())) return '';
+  const seg = Math.max(0, Math.floor((Date.now() - data.getTime()) / 1000));
+  const min = Math.floor(seg / 60);
+  const horas = Math.floor(min / 60);
+  const dias = Math.floor(horas / 24);
+  if (seg < 60) return 'agora mesmo';
+  if (min < 60) return 'há ' + min + ' min';
+  if (horas < 24) return 'há ' + horas + ' h';
+  return 'há ' + dias + (dias === 1 ? ' dia' : ' dias');
+}
+
+const dataCriacao = new Date(p.criadaEm);
+const iso = Number.isNaN(dataCriacao.getTime()) ? '' : dataCriacao.toISOString();
+const respostas = Number(p.totalRespostas) || 0;
+const tambem = Number(p.totalTambemTenho) || 0;
+const validada = p.status === 'Validada';
+const resolvida = p.status === 'Resolvida';
+const destaque = Boolean(p.destaque) && !validada;
+%>
+<article
+  class="pergunta-card<%= validada ? ' pergunta-card--validada' : '' %><%= destaque ? ' pergunta-card--destaque' : '' %>"
+  aria-labelledby="pergunta-titulo-<%= p.id %>"
+>
+  <p class="pergunta-card__meta">
+    <span class="tag"><%= p.materia %></span>
+    <span><%= p.autor %></span>
+    <% if (iso) { %>
+      <span aria-hidden="true">·</span>
+      <time datetime="<%= iso %>"><%= tempoDesde(p.criadaEm) %></time>
+    <% } %>
+  </p>
+
+  <h2 class="pergunta-card__titulo" id="pergunta-titulo-<%= p.id %>">
+    <a href="/perguntas/<%= p.id %>"><%= p.titulo %></a>
+  </h2>
+
+  <% if (validada || resolvida || destaque) { %>
+    <p class="pergunta-card__selos">
+      <% if (validada) { %>
+        <span class="selo"><span aria-hidden="true">✔</span> Resposta validada</span>
+      <% } %>
+      <% if (resolvida) { %>
+        <span class="selo selo--resolvida"><span aria-hidden="true">●</span> Marcada como resolvida</span>
+      <% } %>
+      <% if (destaque) { %>
+        <span class="selo selo--destaque"><span aria-hidden="true">▲</span> Muita gente com essa dúvida</span>
+      <% } %>
+    </p>
+  <% } %>
+
+  <p class="pergunta-card__rodape">
+    <span><%= respostas %> <%= respostas === 1 ? 'resposta' : 'respostas' %></span>
+    <span class="pergunta-card__duvida">
+      <span aria-hidden="true">●</span> <%= tambem %> <%= tambem === 1 ? 'colega também tem' : 'colegas também têm' %> essa dúvida
+    </span>
+  </p>
+</article>
