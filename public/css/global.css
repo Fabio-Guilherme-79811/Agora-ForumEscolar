@@ -10,7 +10,7 @@
     --linha: #e8cbc4;
     --barra: #3A2D32;
     --barra-texto: #FFE3DC;
-    --fonte-titulo: Fraunces, Georgia, serif;
+    --fonte-titulo: "athena"; src: url(/css/fonts/athena.ttf) format(truetype);
     --fonte-texto: Figtree, system-ui, sans-serif;
     box-sizing: border-box;
     padding-top: env(safe-area-inset-top, 0px);
