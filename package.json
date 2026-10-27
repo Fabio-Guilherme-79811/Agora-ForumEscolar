@@ -12,9 +12,15 @@
     "lint": "eslint .",
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",
+<<<<<<< HEAD
     "prepare": "husky",
     "migrate": "tsx database/run-migrations.ts",
     "seed": "tsx database/run-seeds.ts"
+=======
+    "prepare": "husky",  
+    "migrate": "tsx src/database/run-migrations.ts",
+    "seed": "tsx src/database/run-seeds.ts"
+>>>>>>> cc044885016c6fdcbc0d651398b7bb09d80b4b0d
   },
   "repository": {
     "type": "git",
@@ -45,20 +51,20 @@
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/multer": "^2.2.0",
-    "@types/node": "^26.6.2",
+    "@types/multer": "^2.3.0",
+    "@types/node": "^26.6.4",
     "@types/supertest": "^7.2.1",
     "eslint": "^10.11.0",
     "eslint-config-prettier": "^10.1.8",
     "husky": "^9.1.7",
     "jest": "^30.5.2",
-    "lint-staged": "^17.5.1",
+    "lint-staged": "^17.6.0",
     "prettier": "^3.9.9",
     "supertest": "^7.3.0",
     "ts-jest": "^29.4.14",
     "ts-node-dev": "^2.0.0",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.70.1"
+    "typescript-eslint": "^8.71.0"
   }
 }
