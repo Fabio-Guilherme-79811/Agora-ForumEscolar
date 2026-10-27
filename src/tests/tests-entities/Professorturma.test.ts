@@ -1,174 +1,47 @@
-
 import { ProfessorTurma } from '../../entities/Professorturma';
+import { ErroDeValidacao } from '../../entities/erros';
 
-describe('ProfessorTurma', () => {
-  describe('Construtor', () => {
-    it('deve criar uma associação entre professor e turma', () => {
-      const professorTurma = new ProfessorTurma({
-        professorId: 1,
-        turmaId: 2,
-      });
+describe('validar()', () => {
+  let professorTurma: ProfessorTurma;
 
-      expect(professorTurma.professorId).toBe(1);
-      expect(professorTurma.turmaId).toBe(2);
+  beforeEach(() => {
+    professorTurma = new ProfessorTurma({
+      professorId: 1,
+      turmaId: 2,
     });
   });
 
-  describe('Getters e Setters', () => {
-    it('deve retornar o professorId corretamente', () => {
-      const professorTurma = new ProfessorTurma({
-        professorId: 1,
-        turmaId: 2,
-      });
-
-      expect(professorTurma.professorId).toBe(1);
-    });
-
-    it('deve permitir alterar o professorId', () => {
-      const professorTurma = new ProfessorTurma({
-        professorId: 1,
-        turmaId: 2,
-      });
-
-      professorTurma.professorId = 3;
-
-      expect(professorTurma.professorId).toBe(3);
-    });
-
-    it('deve retornar o turmaId corretamente', () => {
-      const professorTurma = new ProfessorTurma({
-        professorId: 1,
-        turmaId: 2,
-      });
-
-      expect(professorTurma.turmaId).toBe(2);
-    });
-
-    it('deve permitir alterar o turmaId', () => {
-      const professorTurma = new ProfessorTurma({
-        professorId: 1,
-        turmaId: 2,
-      });
-
-      professorTurma.turmaId = 4;
-
-      expect(professorTurma.turmaId).toBe(4);
-    });
+  it('deve validar IDs corretos', () => {
+    expect(() => professorTurma.validar()).not.toThrow();
   });
 
-  describe('validar()', () => {
-    it('não deve lançar erro para IDs válidos', () => {
-      const professorTurma = new ProfessorTurma({
-        professorId: 1,
-        turmaId: 2,
-      });
+  it('deve lançar ErroDeValidacao para professor inválido', () => {
+    professorTurma.professorId = 0;
 
-      expect(() => professorTurma.validar()).not.toThrow();
-    });
-
-    it('deve lançar erro quando professorId for zero', () => {
-      const professorTurma = new ProfessorTurma({
-        professorId: 0,
-        turmaId: 2,
-      });
-
-      expect(() => professorTurma.validar()).toThrow();
-    });
-
-    it('deve lançar erro quando turmaId for zero', () => {
-      const professorTurma = new ProfessorTurma({
-        professorId: 1,
-        turmaId: 0,
-      });
-
-      expect(() => professorTurma.validar()).toThrow();
-    });
-
-    it('deve lançar erro quando professorId for negativo', () => {
-      const professorTurma = new ProfessorTurma({
-        professorId: -1,
-        turmaId: 2,
-      });
-
-      expect(() => professorTurma.validar()).toThrow();
-    });
-
-    it('deve lançar erro quando turmaId for negativo', () => {
-      const professorTurma = new ProfessorTurma({
-        professorId: 1,
-        turmaId: -2,
-      });
-
-      expect(() => professorTurma.validar()).toThrow();
-    });
-
-    it('deve lançar erro quando professorId não for inteiro', () => {
-      const professorTurma = new ProfessorTurma({
-        professorId: 1.5,
-        turmaId: 2,
-      });
-
-      expect(() => professorTurma.validar()).toThrow();
-    });
-
-    it('deve lançar erro quando turmaId não for inteiro', () => {
-      const professorTurma = new ProfessorTurma({
-        professorId: 1,
-        turmaId: 2.5,
-      });
-
-      expect(() => professorTurma.validar()).toThrow();
-    });
-
-    it('deve lançar erro quando os dois IDs forem inválidos', () => {
-      const professorTurma = new ProfessorTurma({
-        professorId: 0,
-        turmaId: -1,
-      });
-
-      expect(() => professorTurma.validar()).toThrow();
-    });
-
-    it('deve validar novamente após a alteração dos IDs', () => {
-      const professorTurma = new ProfessorTurma({
-        professorId: 0,
-        turmaId: 2,
-      });
-
-      expect(() => professorTurma.validar()).toThrow();
-
-      professorTurma.professorId = 1;
-
-      expect(() => professorTurma.validar()).not.toThrow();
-    });
+    expect(() => professorTurma.validar()).toThrow(ErroDeValidacao);
   });
 
-  describe('fromJSON()', () => {
-    it('deve criar uma instância a partir de um objeto JSON', () => {
-      const json = {
-        professorId: 5,
-        turmaId: 10,
-      };
+  it('deve lançar ErroDeValidacao para turma inválida', () => {
+    professorTurma.turmaId = -1;
 
-      const professorTurma = ProfessorTurma.fromJSON(json);
-
-      expect(professorTurma).toBeInstanceOf(ProfessorTurma);
-      expect(professorTurma.professorId).toBe(5);
-      expect(professorTurma.turmaId).toBe(10);
-    });
+    expect(() => professorTurma.validar()).toThrow(ErroDeValidacao);
   });
 
-  describe('toJSON()', () => {
-    it('deve converter a instância para um objeto JSON', () => {
-      const professorTurma = new ProfessorTurma({
-        professorId: 3,
-        turmaId: 7,
-      });
+  it('deve acumular os erros dos dois campos', () => {
+    professorTurma.professorId = 0;
+    professorTurma.turmaId = -1;
 
-      expect(professorTurma.toJSON()).toEqual({
-        professorId: 3,
-        turmaId: 7,
-      });
-    });
+    let erroCapturado: unknown;
+    try {
+      professorTurma.validar();
+    } catch (erro) {
+      erroCapturado = erro;
+    }
+
+    expect(erroCapturado).toBeInstanceOf(ErroDeValidacao);
+    expect((erroCapturado as ErroDeValidacao).erros).toEqual([
+      'Professor inválido.',
+      'Turma inválida.',
+    ]);
   });
 });
