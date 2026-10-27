@@ -1,14 +1,15 @@
 <%
 /*
  * partials/header.ejs — Topo das páginas logadas da Ágora.
- * Parâmetros: usuario (nome e perfil) e ativo ('perguntas', 'disciplinas'
- * ou 'termometro'), que marca o link da página atual.
- * O link do painel só aparece para Professor e Admin (RN-30).
+ * Parâmetros: usuario (nome e perfil) e ativo ('perguntas', 'disciplinas',
+ * 'termometro' ou 'admin'), que marca o link da página atual.
+ * O link do painel aparece para Professor, Monitor e Admin (RN-30). O Monitor
+ * vê a versão restrita; quem decide o que cada perfil vê é a rota.
  * Regra de segurança: apenas a tag de saída escapada do EJS.
  */
 const usuario = locals.usuario || null;
 const ativo = locals.ativo || '';
-const podeVerPainel = Boolean(usuario) && ['Professor', 'Admin'].includes(usuario.perfil);
+const podeVerPainel = Boolean(usuario) && ['Professor', 'Monitor', 'Admin'].includes(usuario.perfil);
 const links = [
   { chave: 'perguntas', href: '/perguntas', rotulo: 'Perguntas' },
   { chave: 'disciplinas', href: '/disciplinas', rotulo: 'Disciplinas' },
@@ -22,7 +23,7 @@ const links = [
       <a href="<%= l.href %>" aria-current="<%= l.chave === ativo ? 'page' : 'false' %>"><%= l.rotulo %></a>
     <% }); %>
     <% if (podeVerPainel) { %>
-      <a href="/admin">Painel</a>
+      <a href="/admin" aria-current="<%= ativo === 'admin' ? 'page' : 'false' %>">Painel</a>
     <% } %>
     <% if (usuario) { %>
       <a href="/perfil"><%= usuario.nome %></a>
