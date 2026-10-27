@@ -12,9 +12,15 @@
     "lint": "eslint .",
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",
+<<<<<<< HEAD
+    "prepare": "husky",
+    "migrate": "tsx database/run-migrations.ts",
+    "seed": "tsx database/run-seeds.ts"
+=======
     "prepare": "husky",  
     "migrate": "tsx src/database/run-migrations.ts",
     "seed": "tsx src/database/run-seeds.ts"
+>>>>>>> cc044885016c6fdcbc0d651398b7bb09d80b4b0d
   },
   "repository": {
     "type": "git",
@@ -31,12 +37,12 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
-    "dotenv": "^18.0.4",
+    "dotenv": "^18.0.9",
     "ejs": "^6.0.1",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.4.0",
-    "mysql2": "^3.24.4"
+    "mysql2": "^3.24.6"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
