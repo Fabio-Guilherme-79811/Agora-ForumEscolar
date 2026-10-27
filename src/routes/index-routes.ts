@@ -162,4 +162,51 @@ router.get('/disciplinas/:id/topicos/:topicoId', (req, res) =>
   })
 );
 
+// * Painel (mock): /admin mostra a visão do Professor; /admin?visao=monitor mostra a restrita.
+// Na rota real, a visão vem do perfil do token e Aluno recebe 403 (RN-30).
+router.get('/admin', (req, res) => {
+  const ehMonitor = req.query['visao'] === 'monitor';
+  const pendentes = [
+    ...perguntasMock,
+    {
+      id: 3,
+      titulo: 'Quando usar chave estrangeira composta?',
+      materia: 'Banco de Dados',
+      autor: 'João Pedro',
+      criadaEm: new Date(Date.now() - 5 * 60 * 60 * 1000),
+      totalRespostas: 1,
+      totalTambemTenho: 2,
+      status: 'Respondida',
+      destaque: false,
+    },
+  ];
+  if (ehMonitor) {
+    return res.render('pages/admin/painel', {
+      usuario: { nome: 'Carlos Monitor', perfil: 'Monitor' },
+      visao: 'monitor',
+      perguntas: pendentes.slice(0, 1),
+    });
+  }
+  return res.render('pages/admin/painel', {
+    usuario: { nome: 'Prof. Rafael', perfil: 'Professor' },
+    visao: 'professor',
+    perguntas: pendentes,
+    indicadores: {
+      perguntasSemana: 12,
+      percentualValidadas: 62,
+      tempoMedioMinutos: 150,
+      topDisciplinas: [
+        { id: 1, nome: 'Banco de Dados', total: 7 },
+        { id: 2, nome: 'Programação', total: 4 },
+      ],
+    },
+    membros: [
+      { id: 10, nome: 'Ana Beatriz', perfil: 'Aluno' },
+      { id: 11, nome: 'Carlos Monitor', perfil: 'Monitor' },
+      { id: 12, nome: 'João Pedro', perfil: 'Aluno' },
+    ],
+    codigoTurma: 'TURMA-4F7K',
+  });
+});
+
 export default router;
