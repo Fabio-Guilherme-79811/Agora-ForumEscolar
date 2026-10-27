@@ -1,3 +1,8 @@
+  @font-face {
+    font-family: "Athena";
+    src: url("/css/fonts/athena.ttf") format("truetype");
+    font-display: swap;
+  }
 
   :root {
     --rosa: #D30C7B;
@@ -10,20 +15,23 @@
     --linha: #e8cbc4;
     --barra: #3A2D32;
     --barra-texto: #FFE3DC;
-    --fonte-titulo: "athena"; src: url(/css/fonts/athena.ttf) format(truetype);
+    --fonte-titulo: "Athena", Georgia, serif;
     --fonte-texto: Figtree, system-ui, sans-serif;
+    color-scheme: light;
     box-sizing: border-box;
     padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
-  @media (prefers-color-scheme: light) {
+  @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
+      color-scheme: dark;
       --creme: #2a2024; --papel: #3A2D32; --tinta: #FFE3DC;
       --suave: #DBB4AD; --linha: #55434a; --rosa: #ff4fa8;
     }
   }
   :root[data-theme="dark"] {
+    color-scheme: dark;
     --creme: #2a2024; --papel: #3A2D32; --tinta: #FFE3DC;
     --suave: #DBB4AD; --linha: #55434a; --rosa: #ff4fa8;
   }
@@ -70,7 +78,7 @@
   }
   .marca { font: 700 1.6rem var(--fonte-titulo); color: #FFE3DC; text-decoration: none; display: flex; align-items: center;}
   .marca span { color: var(--rosa); }
-  .marca img { margin-right: 10px; width: 50; height: 50; }
+  .marca img { margin-right: 10px; width: 50px; height: 50px; }
   .topo__nav { display: flex; align-items: center; gap: 6px 20px; flex-wrap: wrap; }
   .topo__nav a:not(.btn) { color: #FFE3DC; text-decoration: none; padding: 6px 2px; }
   .topo__nav a:not(.btn):hover { text-decoration: underline; }

@@ -35,6 +35,7 @@ const titulo = locals.titulo || 'Ágora — o fórum da sua turma';
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/pages/landing.css">
+  <script src="/js/tema.js"></script>
 </head>
 <body class="landing">
   <a class="pular" href="#conteudo">Pular para o conteúdo</a>
@@ -46,6 +47,9 @@ const titulo = locals.titulo || 'Ágora — o fórum da sua turma';
       <a href="#recursos">Recursos</a>
       <a href="#perfis">Para quem</a>
       <a class="btn btn--contorno" href="/login">Entrar</a>
+      <div role="group" aria-label="Modo escuro">
+        <button class="btn" type="button" data-alternar-tema>Alternar tema</button>
+      </div>
     </nav>
   </header>
 
