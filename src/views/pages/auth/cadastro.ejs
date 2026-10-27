@@ -29,6 +29,7 @@ const valores = locals.valores || {};
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/pages/login.css">
+  <script src="/js/tema.js" defer></script>
 </head>
 <body class="auth">
   <a class="pular" href="#conteudo">Pular para o conteúdo</a>
@@ -37,6 +38,9 @@ const valores = locals.valores || {};
     <a class="marca" href="/" aria-label="Ágora, página inicial"><img src="/css/uploads/materials/logo.png" height="50" width="50">Ágo<span>ra</span></a>
     <nav class="topo__nav" aria-label="Principal">
       <a class="btn btn--contorno" href="/login">Entrar</a>
+      <div role="group" aria-label="Modo escuro">
+        <button class="btn btn--contorno" type="button" data-alternar-tema>Alternar tema</button>
+      </div>
     </nav>
   </header>
 
