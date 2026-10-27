@@ -1,0 +1,199 @@
+<%
+/*
+ * perguntas/detalhes.ejs — Pergunta aberta, com respostas (Tela 3).
+ * Rota: GET /perguntas/:id (exige login — RN-01). A rota deve responder 404
+ * se a pergunta não existir ou for de outra turma (RN-02).
+ * Variáveis enviadas pela rota:
+ *   usuario  (objeto) nome e perfil
+ *   pergunta (objeto) id, titulo, descricao, materia, materiaId, topico
+ *            (opcional: id e nome), autor, criadaEm, status, anexoUrl (caminho
+ *            gerado pelo servidor, ou vazio), totalTambemTenho, jaMarcou,
+ *            ehAutor, destaque
+ *   respostas (array) com a validada primeiro (RN-18); cada item tem id,
+ *            conteudo, autor, criadaEm, totalUteis, jaVotou, ehMinha,
+ *            validada, validadaPor
+ *   podeValidar          (boolean) Professor ou Monitor e pergunta ainda sem
+ *                        resposta validada (RN-17)
+ *   podeRetirarValidacao (boolean) só Professor (RN-20)
+ * Os blocos #estado-pergunta e #bloco-respostas são atualizados pelo
+ * resposta-fetch.js, que busca esta mesma página de novo e troca os dois.
+ * Estilos: /css/pages/perguntas.css, /css/components/forms.css, navbar.css e cards.css
+ * Regra de segurança: apenas a tag de saída escapada do EJS. A tag sem
+ * escape aparece só nos includes, que inserem templates do projeto.
+ */
+const usuario = locals.usuario || null;
+const respostas = locals.respostas || [];
+const podeValidar = Boolean(locals.podeValidar);
+const podeRetirarValidacao = Boolean(locals.podeRetirarValidacao);
+const titulo = locals.titulo || pergunta.titulo + ' — Ágora';
+const ehAutor = Boolean(pergunta.ehAutor);
+const validada = pergunta.status === 'Validada';
+const resolvida = pergunta.status === 'Resolvida';
+const destaque = Boolean(pergunta.destaque) && !validada;
+const totalTambem = Number(pergunta.totalTambemTenho) || 0;
+
+function tempoDesde(valor) {
+  const data = new Date(valor);
+  if (Number.isNaN(data.getTime())) return '';
+  const seg = Math.max(0, Math.floor((Date.now() - data.getTime()) / 1000));
+  const min = Math.floor(seg / 60);
+  const horas = Math.floor(min / 60);
+  const dias = Math.floor(horas / 24);
+  if (seg < 60) return 'agora mesmo';
+  if (min < 60) return 'há ' + min + ' min';
+  if (horas < 24) return 'há ' + horas + ' h';
+  return 'há ' + dias + (dias === 1 ? ' dia' : ' dias');
+}
+
+const dataCriacao = new Date(pergunta.criadaEm);
+const iso = Number.isNaN(dataCriacao.getTime()) ? '' : dataCriacao.toISOString();
+
+const trilha = [
+  { rotulo: 'Disciplinas', href: '/disciplinas' },
+  { rotulo: pergunta.materia, href: '/disciplinas/' + pergunta.materiaId }
+];
+if (pergunta.topico) {
+  trilha.push({
+    rotulo: pergunta.topico.nome,
+    href: '/disciplinas/' + pergunta.materiaId + '/topicos/' + pergunta.topico.id
+  });
+}
+trilha.push({ rotulo: pergunta.titulo });
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Pergunta da turma na Ágora, com respostas e a resposta validada pelo professor.">
+  <title><%= titulo %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/components/navbar.css">
+  <link rel="stylesheet" href="/css/components/cards.css">
+  <link rel="stylesheet" href="/css/components/forms.css">
+  <link rel="stylesheet" href="/css/pages/perguntas.css">
+</head>
+<body class="feed">
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <%- include('../../partials/header', { usuario: usuario, ativo: 'disciplinas' }) %>
+
+  <main id="conteudo" class="feed__main">
+    <%- include('../../partials/nav', { trilha: trilha }) %>
+
+    <article class="pergunta-completa<%= validada ? ' pergunta-completa--validada' : '' %>" id="estado-pergunta" aria-labelledby="titulo-pergunta">
+      <p class="pergunta-completa__meta">
+        <span class="tag"><%= pergunta.materia %></span>
+        <span><%= pergunta.autor %></span>
+        <% if (iso) { %>
+          <span aria-hidden="true">·</span>
+          <time datetime="<%= iso %>"><%= tempoDesde(pergunta.criadaEm) %></time>
+        <% } %>
+      </p>
+
+      <h1 class="pergunta-completa__titulo" id="titulo-pergunta"><%= pergunta.titulo %></h1>
+
+      <% if (validada || resolvida || destaque) { %>
+        <p class="pergunta-completa__selos">
+          <% if (validada) { %>
+            <span class="selo"><span aria-hidden="true">✔</span> Resposta validada</span>
+          <% } %>
+          <% if (resolvida) { %>
+            <span class="selo selo--resolvida"><span aria-hidden="true">●</span> Marcada como resolvida</span>
+          <% } %>
+          <% if (destaque) { %>
+            <span class="selo selo--destaque"><span aria-hidden="true">▲</span> Muita gente com essa dúvida</span>
+          <% } %>
+        </p>
+      <% } %>
+
+      <div class="pergunta-completa__texto"><%= pergunta.descricao %></div>
+
+      <% if (pergunta.anexoUrl) { %>
+        <p class="pergunta-completa__anexo">
+          <a href="<%= pergunta.anexoUrl %>" target="_blank" rel="noopener noreferrer">Abrir anexo</a>
+        </p>
+      <% } %>
+
+      <div class="pergunta-completa__acoes">
+        <% if (ehAutor) { %>
+          <p class="pergunta-completa__duvida">
+            <span aria-hidden="true">●</span>
+            <span data-total-tambem><%= totalTambem %></span> <%= totalTambem === 1 ? 'colega tem' : 'colegas têm' %> essa dúvida
+          </p>
+        <% } else { %>
+          <button
+            class="botao-marca"
+            type="button"
+            data-acao="tambem-tenho"
+            data-url="/perguntas/<%= pergunta.id %>/tambem-tenho"
+            aria-pressed="<%= pergunta.jaMarcou ? 'true' : 'false' %>"
+          >
+            <span aria-hidden="true">●</span> Também tenho essa dúvida (<span data-total-tambem><%= totalTambem %></span>)
+          </button>
+        <% } %>
+      </div>
+    </article>
+
+    <section class="respostas" id="bloco-respostas" aria-labelledby="titulo-respostas">
+      <h2 class="respostas__titulo" id="titulo-respostas"><%= respostas.length %> <%= respostas.length === 1 ? 'resposta' : 'respostas' %></h2>
+
+      <% if (respostas.length > 0) { %>
+        <ul class="respostas__lista">
+          <% respostas.forEach(function (r) { %>
+            <li><%- include('../../components/resposta-card', {
+              resposta: r,
+              podeValidar: podeValidar,
+              podeRetirarValidacao: podeRetirarValidacao,
+              tempoDesde: tempoDesde
+            }) %></li>
+          <% }); %>
+        </ul>
+      <% } else { %>
+        <div class="vazio">
+          <h3>Ainda não há respostas</h3>
+          <p>Que tal ser a primeira pessoa a ajudar a turma?</p>
+        </div>
+      <% } %>
+    </section>
+
+    <section class="resposta-form" aria-labelledby="titulo-form-resposta">
+      <h2 id="titulo-form-resposta">Sua resposta</h2>
+      <form
+        class="form"
+        id="form-resposta"
+        action="/perguntas/<%= pergunta.id %>/respostas"
+        method="post"
+        data-url="/perguntas/<%= pergunta.id %>/respostas"
+        novalidate
+      >
+        <div class="campo">
+          <label class="campo__rotulo" for="conteudo">Explique como você explicaria para um colega</label>
+          <textarea
+            class="campo__input"
+            id="conteudo"
+            name="conteudo"
+            rows="5"
+            maxlength="5000"
+            required
+            aria-invalid="false"
+            aria-describedby="erro-conteudo"
+          ></textarea>
+          <p class="campo__erro" id="erro-conteudo" hidden></p>
+        </div>
+        <button class="btn" type="submit">Publicar resposta</button>
+      </form>
+    </section>
+  </main>
+
+  <%- include('../../partials/footer') %>
+  <%- include('../../partials/feedback') %>
+
+  <script src="/js/main.js" defer></script>
+  <script src="/js/resposta-fetch.js" defer></script>
+  <script src="/js/tenho-duvida-fetch.js" defer></script>
+</body>
+</html>

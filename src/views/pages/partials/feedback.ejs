@@ -1,0 +1,17 @@
+<%
+/*
+ * partials/feedback.ejs — Área de avisos (toasts) da página.
+ * O main.js escreve aqui as mensagens de sucesso e erro (Agora.toast). O
+ * spinner de carregamento é um estado do botão (aria-busy), feito só em CSS.
+ * Parâmetros opcionais: mensagem (string) e tipo ('sucesso', 'erro', 'aviso'
+ * ou 'info') para um aviso já renderizado pelo servidor.
+ * Regra de segurança: apenas a tag de saída escapada do EJS.
+ */
+const mensagem = locals.mensagem || '';
+const tipo = locals.tipo || 'info';
+%>
+<div class="toasts" id="toasts" aria-live="polite" aria-atomic="false">
+  <% if (mensagem) { %>
+    <p class="toast toast--<%= tipo %>"><%= mensagem %></p>
+  <% } %>
+</div>
