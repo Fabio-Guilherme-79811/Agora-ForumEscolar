@@ -40,8 +40,8 @@ export class VotoUtil {
 
   validar(): void {
     const erros: string[] = [];
-    if (!this._usuarioId) erros.push('Usuário inválido.');
-    if (!this._respostaId) erros.push('Resposta inválida.');
+    if (!Number.isInteger(this._usuarioId) || this._usuarioId <= 0) erros.push('Usuário inválido.');
+    if (!Number.isInteger(this._respostaId) || this._respostaId <= 0) erros.push('Resposta inválida.');
     lancarSeInvalido(erros);
   }
 

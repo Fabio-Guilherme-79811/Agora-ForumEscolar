@@ -1,18 +1,8 @@
-import {
-  Usuario,
-  MAX_TENTATIVAS_LOGIN,
-  MINUTOS_BLOQUEIO_LOGIN,
-  TAMANHO_MINIMO_SENHA,
-} from '../../entities/Usuario';
-
-import {
-  ErroDePermissao,
-  ErroDeRegraDeNegocio,
-  ErroDeValidacao,
-} from '../../entities/erros';
+import {Usuario,MAX_TENTATIVAS_LOGIN,MINUTOS_BLOQUEIO_LOGIN,TAMANHO_MINIMO_SENHA,} from '../../entities/Usuario';
+import {ErroDePermissao,ErroDeRegraDeNegocio,ErroDeValidacao,} from '../../entities/erros';
 
 const HASH_VALIDO =
-  '$2b$10$abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012';
+  '$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy';
 
 const criarUsuario = (
   overrides: Partial<ConstructorParameters<typeof Usuario>[0]> = {},

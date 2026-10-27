@@ -102,9 +102,9 @@ describe('tipos', () => {
       const resultado = paraData('2025-12-25');
 
       expect(resultado).toBeInstanceOf(Date);
-      expect(resultado?.getFullYear()).toBe(2025);
-      expect(resultado?.getMonth()).toBe(11);
-      expect(resultado?.getDate()).toBe(25);
+      expect(resultado?.getUTCFullYear()).toBe(2025);
+      expect(resultado?.getUTCMonth()).toBe(11);
+      expect(resultado?.getUTCDate()).toBe(25);
     });
 
     it('deve retornar uma data inválida como Date quando a string for inválida', () => {
