@@ -68,8 +68,9 @@
     padding: 12px clamp(16px, 5vw, 56px);
     background: var(--barra); color: var(--barra-texto);
   }
-  .marca { font: 700 1.6rem var(--fonte-titulo); color: #FFE3DC; text-decoration: none; }
+  .marca { font: 700 1.6rem var(--fonte-titulo); color: #FFE3DC; text-decoration: none; display: flex; align-items: center;}
   .marca span { color: var(--rosa); }
+  .marca img { margin-right: 10px; width: 50; height: 50; }
   .topo__nav { display: flex; align-items: center; gap: 6px 20px; flex-wrap: wrap; }
   .topo__nav a:not(.btn) { color: #FFE3DC; text-decoration: none; padding: 6px 2px; }
   .topo__nav a:not(.btn):hover { text-decoration: underline; }

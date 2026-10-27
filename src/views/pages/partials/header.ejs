@@ -16,7 +16,7 @@ const links = [
 ];
 %>
 <header class="topo topo--logado">
-  <a class="marca" href="/perguntas" aria-label="Ágora, feed de perguntas">Ágo<span>ra</span></a>
+  <a class="marca" href="/" aria-label="Ágora, página inicial"><img src="/css/uploads/materials/logo.png" height="50" width="50">Ágo<span>ra</span></a>
   <nav class="topo__nav" aria-label="Principal">
     <% links.forEach(function (l) { %>
       <a href="<%= l.href %>" aria-current="<%= l.chave === ativo ? 'page' : 'false' %>"><%= l.rotulo %></a>
