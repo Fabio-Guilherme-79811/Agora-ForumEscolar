@@ -209,4 +209,9 @@ router.get('/admin', (req, res) => {
   });
 });
 
+// * Configurações (mock). Na rota real, exige login e redireciona para /login sem sessão (RN-01).
+router.get('/configuracoes', (_req, res) =>
+  res.render('pages/configuracoes/index', { usuario: usuarioMock })
+);
+
 export default router;

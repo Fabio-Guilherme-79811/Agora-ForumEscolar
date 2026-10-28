@@ -1,0 +1,85 @@
+<%
+/*
+ * configuracoes/index.ejs — Configurações do usuário (item 22).
+ * Rota: GET /configuracoes (exige login — RN-01). Hoje só tem a seção
+ * Aparência, com o botão de tema claro/escuro. Novas seções entram como
+ * outros blocos .config__grupo.
+ * O botão usa o atributo data-alternar-tema: quem faz a troca é o
+ * /js/tema.js, que o partials/header.ejs já carrega nas páginas logadas
+ * (não carregar de novo aqui). A escolha fica salva neste dispositivo
+ * (localStorage); sem escolha, vale o tema do sistema. O tema.js atualiza o
+ * aria-pressed do botão (true = modo escuro ligado).
+ * Variáveis enviadas pela rota:
+ *   usuario  (objeto) nome e perfil
+ * Estilos: /css/pages/configuracoes.css (mais perguntas.css e forms.css)
+ * Regra de segurança: apenas a tag de saída escapada do EJS. A tag sem
+ * escape aparece só nos includes, que inserem templates do projeto.
+ */
+const titulo = locals.titulo || 'Configurações — Ágora';
+const usuario = locals.usuario || null;
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Ajuste a aparência da Ágora, como o modo escuro.">
+  <title><%= titulo %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/components/forms.css">
+  <link rel="stylesheet" href="/css/pages/perguntas.css">
+  <link rel="stylesheet" href="/css/pages/configuracoes.css">
+</head>
+<body class="feed">
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <%- include('../../partials/header', { usuario: usuario, ativo: 'configuracoes' }) %>
+
+  <main id="conteudo" class="feed__main">
+    <%- include('../../partials/nav', { trilha: [{ rotulo: 'Configurações' }] }) %>
+
+    <section class="cartao-form" aria-labelledby="titulo-config">
+      <h1 id="titulo-config">Configurações</h1>
+      <p class="feed__sub">Ajuste a Ágora ao seu gosto.</p>
+
+      <section class="config__grupo" aria-labelledby="titulo-aparencia">
+        <h2 id="titulo-aparencia">Aparência</h2>
+
+        <div class="config__linha">
+          <div class="config__texto">
+            <p class="config__nome" id="tema-nome">Modo escuro</p>
+            <p class="campo__ajuda" id="tema-ajuda">
+              Troca as cores da página para tons escuros. A escolha fica salva neste dispositivo.
+              Enquanto você não escolher, a Ágora segue o tema do seu aparelho.
+            </p>
+          </div>
+
+          <button
+            class="btn btn--contorno config__tema"
+            type="button"
+            data-alternar-tema
+            aria-pressed="false"
+            aria-labelledby="tema-nome"
+            aria-describedby="tema-ajuda"
+          >
+            <span class="tema-estado tema-estado--ligado" aria-hidden="true">☾ Ligado</span>
+            <span class="tema-estado tema-estado--desligado" aria-hidden="true">☀ Desligado</span>
+          </button>
+        </div>
+
+        <noscript>
+          <p class="alerta alerta--aviso">
+            <span aria-hidden="true">⚠</span>
+            O botão de tema precisa de JavaScript. Sem ele, a Ágora usa o tema do seu aparelho.
+          </p>
+        </noscript>
+      </section>
+    </section>
+  </main>
+
+  <%- include('../../partials/footer') %>
+</body>
+</html>
