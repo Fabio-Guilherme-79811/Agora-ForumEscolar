@@ -1,0 +1,130 @@
+<%
+/*
+ * home/index.ejs — Landing page pública da Ágora.
+ * Rota: GET / (sem autenticação; as demais rotas exigem login — RN-01).
+ * Se houver JWT válido, a rota redireciona para o feed (perguntas/index).
+ * Estilos: /public/css/pages/landing.css
+ * Regra de segurança: usar apenas a tag de saída escapada do EJS
+ * (igual ao sinal de igual) para dados dinâmicos; nunca a tag sem escape.
+ */
+const passos = [
+  { titulo: 'Pergunte pela disciplina', texto: 'Escolha a matéria, escreva sua dúvida e veja se alguém já perguntou algo parecido antes de publicar.' },
+  { titulo: 'A turma ajuda', texto: 'Colegas respondem e marcam “também tenho essa dúvida”. Ninguém precisa repetir a mesma pergunta.' },
+  { titulo: 'O professor valida', texto: 'Professor ou monitor marca a resposta certa. Ela fica fixada no topo, com o nome de quem validou.' }
+];
+const recursos = [
+  { titulo: 'Também tenho essa dúvida', texto: 'Um toque mostra o tamanho da dúvida da turma. Com 5 marcações sem resposta validada, a pergunta ganha destaque.' },
+  { titulo: 'Resposta validada', texto: 'Uma única resposta oficial por pergunta, sinalizada com ícone e texto. Você sabe em qual confiar.' },
+  { titulo: 'Termômetro de dúvidas', texto: 'Cada disciplina aparece como fria, morna ou quente, com base nos últimos 7 dias.' }
+];
+const perfis = [
+  { nome: 'Aluno', texto: 'Pergunta, responde, vota nas respostas úteis e acompanha a própria pontuação.' },
+  { nome: 'Monitor', texto: 'É um aluno indicado pelo professor e pode validar respostas da turma.' },
+  { nome: 'Professor', texto: 'Enxerga o que a turma não entendeu, valida respostas, modera e gera o código da turma.' }
+];
+const titulo = locals.titulo || 'Ágora — o fórum da sua turma';
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Ágora: fórum de perguntas e respostas da escola, com respostas validadas pelo professor.">
+  <title><%= titulo %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/pages/landing.css">
+  <script src="/js/tema.js" defer></script>
+</head>
+<body class="landing">
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="topo">
+    <a class="marca" href="/" aria-label="Ágora, página inicial"><img src="/css/uploads/materials/logo.png" height="50" width="50">Ágo<span>ra</span></a>
+    <nav class="topo__nav" aria-label="Principal">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#recursos">Recursos</a>
+      <a href="#perfis">Para quem</a>
+      <a class="btn btn--contorno" href="/login">Entrar</a>
+      <div role="group" aria-label="Modo escuro">
+        <button class="btn btn--contorno" type="button" data-alternar-tema><img src="/css/uploads/materials/tema.png" height="35" width="30"></button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="conteudo">
+    <section class="hero">
+      <div class="hero__texto">
+        <h1>A dúvida da véspera da prova merece uma resposta confiável.</h1>
+        <p class="hero__sub">A Ágora organiza as perguntas da turma por disciplina e destaca a resposta que o professor validou. Nada se perde no meio de centenas de mensagens.</p>
+        <div class="hero__acoes">
+          <a class="btn" href="/cadastro">Criar conta com código da turma</a>
+          <a class="btn btn--contorno" href="/login">Já tenho conta</a>
+        </div>
+      </div>
+
+      <div class="hero__demo" aria-label="Exemplo de pergunta na Ágora">
+        <article class="pergunta">
+          <p class="pergunta__meta"><span class="tag">Banco de Dados</span> Ana Beatriz · há 2h</p>
+          <h2>Qual a diferença entre INNER JOIN e LEFT JOIN?</h2>
+          <p class="pergunta__duvida"><span aria-hidden="true">●</span> 5 colegas também têm essa dúvida</p>
+        </article>
+        <article class="pergunta pergunta--validada">
+          <p class="selo"><span aria-hidden="true">✔</span> Resposta validada por Prof. Rafael</p>
+          <p>INNER JOIN traz só as linhas que têm par nas duas tabelas. LEFT JOIN mantém todas as da esquerda, mesmo sem par.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="secao" id="como-funciona">
+      <h2>Como funciona</h2>
+      <ol class="passos">
+        <% passos.forEach(function (p, i) { %>
+          <li class="passo">
+            <span class="passo__n" aria-hidden="true"><%= i + 1 %></span>
+            <h3><%= p.titulo %></h3>
+            <p><%= p.texto %></p>
+          </li>
+        <% }); %>
+      </ol>
+    </section>
+
+    <section class="secao secao--rosa" id="recursos">
+      <h2>Feita para o que o WhatsApp não resolve</h2>
+      <p class="secao__sub">No grupo, a resposta certa se perde na rolagem. Aqui, tudo fica ligado à disciplina e ao assunto.</p>
+      <div class="recursos">
+        <% recursos.forEach(function (r) { %>
+          <article class="recurso">
+            <h3><%= r.titulo %></h3>
+            <p><%= r.texto %></p>
+          </article>
+        <% }); %>
+      </div>
+    </section>
+
+    <section class="secao" id="perfis">
+      <h2>Um espaço, três papéis</h2>
+      <div class="perfis">
+        <% perfis.forEach(function (p) { %>
+          <article class="perfil">
+            <h3><%= p.nome %></h3>
+            <p><%= p.texto %></p>
+          </article>
+        <% }); %>
+      </div>
+    </section>
+
+    <section class="cta">
+      <h2>Na Grécia antiga, a ágora era onde todos se reuniam para decidir o bem comum.</h2>
+      <p>A sua turma também merece um lugar assim.</p>
+      <a class="btn btn--claro" href="/cadastro">Entrar na minha turma</a>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <p>Ágora · Fórum escolar de perguntas e respostas</p>
+    <p class="rodape__nota">Coletamos o mínimo de dados pessoais, conforme a LGPD.</p>
+  </footer>
+</body>
+</html>

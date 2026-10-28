@@ -1,0 +1,20 @@
+<%
+/*
+ * components/topico-card.ejs — Cartão de um tópico dentro de uma disciplina.
+ * Uso: include('../../components/topico-card', { topico: t, disciplinaId: 1 })
+ * Campos esperados em topico: id, nome, totalPerguntas, totalAbertas.
+ * Regra de segurança: apenas a tag de saída escapada do EJS.
+ */
+const t = topico;
+const totalPerguntas = Number(t.totalPerguntas) || 0;
+const totalAbertas = Number(t.totalAbertas) || 0;
+%>
+<article class="cartao-nav">
+  <h2 class="cartao-nav__titulo">
+    <a href="/disciplinas/<%= disciplinaId %>/topicos/<%= t.id %>"><%= t.nome %></a>
+  </h2>
+  <p class="cartao-nav__meta"><%= totalPerguntas %> <%= totalPerguntas === 1 ? 'pergunta' : 'perguntas' %></p>
+  <p class="cartao-nav__duvidas">
+    <span aria-hidden="true">●</span> <%= totalAbertas %> <%= totalAbertas === 1 ? 'dúvida aberta' : 'dúvidas abertas' %>
+  </p>
+</article>

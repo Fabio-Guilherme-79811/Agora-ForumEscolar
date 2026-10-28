@@ -1,0 +1,152 @@
+  @font-face {
+    font-family: "Athena";
+    src: url("/css/fonts/athena.ttf") format("truetype");
+    font-display: swap;
+  }
+
+  :root {
+    --rosa: #D30C7B;
+    --creme: #FFE3DC;
+    --blush: #DBB4AD;
+    --salvia: #A2AD91;
+    --tinta: #3A2D32;
+    --papel: #fff9f7;
+    --suave: #6d5a60;
+    --linha: #e8cbc4;
+    --barra: #3A2D32;
+    --barra-texto: #FFE3DC;
+    --fonte-titulo: "Athena", Georgia, serif;
+    --fonte-texto: Figtree, system-ui, sans-serif;
+    color-scheme: light;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --creme: #2a2024; --papel: #3A2D32; --tinta: #FFE3DC;
+      --suave: #DBB4AD; --linha: #55434a; --rosa: #ff4fa8;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --creme: #2a2024; --papel: #3A2D32; --tinta: #FFE3DC;
+    --suave: #DBB4AD; --linha: #55434a; --rosa: #ff4fa8;
+  }
+  
+  html { scroll-padding-top: calc(72px + env(safe-area-inset-top, 0px)); scroll-behavior: smooth; }
+  *, *::before, *::after { box-sizing: border-box; }
+  
+  body.landing {
+    margin: 0;
+    background: var(--creme);
+    color: var(--tinta);
+    font: 400 1rem/1.6 var(--fonte-texto);
+  }
+  .landing h1, .landing h2, .landing h3 {
+    font-family: var(--fonte-titulo);
+    line-height: 1.15;
+    margin: 0 0 .5em;
+  }
+  .landing p { margin: 0 0 1em; }
+  .landing :focus-visible { outline: 3px solid var(--rosa); outline-offset: 3px; }
+  
+  .pular {
+    position: absolute; left: -999px; top: 8px;
+    background: var(--tinta); color: var(--creme); padding: 8px 14px; border-radius: 8px; z-index: 20;
+  }
+  .pular:focus { left: 8px; }
+  
+  /* Botões */
+  .btn {
+    display: inline-block; text-decoration: none; text-align: center;
+    background: var(--rosa); color: #fff; font-weight: 700;
+    padding: 12px 22px; border-radius: 10px; border: 2px solid var(--rosa);
+  }
+  .btn:hover { filter: brightness(.92); }
+  .btn--contorno { background: transparent; color: var(--tinta); border-color: var(--tinta); }
+  .btn--claro { background: var(--creme); color: var(--tinta); border-color: var(--creme); }
+  
+  /* Topo */
+  .topo {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    padding: 12px clamp(16px, 5vw, 56px);
+    background: var(--barra); color: var(--barra-texto);
+  }
+  .marca { font: 700 1.6rem var(--fonte-titulo); color: #FFE3DC; text-decoration: none; display: flex; align-items: center;}
+  .marca span { color: var(--rosa); }
+  .marca img { margin-right: 10px; width: 50px; height: 50px; }
+  .topo__nav { display: flex; align-items: center; gap: 6px 20px; flex-wrap: wrap; }
+  .topo__nav a:not(.btn) { color: #FFE3DC; text-decoration: none; padding: 6px 2px; }
+  .topo__nav a:not(.btn):hover { text-decoration: underline; }
+  .topo__nav .btn { padding: 8px 18px; color: #FFE3DC; border-color: #FFE3DC; }
+  
+  /* Hero */
+  .hero {
+    display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(24px, 5vw, 64px); align-items: center;
+    max-width: 1120px; margin: 0 auto; padding: clamp(40px, 8vw, 96px) clamp(16px, 5vw, 56px);
+  }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 700; }
+  .hero__sub { font-size: 1.125rem; color: var(--suave); max-width: 52ch; }
+  .hero__acoes { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+  
+  .hero__demo { display: grid; gap: 14px; }
+  .pergunta {
+    background: var(--papel); border: 1px solid var(--linha); border-radius: 14px; padding: 18px;
+  }
+  .pergunta h2 { font-size: 1.25rem; margin-bottom: .4em; }
+  .pergunta p:last-child { margin-bottom: 0; }
+  .pergunta__meta { font-size: .875rem; color: var(--suave); display: flex; gap: 10px; align-items: center; }
+  .pergunta__duvida { font-size: .9rem; font-weight: 700; color: var(--rosa); }
+  .pergunta--validada { border: 2px solid var(--salvia); margin-left: clamp(0px, 4vw, 36px); }
+  .tag { background: var(--blush); color: #3A2D32; border-radius: 99px; padding: 2px 10px; font-size: .8rem; font-weight: 500; }
+  .selo {
+    display: inline-block; background: var(--salvia); color: #1f2a17;
+    font-weight: 700; font-size: .85rem; padding: 3px 12px; border-radius: 99px;
+  }
+  
+  /* Seções */
+  .secao { max-width: 1120px; margin: 0 auto; padding: clamp(40px, 7vw, 80px) clamp(16px, 5vw, 56px); }
+  .secao h2, .cta h2 { font-size: clamp(1.6rem, 3.5vw, 2.3rem); }
+  .secao__sub { color: var(--suave); max-width: 60ch; }
+  .secao--rosa {
+    max-width: none; background: var(--blush); color: #3A2D32;
+    padding-left: max(clamp(16px, 5vw, 56px), calc((100% - 1008px) / 2));
+    padding-right: max(clamp(16px, 5vw, 56px), calc((100% - 1008px) / 2));
+  }
+  .secao--rosa .secao__sub { color: #4d3b41; }
+  
+  .passos { list-style: none; margin: 28px 0 0; padding: 0; display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); counter-reset: p; }
+  .passo { border-top: 3px solid var(--rosa); padding-top: 14px; }
+  .passo__n { font: 700 2rem var(--fonte-titulo); color: var(--rosa); }
+  .passo h3 { font-size: 1.2rem; }
+  
+  .recursos, .perfis { display: grid; gap: 16px; margin-top: 28px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .recurso { background: var(--creme); color: #3A2D32; border-radius: 14px; padding: 22px; }
+  .recurso:nth-child(2) { border-bottom: 5px solid var(--salvia); }
+  .recurso h3, .perfil h3 { font-size: 1.2rem; }
+  .perfil { padding: 4px 0 4px 18px; border-left: 4px solid var(--salvia); }
+  .perfil:first-child { border-left-color: var(--blush); }
+  .perfil:last-child { border-left-color: var(--rosa); }
+  
+  /* Chamada final */
+  .cta { background: var(--rosa); color: #fff; text-align: center; padding: clamp(48px, 8vw, 96px) 20px; }
+  .cta h2 { max-width: 26ch; margin: 0 auto .5em; }
+  .cta .btn--claro { color: #3A2D32; margin-top: 8px; }
+  
+  /* Rodapé */
+  .rodape { background: var(--barra); color: var(--barra-texto); text-align: center; padding: 28px 16px; font-size: .9rem; }
+  .rodape p { margin: 0 0 4px; }
+  .rodape__nota { color: var(--blush); }
+  
+  /* Mobile (a partir de 360px) */
+  @media (max-width: 800px) {
+    .hero { grid-template-columns: 1fr; }
+    .topo__nav a:not(.btn) { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }

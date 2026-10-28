@@ -1,0 +1,178 @@
+/*
+ * pages/perguntas.css — Estilos do feed de perguntas da Ágora.
+ * Usa as variáveis e componentes de /css/global.css (.btn, .topo, .rodape, .pular).
+ * Os cartões ficam em /css/components/cards.css.
+ */
+body.feed {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--creme);
+  color: var(--tinta);
+  font: 400 1rem/1.6 var(--fonte-texto);
+}
+.feed h1,
+.feed h2,
+.feed h3 {
+  font-family: var(--fonte-titulo);
+  line-height: 1.15;
+  margin: 0 0 .5em;
+}
+.feed p { margin: 0 0 1em; }
+.feed :focus-visible { outline: 3px solid var(--rosa); outline-offset: 3px; }
+
+/* Topo logado: o global.css esconde os links comuns no mobile, aqui eles ficam */
+.feed .topo__nav a:not(.btn) { display: inline-block; }
+.feed .topo__nav a[aria-current="page"] { text-decoration: underline; text-underline-offset: 6px; }
+.topo__nav form { margin: 0; }
+.topo__nav button.btn { font: inherit; font-weight: 700; cursor: pointer; }
+
+/* Área central */
+.feed__main {
+  flex: 1;
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: clamp(20px, 5vw, 48px) clamp(16px, 5vw, 32px);
+}
+.feed__cabeca {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.feed__cabeca h1 { font-size: clamp(1.6rem, 4vw, 2.1rem); margin: 0; }
+.feed__sub { color: var(--suave); margin: 0; }
+
+/* Busca e filtros */
+.filtros {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  background: var(--papel);
+  border: 1px solid var(--linha);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.filtros__busca { grid-column: 1 / -1; }
+.filtros__campo { display: grid; gap: 4px; align-content: start; }
+.filtros__rotulo { font-weight: 700; font-size: .85rem; }
+.filtros__input {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  font: inherit;
+  color: var(--tinta);
+  background: var(--papel);
+  border: 2px solid var(--linha);
+  border-radius: 10px;
+}
+.filtros__input:hover { border-color: var(--blush); }
+.filtros__input:focus { border-color: var(--rosa); outline: none; box-shadow: 0 0 0 3px rgba(211, 12, 123, .25); }
+.filtros__check { display: flex; gap: 8px; align-items: center; min-height: 44px; font-weight: 500; cursor: pointer; }
+.filtros__check input { width: 20px; height: 20px; accent-color: var(--rosa); }
+.filtros__acoes { grid-column: 1 / -1; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.filtros__acoes .btn { font: inherit; font-weight: 700; cursor: pointer; }
+.filtros__limpar { color: var(--rosa); font-weight: 700; }
+
+/* Lista e estado vazio */
+.feed__resumo { color: var(--suave); font-size: .9rem; margin: 0 0 12px; }
+.lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.vazio {
+  text-align: center;
+  background: var(--papel);
+  border: 2px dashed var(--linha);
+  border-radius: 14px;
+  padding: clamp(24px, 6vw, 40px) 20px;
+}
+.vazio h2 { font-size: 1.3rem; }
+.vazio p { color: var(--suave); max-width: 46ch; margin: 0 auto 1.25em; }
+
+/* Mobile (a partir de 360px) */
+@media (max-width: 400px) {
+  .filtros { padding: 12px; }
+  .feed__cabeca .btn { width: 100%; }
+}
+
+/* Estado vazio com título menor (h3) */
+.vazio h3 { font-size: 1.2rem; margin: 0 0 .5em; }
+
+/* Nova pergunta */
+.cartao-form {
+  background: var(--papel);
+  border: 1px solid var(--linha);
+  border-top: 5px solid var(--rosa);
+  border-radius: 14px;
+  padding: clamp(18px, 4vw, 32px);
+}
+.cartao-form h1 { font-size: clamp(1.6rem, 4vw, 2rem); }
+.cartao-form .feed__sub { margin-bottom: 1.25em; }
+
+.similares {
+  background: var(--creme);
+  border: 2px solid var(--salvia);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.similares[aria-busy="true"] { opacity: .7; }
+.similares h2 { font-size: 1.05rem; margin: 0 0 .4em; }
+.similares .similares__ajuda { color: var(--suave); font-size: .9rem; }
+.similares ul { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 10px; }
+.similares li a { font-weight: 700; color: var(--rosa); }
+.similares__meta { display: block; font-size: .85rem; color: var(--suave); }
+
+.anexo__previa {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px;
+  border: 1px dashed var(--linha);
+  border-radius: 10px;
+}
+.anexo__previa img { max-width: 120px; max-height: 90px; border-radius: 8px; object-fit: cover; }
+
+/* Pergunta aberta */
+.pergunta-completa {
+  display: grid;
+  gap: 10px;
+  background: var(--papel);
+  border: 1px solid var(--linha);
+  border-radius: 14px;
+  padding: clamp(18px, 4vw, 28px);
+  margin-bottom: 28px;
+}
+.pergunta-completa--validada { border: 2px solid var(--salvia); }
+.pergunta-completa .pergunta-completa__titulo { font-size: clamp(1.4rem, 3.5vw, 1.9rem); margin: 0; }
+.pergunta-completa .pergunta-completa__meta,
+.pergunta-completa .pergunta-completa__selos,
+.pergunta-completa .pergunta-completa__anexo,
+.pergunta-completa .pergunta-completa__duvida { margin: 0; }
+.pergunta-completa .pergunta-completa__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  align-items: center;
+  font-size: .875rem;
+  color: var(--suave);
+}
+.pergunta-completa__selos { display: flex; flex-wrap: wrap; gap: 8px; }
+.pergunta-completa__texto { white-space: pre-wrap; overflow-wrap: anywhere; }
+.pergunta-completa__anexo a { color: var(--rosa); font-weight: 700; }
+.pergunta-completa__acoes { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: center; }
+.pergunta-completa__duvida { font-weight: 700; color: var(--rosa); }
+
+/* Respostas */
+.respostas__titulo { font-size: 1.3rem; }
+.respostas__lista { list-style: none; margin: 0 0 28px; padding: 0; display: grid; gap: 14px; }
+.resposta-form {
+  background: var(--papel);
+  border: 1px solid var(--linha);
+  border-radius: 14px;
+  padding: clamp(16px, 4vw, 24px);
+}
+.resposta-form h2 { font-size: 1.2rem; }

@@ -12,15 +12,9 @@
     "lint": "eslint .",
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",
-<<<<<<< HEAD
-    "prepare": "husky",
-    "migrate": "tsx database/run-migrations.ts",
-    "seed": "tsx database/run-seeds.ts"
-=======
     "prepare": "husky",  
     "migrate": "tsx src/database/run-migrations.ts",
     "seed": "tsx src/database/run-seeds.ts"
->>>>>>> cc044885016c6fdcbc0d651398b7bb09d80b4b0d
   },
   "repository": {
     "type": "git",

@@ -1,0 +1,154 @@
+<%
+/*
+ * auth/cadastro.ejs — Tela de cadastro da Ágora.
+ * Rota: GET /cadastro (pública). O envio é um POST /cadastro.
+ * Variáveis opcionais enviadas pela rota:
+ *   erro    (string)  erro geral, ex.: falha inesperada
+ *   erros   (objeto)  erro por campo: nome, email, senha, codigoTurma
+ *                     (ex.: codigoTurma = código de turma inválido — RN-07)
+ *   valores (objeto)  nome, email e codigoTurma digitados (a senha nunca volta)
+ * Todo cadastro entra como Aluno (RN-08).
+ * Estilos: /css/pages/auth.css (compartilhado com o login)
+ * Regra de segurança: usar apenas a tag de saída escapada do EJS
+ * (igual ao sinal de igual) para dados dinâmicos; nunca a tag sem escape.
+ */
+const titulo = locals.titulo || 'Criar conta — Ágora';
+const erro = locals.erro || '';
+const erros = locals.erros || {};
+const valores = locals.valores || {};
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Crie sua conta na Ágora com o código da turma para perguntar e responder dúvidas.">
+  <title><%= titulo %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/pages/login.css">
+  <script src="/js/tema.js" defer></script>
+</head>
+<body class="auth">
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="topo">
+    <a class="marca" href="/" aria-label="Ágora, página inicial"><img src="/css/uploads/materials/logo.png" height="50" width="50">Ágo<span>ra</span></a>
+    <nav class="topo__nav" aria-label="Principal">
+      <a class="btn btn--contorno" href="/login">Entrar</a>
+      <div role="group" aria-label="Modo escuro">
+        <button class="btn btn--contorno" type="button" data-alternar-tema>Alternar tema</button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="conteudo" class="auth__main">
+    <section class="auth__cartao" aria-labelledby="titulo-cadastro">
+      <h1 id="titulo-cadastro">Criar conta</h1>
+      <p class="auth__sub">Peça o código da turma ao seu professor e preencha os dados abaixo.</p>
+
+      <div class="auth__avisos" role="status" aria-live="polite">
+        <% if (erro) { %>
+          <p class="alerta alerta--erro" role="alert">
+            <span aria-hidden="true">✖</span> <%= erro %>
+          </p>
+        <% } %>
+      </div>
+
+      <form class="form" action="/cadastro" method="post" novalidate>
+        <div class="campo">
+          <label class="campo__rotulo" for="nome">Nome completo</label>
+          <input
+            class="campo__input"
+            type="text"
+            id="nome"
+            name="nome"
+            value="<%= valores.nome || '' %>"
+            autocomplete="name"
+            maxlength="100"
+            required
+            aria-invalid="<%= erros.nome ? 'true' : 'false' %>"
+            <%= erros.nome ? 'aria-describedby=erro-nome' : '' %>
+          >
+          <% if (erros.nome) { %>
+            <p class="campo__erro" id="erro-nome"><%= erros.nome %></p>
+          <% } %>
+        </div>
+
+        <div class="campo">
+          <label class="campo__rotulo" for="email">E-mail</label>
+          <input
+            class="campo__input"
+            type="email"
+            id="email"
+            name="email"
+            value="<%= valores.email || '' %>"
+            autocomplete="email"
+            inputmode="email"
+            maxlength="100"
+            required
+            aria-invalid="<%= erros.email ? 'true' : 'false' %>"
+            <%= erros.email ? 'aria-describedby=erro-email' : '' %>
+          >
+          <% if (erros.email) { %>
+            <p class="campo__erro" id="erro-email"><%= erros.email %></p>
+          <% } %>
+        </div>
+
+        <div class="campo">
+          <label class="campo__rotulo" for="senha">Senha</label>
+          <input
+            class="campo__input"
+            type="password"
+            id="senha"
+            name="senha"
+            autocomplete="new-password"
+            minlength="8"
+            required
+            aria-invalid="<%= erros.senha ? 'true' : 'false' %>"
+            aria-describedby="ajuda-senha<%= erros.senha ? ' erro-senha' : '' %>"
+          >
+          <p class="campo__ajuda" id="ajuda-senha">Mínimo de 8 caracteres.</p>
+          <% if (erros.senha) { %>
+            <p class="campo__erro" id="erro-senha"><%= erros.senha %></p>
+          <% } %>
+        </div>
+
+        <div class="campo">
+          <label class="campo__rotulo" for="codigoTurma">Código da turma</label>
+          <input
+            class="campo__input"
+            type="text"
+            id="codigoTurma"
+            name="codigoTurma"
+            value="<%= valores.codigoTurma || '' %>"
+            autocomplete="off"
+            autocapitalize="characters"
+            maxlength="20"
+            required
+            aria-invalid="<%= erros.codigoTurma ? 'true' : 'false' %>"
+            aria-describedby="ajuda-codigo<%= erros.codigoTurma ? ' erro-codigo' : '' %>"
+          >
+          <p class="campo__ajuda" id="ajuda-codigo">Fornecido pelo seu professor.</p>
+          <% if (erros.codigoTurma) { %>
+            <p class="campo__erro" id="erro-codigo"><%= erros.codigoTurma %></p>
+          <% } %>
+        </div>
+
+        <button class="btn btn--bloco" type="submit">Criar conta</button>
+      </form>
+
+      <p class="auth__troca">
+        Já tem conta? <a href="/login">Entrar</a>
+      </p>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <p>Ágora · Fórum escolar de perguntas e respostas</p>
+    <p class="rodape__nota">Coletamos o mínimo de dados pessoais, conforme a LGPD.</p>
+  </footer>
+</body>
+</html>
