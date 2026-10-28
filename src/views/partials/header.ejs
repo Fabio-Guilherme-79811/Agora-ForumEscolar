@@ -2,9 +2,11 @@
 /*
  * partials/header.ejs — Topo das páginas logadas da Ágora.
  * Parâmetros: usuario (nome e perfil) e ativo ('perguntas', 'disciplinas',
- * 'termometro' ou 'admin'), que marca o link da página atual.
+ * 'termometro', 'admin' ou 'configuracoes'), que marca o link da página atual.
  * O link do painel aparece para Professor, Monitor e Admin (RN-30). O Monitor
  * vê a versão restrita; quem decide o que cada perfil vê é a rota.
+ * Carrega o /js/tema.js, que faz funcionar o botão de tema e aplica o tema salvo
+ * em todas as páginas logadas. Não carregar o tema.js de novo nas páginas.
  * Regra de segurança: apenas a tag de saída escapada do EJS.
  */
 const usuario = locals.usuario || null;
@@ -16,6 +18,7 @@ const links = [
   { chave: 'termometro', href: '/termometro', rotulo: 'Termômetro' }
 ];
 %>
+<script src="/js/tema.js"></script>
 <header class="topo topo--logado">
   <a class="marca" href="/" aria-label="Ágora, página inicial"><img src="/css/uploads/materials/logo.png" height="50" width="50">Ágo<span>ra</span></a>
   <div role="group" aria-label="Modo escuro">
@@ -29,6 +32,7 @@ const links = [
       <a href="/admin" aria-current="<%= ativo === 'admin' ? 'page' : 'false' %>">Painel</a>
     <% } %>
     <% if (usuario) { %>
+      <a href="/configuracoes" aria-current="<%= ativo === 'configuracoes' ? 'page' : 'false' %>">Configurações</a>
       <a href="/perfil"><%= usuario.nome %></a>
       <form action="/logout" method="post">
         <button class="btn btn--contorno" type="submit">Sair</button>
