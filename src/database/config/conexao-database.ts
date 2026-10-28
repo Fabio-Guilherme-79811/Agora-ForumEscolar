@@ -2,7 +2,7 @@ import 'dotenv/config';
 import mysql, { Pool } from 'mysql2/promise';
 
 export class Conexao {
-  private static pool: Pool;
+  public static pool: Pool;
 
   static obterPool(): Pool {
     if (!Conexao.pool) {
