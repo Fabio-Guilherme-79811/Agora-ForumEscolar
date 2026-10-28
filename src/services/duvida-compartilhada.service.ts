@@ -1,11 +1,11 @@
 /** "Também tenho essa dúvida": toggle de 1 por usuário/pergunta (RN-15) e alerta aos 5 (RN-28). */
-import { DuvidaCompartilhada } from '../entities/DuvidaCompartilhada';
-import { LIMITE_TAMBEM_TENHO_DESTAQUE } from '../entities/Perguntas';
-import type { IPerguntaRepository } from '../entities/models/interface/Iperguntarepository';
-import type { ITambemTenhoRepository } from '../entities/models/interface/Itambemtenhorepository';
-import { AcessoTurmaService } from './acesso-turma.service';
-import { ErroDeNaoEncontrado } from './erros-servico';
-import { Ator, exigir } from './tipos.service';
+import { DuvidaCompartilhada } from "../entities/DuvidaCompartilhada";
+import { LIMITE_TAMBEM_TENHO_DESTAQUE } from "../entities/Perguntas";
+import type { IPerguntaRepository } from "../entities/models/interface/Iperguntarepository";
+import type { ITambemTenhoRepository } from "../entities/models/interface/Itambemtenhorepository";
+import { AcessoTurmaService } from "./acesso-turma.service";
+import { ErroDeNaoEncontrado } from "./erros.service";
+import { Ator, exigir } from "./tipos.service";
 
 export interface ResultadoDuvida {
   marcado: boolean;
@@ -24,10 +24,13 @@ export class DuvidaCompartilhadaService {
   ) {}
 
   async alternar(ator: Ator, perguntaId: number): Promise<ResultadoDuvida> {
-    const pergunta = exigir(await this.perguntaRepo.buscarPorId(perguntaId), 'Pergunta não encontrada.');
+    const pergunta = exigir(
+      await this.perguntaRepo.buscarPorId(perguntaId),
+      "Pergunta não encontrada.",
+    );
     await this.acesso.garantirAcesso(ator, pergunta.turma_id); // RN-02
-    if (pergunta.oculta === 1 && ator.perfil !== 'professor') {
-      throw new ErroDeNaoEncontrado('Pergunta não encontrada.');
+    if (pergunta.oculta === 1 && ator.perfil !== "professor") {
+      throw new ErroDeNaoEncontrado("Pergunta não encontrada.");
     }
 
     let marcado: boolean;
@@ -46,7 +49,8 @@ export class DuvidaCompartilhadaService {
       marcado,
       total,
       destaque: semValidada && total >= LIMITE_TAMBEM_TENHO_DESTAQUE,
-      alertaProfessor: marcado && semValidada && total === LIMITE_TAMBEM_TENHO_DESTAQUE,
+      alertaProfessor:
+        marcado && semValidada && total === LIMITE_TAMBEM_TENHO_DESTAQUE,
     };
   }
 }

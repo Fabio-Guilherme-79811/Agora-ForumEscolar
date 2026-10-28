@@ -1,36 +1,41 @@
-import { randomUUID } from 'crypto';
-import { NextFunction, Request, Response } from 'express';
-import fs from 'fs';
-import multer, { MulterError } from 'multer';
-import path from 'path';
+import { randomUUID } from "crypto";
+import { NextFunction, Request, Response } from "express";
+import fs from "fs";
+import multer, { MulterError } from "multer";
+import path from "path";
 
 const LIMITE_BYTES = 5 * 1024 * 1024; // RN-22: 5 MB
 
 // mimetype -> extensão que o SERVIDOR escolhe (nunca confiamos no nome enviado)
 const TIPOS_ACEITOS: Record<string, string> = {
-  'image/jpeg': '.jpg',
-  'image/png': '.png',
-  'image/webp': '.webp',
-  'application/pdf': '.pdf',
+  "image/jpeg": ".jpg",
+  "image/png": ".png",
+  "image/webp": ".webp",
+  "application/pdf": ".pdf",
 };
-const EXTENSOES_ACEITAS = new Set(['.jpg', '.jpeg', '.png', '.webp', '.pdf']);
+const EXTENSOES_ACEITAS = new Set([".jpg", ".jpeg", ".png", ".webp", ".pdf"]);
 
 class ErroUpload extends Error {}
 
 function criarMulter(pasta: string): multer.Multer {
-  const destino = path.resolve(process.cwd(), 'public', 'uploads', pasta);
+  const destino = path.resolve(process.cwd(), "public", "uploads", pasta);
   fs.mkdirSync(destino, { recursive: true });
 
   return multer({
     storage: multer.diskStorage({
       destination: (_req, _file, cb) => cb(null, destino),
-      filename: (_req, file, cb) => cb(null, `${randomUUID()}${TIPOS_ACEITOS[file.mimetype]}`),
+      filename: (_req, file, cb) =>
+        cb(null, `${randomUUID()}${TIPOS_ACEITOS[file.mimetype]}`),
     }),
     limits: { fileSize: LIMITE_BYTES, files: 1 },
     fileFilter: (_req, file, cb) => {
       const ext = path.extname(file.originalname).toLowerCase();
       if (!(file.mimetype in TIPOS_ACEITOS) || !EXTENSOES_ACEITAS.has(ext)) {
-        cb(new ErroUpload('Tipo de arquivo não permitido. Envie imagem (JPG, PNG, WEBP) ou PDF.'));
+        cb(
+          new ErroUpload(
+            "Tipo de arquivo não permitido. Envie imagem (JPG, PNG, WEBP) ou PDF.",
+          ),
+        );
         return;
       }
       cb(null, true);
@@ -46,9 +51,9 @@ function criarUpload(pasta: string, campo: string) {
       if (!erro) return next();
       if (erro instanceof MulterError) {
         const msg =
-          erro.code === 'LIMIT_FILE_SIZE'
-            ? 'O arquivo excede o limite de 5 MB.'
-            : 'Envio de arquivo inválido. Envie apenas 1 arquivo.';
+          erro.code === "LIMIT_FILE_SIZE"
+            ? "O arquivo excede o limite de 5 MB."
+            : "Envio de arquivo inválido. Envie apenas 1 arquivo.";
         res.status(400).json({ erro: msg });
         return;
       }
@@ -62,7 +67,7 @@ function criarUpload(pasta: string, campo: string) {
 }
 
 /** Anexo opcional da pergunta (RN-22). Campo do form: "anexo". Caminho salvo: uploads/perguntas/<uuid>.<ext> */
-export const uploadAnexoPergunta = criarUpload('perguntas', 'anexo');
+export const uploadAnexoPergunta = criarUpload("perguntas", "anexo");
 
 /** Acervo de Materiais. Campo do form: "arquivo". */
-export const uploadMaterial = criarUpload('materiais', 'arquivo');
+export const uploadMaterial = criarUpload("materiais", "arquivo");

@@ -1,9 +1,9 @@
 /** UC-18 / RN-07 / RN-32: o professor gera (ou regenera) o código usado no cadastro dos alunos. */
-import { ErroDeRegraDeNegocio } from '../entities/erros';
-import { Turma } from '../entities/Turma';
-import type { ITurmaRepository } from '../entities/models/interface/Iturmarepository';
-import { AcessoTurmaService } from './acesso-turma.service';
-import { Ator, exigir, exigirProfessor } from './tipos.service';
+import { ErroDeRegraDeNegocio } from "../entities/erros";
+import { Turma } from "../entities/Turma";
+import type { ITurmaRepository } from "../entities/models/interface/Iturmarepository";
+import { AcessoTurmaService } from "./acesso-turma.service";
+import { Ator, exigir, exigirProfessor } from "./tipos.service";
 
 const MAX_TENTATIVAS_UNICIDADE = 5;
 
@@ -13,10 +13,14 @@ export class TurmaService {
     private readonly acesso: AcessoTurmaService,
   ) {}
 
-  async gerarCodigo(ator: Ator, turmaId: number, agora: Date = new Date()): Promise<{ codigo: string; geradoEm: Date }> {
+  async gerarCodigo(
+    ator: Ator,
+    turmaId: number,
+    agora: Date = new Date(),
+  ): Promise<{ codigo: string; geradoEm: Date }> {
     exigirProfessor(ator);
     await this.acesso.garantirAcesso(ator, turmaId);
-    exigir(await this.turmaRepo.buscarPorId(turmaId), 'Turma não encontrada.');
+    exigir(await this.turmaRepo.buscarPorId(turmaId), "Turma não encontrada.");
 
     // o código é UNIQUE no banco; sorteia de novo se colidir com o de outra turma
     for (let i = 0; i < MAX_TENTATIVAS_UNICIDADE; i++) {
@@ -26,6 +30,8 @@ export class TurmaService {
         return { codigo, geradoEm: agora };
       }
     }
-    throw new ErroDeRegraDeNegocio('Não foi possível gerar um código único. Tente novamente.');
+    throw new ErroDeRegraDeNegocio(
+      "Não foi possível gerar um código único. Tente novamente.",
+    );
   }
 }

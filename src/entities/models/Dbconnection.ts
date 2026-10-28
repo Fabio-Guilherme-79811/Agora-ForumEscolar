@@ -1,30 +1,52 @@
-import type { PoolConnection, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
-import { Conexao } from '../../database/config/conexao-database'; 
+import type {
+  PoolConnection,
+  ResultSetHeader,
+  RowDataPacket,
+} from "mysql2/promise";
+import { Conexao } from "../../database/config/conexao-database";
 
 /** Pool ou conexão de transação: os repositories aceitam ambos. */
-export type Executor = Pick<PoolConnection, 'query'>;
+export type Executor = Pick<PoolConnection, "query">;
 
-export async function select<T>(sql: string, params: unknown[] = [], ex: Executor = Conexao.pool): Promise<T[]> {
+export async function select<T>(
+  sql: string,
+  params: unknown[] = [],
+  ex: Executor = Conexao.pool,
+): Promise<T[]> {
   const [rows] = await ex.query<RowDataPacket[]>(sql, params);
   return rows as unknown as T[];
 }
 
-export async function selectOne<T>(sql: string, params: unknown[] = [], ex: Executor = Conexao.pool): Promise<T | null> {
+export async function selectOne<T>(
+  sql: string,
+  params: unknown[] = [],
+  ex: Executor = Conexao.pool,
+): Promise<T | null> {
   const rows = await select<T>(sql, params, ex);
   return rows[0] ?? null;
 }
 
-export async function run(sql: string, params: unknown[] = [], ex: Executor = Conexao.pool): Promise<ResultSetHeader> {
+export async function run(
+  sql: string,
+  params: unknown[] = [],
+  ex: Executor = Conexao.pool,
+): Promise<ResultSetHeader> {
   const [res] = await ex.query<ResultSetHeader>(sql, params);
   return res;
 }
 
 export function isDuplicateError(e: unknown): boolean {
-  return typeof e === 'object' && e !== null && (e as { code?: string }).code === 'ER_DUP_ENTRY';
+  return (
+    typeof e === "object" &&
+    e !== null &&
+    (e as { code?: string }).code === "ER_DUP_ENTRY"
+  );
 }
 
 /** Executa várias operações de forma atômica (commit/rollback automáticos). */
-export async function withTransaction<T>(fn: (conn: PoolConnection) => Promise<T>): Promise<T> {
+export async function withTransaction<T>(
+  fn: (conn: PoolConnection) => Promise<T>,
+): Promise<T> {
   const conn = await Conexao.pool.getConnection();
   try {
     await conn.beginTransaction();

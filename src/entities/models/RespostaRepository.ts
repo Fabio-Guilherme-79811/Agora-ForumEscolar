@@ -1,14 +1,25 @@
-import { isDuplicateError, run, select, selectOne, withTransaction } from './DbConnection';
-import type { IRespostaRepository } from './interface/Irespostarepository';
-import type { RespostaDetalhe, RespostaRow } from './Types';
+import {
+  isDuplicateError,
+  run,
+  select,
+  selectOne,
+  withTransaction,
+} from "./DbConnection";
+import type { IRespostaRepository } from "./interface/Irespostarepository";
+import type { RespostaDetalhe, RespostaRow } from "./Types";
 
 export class RespostaRepository implements IRespostaRepository {
   async criar(perguntaId: number, autorId: number, conteudo: string) {
-    return (await run('INSERT INTO respostas (pergunta_id, autor_id, conteudo) VALUES (?, ?, ?)', [perguntaId, autorId, conteudo])).insertId;
+    return (
+      await run(
+        "INSERT INTO respostas (pergunta_id, autor_id, conteudo) VALUES (?, ?, ?)",
+        [perguntaId, autorId, conteudo],
+      )
+    ).insertId;
   }
 
   buscarPorId(id: number) {
-    return selectOne<RespostaRow>('SELECT * FROM respostas WHERE id = ?', [id]);
+    return selectOne<RespostaRow>("SELECT * FROM respostas WHERE id = ?", [id]);
   }
 
   /** RN-18: validada fixada no topo; demais por mais úteis e depois mais antigas. */
@@ -31,16 +42,29 @@ export class RespostaRepository implements IRespostaRepository {
    */
   validar(respostaId: number, validadorId: number): Promise<boolean> {
     return withTransaction(async (conn) => {
-      const resp = await selectOne<RespostaRow>('SELECT * FROM respostas WHERE id = ?', [respostaId], conn);
+      const resp = await selectOne<RespostaRow>(
+        "SELECT * FROM respostas WHERE id = ?",
+        [respostaId],
+        conn,
+      );
       if (!resp) return false;
-      await select('SELECT id FROM perguntas WHERE id = ? FOR UPDATE', [resp.pergunta_id], conn);
+      await select(
+        "SELECT id FROM perguntas WHERE id = ? FOR UPDATE",
+        [resp.pergunta_id],
+        conn,
+      );
       const outra = await selectOne(
-        'SELECT 1 FROM respostas WHERE pergunta_id = ? AND validada = 1 AND id <> ?',
-        [resp.pergunta_id, respostaId], conn,
+        "SELECT 1 FROM respostas WHERE pergunta_id = ? AND validada = 1 AND id <> ?",
+        [resp.pergunta_id, respostaId],
+        conn,
       );
       if (outra) return false;
       try {
-        await run('UPDATE respostas SET validada = 1, validada_por = ?, validada_em = NOW() WHERE id = ?', [validadorId, respostaId], conn);
+        await run(
+          "UPDATE respostas SET validada = 1, validada_por = ?, validada_em = NOW() WHERE id = ?",
+          [validadorId, respostaId],
+          conn,
+        );
         return true;
       } catch (e) {
         if (isDuplicateError(e)) return false;
@@ -50,18 +74,24 @@ export class RespostaRepository implements IRespostaRepository {
   }
 
   async retirarValidacao(respostaId: number) {
-    await run('UPDATE respostas SET validada = 0, validada_por = NULL, validada_em = NULL WHERE id = ?', [respostaId]);
+    await run(
+      "UPDATE respostas SET validada = 0, validada_por = NULL, validada_em = NULL WHERE id = ?",
+      [respostaId],
+    );
   }
 
   async atualizarConteudo(id: number, conteudo: string) {
-    await run('UPDATE respostas SET conteudo = ? WHERE id = ?', [conteudo, id]);
+    await run("UPDATE respostas SET conteudo = ? WHERE id = ?", [conteudo, id]);
   }
 
   async excluir(id: number) {
-    await run('DELETE FROM respostas WHERE id = ?', [id]);
+    await run("DELETE FROM respostas WHERE id = ?", [id]);
   }
 
   async definirOculta(id: number, oculta: boolean) {
-    await run('UPDATE respostas SET oculta = ? WHERE id = ?', [oculta ? 1 : 0, id]);
+    await run("UPDATE respostas SET oculta = ? WHERE id = ?", [
+      oculta ? 1 : 0,
+      id,
+    ]);
   }
 }

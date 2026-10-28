@@ -1,5 +1,5 @@
-import { ErroDeRegraDeNegocio, lancarSeInvalido } from './erros';
-import { paraData } from './tipos';
+import { ErroDeRegraDeNegocio, lancarSeInvalido } from "./erros";
+import { paraData } from "./tipos";
 
 export interface DuvidaCompartilhadaProps {
   id?: number;
@@ -25,16 +25,32 @@ export class DuvidaCompartilhada {
     this._criadoEm = paraData(p.criadoEm) ?? new Date();
   }
 
-  get id(): number | undefined { return this._id; }
-  set id(v: number | undefined) { this._id = v; }
-  get usuarioId(): number { return this._usuarioId; }
-  get perguntaId(): number { return this._perguntaId; }
-  get criadoEm(): Date { return this._criadoEm; }
+  get id(): number | undefined {
+    return this._id;
+  }
+  set id(v: number | undefined) {
+    this._id = v;
+  }
+  get usuarioId(): number {
+    return this._usuarioId;
+  }
+  get perguntaId(): number {
+    return this._perguntaId;
+  }
+  get criadoEm(): Date {
+    return this._criadoEm;
+  }
 
   /** o autor não pode marcar a própria pergunta. */
-  static criar(usuarioId: number, perguntaId: number, autorDaPerguntaId: number): DuvidaCompartilhada {
+  static criar(
+    usuarioId: number,
+    perguntaId: number,
+    autorDaPerguntaId: number,
+  ): DuvidaCompartilhada {
     if (usuarioId === autorDaPerguntaId) {
-      throw new ErroDeRegraDeNegocio('Você não pode marcar "também tenho essa dúvida" na própria pergunta.');
+      throw new ErroDeRegraDeNegocio(
+        'Você não pode marcar "também tenho essa dúvida" na própria pergunta.',
+      );
     }
     const marcacao = new DuvidaCompartilhada({ usuarioId, perguntaId });
     marcacao.validar();
@@ -43,13 +59,20 @@ export class DuvidaCompartilhada {
 
   validar(): void {
     const erros: string[] = [];
-    if (!this._usuarioId) erros.push('Usuário inválido.');
-    if (!this._perguntaId) erros.push('Pergunta inválida.');
+    if (!this._usuarioId) erros.push("Usuário inválido.");
+    if (!this._perguntaId) erros.push("Pergunta inválida.");
     lancarSeInvalido(erros);
   }
 
-  static fromJSON(json: DuvidaCompartilhadaProps): DuvidaCompartilhada { return new DuvidaCompartilhada(json); }
+  static fromJSON(json: DuvidaCompartilhadaProps): DuvidaCompartilhada {
+    return new DuvidaCompartilhada(json);
+  }
   toJSON() {
-    return { id: this._id, usuarioId: this._usuarioId, perguntaId: this._perguntaId, criadoEm: this._criadoEm };
+    return {
+      id: this._id,
+      usuarioId: this._usuarioId,
+      perguntaId: this._perguntaId,
+      criadoEm: this._criadoEm,
+    };
   }
 }

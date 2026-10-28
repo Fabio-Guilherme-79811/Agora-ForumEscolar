@@ -1,4 +1,4 @@
-import type { MateriaRow } from '../Types';
+import type { MateriaRow } from "../Types";
 
 export interface IMateriaRepository {
   criar(nome: string): Promise<number>;

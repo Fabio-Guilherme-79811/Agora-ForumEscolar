@@ -11,7 +11,7 @@ async function seedUsuarios() {
       ('Fernanda Lima', 'fernanda.monitora@agora.com', ?, 'monitor'),
       ('Prof. Ricardo', 'ricardo.professor@agora.com', ?, 'professor'),
       ('Admin Sistema', 'admin@agora.com', ?, 'admin')`,
-    [senhaHash, senhaHash, senhaHash, senhaHash, senhaHash]
+    [senhaHash, senhaHash, senhaHash, senhaHash, senhaHash],
   );
 
   console.log("Usuários de demonstração inseridos.");

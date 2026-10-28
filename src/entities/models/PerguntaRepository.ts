@@ -1,6 +1,13 @@
-import { run, select, selectOne } from './DbConnection';
-import type { IPerguntaRepository } from './interface/Iperguntarepository';
-import type { FiltroPerguntas, NovaPergunta, PerguntaFeed, PerguntaRow, StatusPergunta, TemperaturaMateria } from './Types';
+import { run, select, selectOne } from "./DbConnection";
+import type { IPerguntaRepository } from "./interface/Iperguntarepository";
+import type {
+  FiltroPerguntas,
+  NovaPergunta,
+  PerguntaFeed,
+  PerguntaRow,
+  StatusPergunta,
+  TemperaturaMateria,
+} from "./Types";
 
 /** Base do feed: pergunta + autor + matéria + contadores. O status é derivado (nunca gravado). */
 const BASE = `
@@ -12,10 +19,14 @@ const BASE = `
   JOIN usuarios u ON u.id = p.autor_id
   JOIN materias m ON m.id = p.materia_id`;
 
-type FeedRaw = Omit<PerguntaFeed, 'status'>;
+type FeedRaw = Omit<PerguntaFeed, "status">;
 
 function comStatus(r: FeedRaw): PerguntaFeed {
-  const status: StatusPergunta = r.tem_validada ? 'validada' : r.total_respostas > 0 ? 'respondida' : 'aberta';
+  const status: StatusPergunta = r.tem_validada
+    ? "validada"
+    : r.total_respostas > 0
+      ? "respondida"
+      : "aberta";
   return { ...r, status };
 }
 
@@ -24,8 +35,15 @@ const ids = (a: number[]) => (a.length ? a : [0]); // evita "IN ()" inválido
 export class PerguntaRepository implements IPerguntaRepository {
   async criar(d: NovaPergunta) {
     const r = await run(
-      'INSERT INTO perguntas (titulo, descricao, materia_id, turma_id, autor_id, anexo) VALUES (?, ?, ?, ?, ?, ?)',
-      [d.titulo, d.descricao, d.materia_id, d.turma_id, d.autor_id, d.anexo ?? null],
+      "INSERT INTO perguntas (titulo, descricao, materia_id, turma_id, autor_id, anexo) VALUES (?, ?, ?, ?, ?, ?)",
+      [
+        d.titulo,
+        d.descricao,
+        d.materia_id,
+        d.turma_id,
+        d.autor_id,
+        d.anexo ?? null,
+      ],
     );
     return r.insertId;
   }
@@ -37,24 +55,31 @@ export class PerguntaRepository implements IPerguntaRepository {
 
   /** RN-02/03 (turmas), RN-10 (ordem), RN-11 (filtros), RN-13 (busca). */
   async listar(f: FiltroPerguntas) {
-    const where: string[] = ['x.turma_id IN (?)'];
+    const where: string[] = ["x.turma_id IN (?)"];
     const params: unknown[] = [ids(f.turmaIds)];
-    if (!f.incluirOcultas) where.push('x.oculta = 0');
-    if (f.materiaId) { where.push('x.materia_id = ?'); params.push(f.materiaId); }
-    if (f.autorId) { where.push('x.autor_id = ?'); params.push(f.autorId); }
+    if (!f.incluirOcultas) where.push("x.oculta = 0");
+    if (f.materiaId) {
+      where.push("x.materia_id = ?");
+      params.push(f.materiaId);
+    }
+    if (f.autorId) {
+      where.push("x.autor_id = ?");
+      params.push(f.autorId);
+    }
     if (f.busca?.trim()) {
-      where.push('(x.titulo LIKE ? OR x.descricao LIKE ?)');
-      const like = `%${f.busca.trim().replace(/[%_\\]/g, '\\$&')}%`;
+      where.push("(x.titulo LIKE ? OR x.descricao LIKE ?)");
+      const like = `%${f.busca.trim().replace(/[%_\\]/g, "\\$&")}%`;
       params.push(like, like);
     }
-    if (f.status === 'validada') where.push('x.tem_validada = 1');
-    if (f.status === 'respondida') where.push('x.tem_validada = 0 AND x.total_respostas > 0');
-    if (f.status === 'aberta') where.push('x.total_respostas = 0');
+    if (f.status === "validada") where.push("x.tem_validada = 1");
+    if (f.status === "respondida")
+      where.push("x.tem_validada = 0 AND x.total_respostas > 0");
+    if (f.status === "aberta") where.push("x.total_respostas = 0");
 
     const limite = Math.min(Math.max(f.limite ?? 20, 1), 100);
     const offset = Math.max(f.offset ?? 0, 0);
     const rows = await select<FeedRaw>(
-      `SELECT x.* FROM (${BASE}) x WHERE ${where.join(' AND ')}
+      `SELECT x.* FROM (${BASE}) x WHERE ${where.join(" AND ")}
        ORDER BY x.tem_validada ASC, x.criado_em DESC LIMIT ? OFFSET ?`,
       [...params, limite, offset],
     );
@@ -63,10 +88,17 @@ export class PerguntaRepository implements IPerguntaRepository {
 
   /** RN-23: pontua por quantas palavras relevantes (>3 letras) do título aparecem. Sem FULLTEXT, para o MVP. */
   async buscarSimilares(turmaId: number, titulo: string, limite = 5) {
-    const palavras = [...new Set(titulo.toLowerCase().split(/\W+/).filter((w) => w.length > 3))].slice(0, 6);
+    const palavras = [
+      ...new Set(
+        titulo
+          .toLowerCase()
+          .split(/\W+/)
+          .filter((w) => w.length > 3),
+      ),
+    ].slice(0, 6);
     if (palavras.length === 0) return [];
-    const likes = palavras.map((w) => `%${w.replace(/[%_\\]/g, '\\$&')}%`);
-    const score = palavras.map(() => '(x.titulo LIKE ?)').join(' + ');
+    const likes = palavras.map((w) => `%${w.replace(/[%_\\]/g, "\\$&")}%`);
+    const score = palavras.map(() => "(x.titulo LIKE ?)").join(" + ");
     const rows = await select<FeedRaw>(
       `SELECT x.*, (${score}) AS score FROM (${BASE}) x
        WHERE x.turma_id = ? AND x.oculta = 0 HAVING score > 0
@@ -78,30 +110,47 @@ export class PerguntaRepository implements IPerguntaRepository {
 
   async contarPublicadasHoje(autorId: number) {
     const r = await selectOne<{ total: number }>(
-      'SELECT COUNT(*) AS total FROM perguntas WHERE autor_id = ? AND criado_em >= CURDATE()',
+      "SELECT COUNT(*) AS total FROM perguntas WHERE autor_id = ? AND criado_em >= CURDATE()",
       [autorId],
     );
     return r?.total ?? 0;
   }
 
-  async atualizar(id: number, d: Partial<Pick<PerguntaRow, 'titulo' | 'descricao' | 'materia_id' | 'anexo'>>) {
+  async atualizar(
+    id: number,
+    d: Partial<
+      Pick<PerguntaRow, "titulo" | "descricao" | "materia_id" | "anexo">
+    >,
+  ) {
     await run(
       `UPDATE perguntas SET titulo = COALESCE(?, titulo), descricao = COALESCE(?, descricao),
          materia_id = COALESCE(?, materia_id), anexo = COALESCE(?, anexo) WHERE id = ?`,
-      [d.titulo ?? null, d.descricao ?? null, d.materia_id ?? null, d.anexo ?? null, id],
+      [
+        d.titulo ?? null,
+        d.descricao ?? null,
+        d.materia_id ?? null,
+        d.anexo ?? null,
+        id,
+      ],
     );
   }
 
   async excluir(id: number) {
-    await run('DELETE FROM perguntas WHERE id = ?', [id]);
+    await run("DELETE FROM perguntas WHERE id = ?", [id]);
   }
 
   async marcarResolvida(id: number, resolvida: boolean) {
-    await run('UPDATE perguntas SET resolvida = ? WHERE id = ?', [resolvida ? 1 : 0, id]);
+    await run("UPDATE perguntas SET resolvida = ? WHERE id = ?", [
+      resolvida ? 1 : 0,
+      id,
+    ]);
   }
 
   async definirOculta(id: number, oculta: boolean) {
-    await run('UPDATE perguntas SET oculta = ? WHERE id = ?', [oculta ? 1 : 0, id]);
+    await run("UPDATE perguntas SET oculta = ? WHERE id = ?", [
+      oculta ? 1 : 0,
+      id,
+    ]);
   }
 
   /** RN-31: sem validação, ordenada por nº de "também tenho" desc e depois pela mais antiga. */

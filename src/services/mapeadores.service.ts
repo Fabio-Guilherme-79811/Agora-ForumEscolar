@@ -1,8 +1,12 @@
 /** Converte linhas cruas do banco (snake_case, Types.ts) nas entities de domínio, para reaproveitar as regras delas. */
-import { Pergunta } from '../entities/Perguntas';
-import { Resposta } from '../entities/Respostas';
-import { Usuario } from '../entities/Usuario';
-import type { PerguntaFeed, RespostaRow, UsuarioRow } from '../entities/models/Types';
+import { Pergunta } from "../entities/Perguntas";
+import { Resposta } from "../entities/Respostas";
+import { Usuario } from "../entities/Usuario";
+import type {
+  PerguntaFeed,
+  RespostaRow,
+  UsuarioRow,
+} from "../entities/models/Types";
 
 export function usuarioDeRow(r: UsuarioRow): Usuario {
   return new Usuario({
