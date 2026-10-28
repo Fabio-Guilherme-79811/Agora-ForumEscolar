@@ -1,5 +1,7 @@
 import type { PoolConnection, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
-import { pool } from '..';
+import { Conexao } from '../../database/config/conexao-database';
+
+const pool = Conexao.obterPool();
 
 /** Pool ou conexão de transação: os repositories aceitam ambos. */
 export type Executor = Pick<PoolConnection, 'query'>;
