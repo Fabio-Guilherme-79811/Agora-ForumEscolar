@@ -5,8 +5,11 @@ CREATE TABLE respostas (
   pergunta_id  INT NOT NULL,
   validada     BOOLEAN NOT NULL DEFAULT FALSE,
   validada_por INT NULL,
+  validada_em  DATETIME NULL,
+  oculta       BOOLEAN NOT NULL DEFAULT FALSE,
   criado_em    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (autor_id)     REFERENCES usuarios(id) ON DELETE CASCADE,
+  FOREIGN KEY (autor_id)     REFERENCES usuarios(id)  ON DELETE CASCADE,
   FOREIGN KEY (pergunta_id)  REFERENCES perguntas(id) ON DELETE CASCADE,
-  FOREIGN KEY (validada_por) REFERENCES usuarios(id) ON DELETE SET NULL
+  FOREIGN KEY (validada_por) REFERENCES usuarios(id)  ON DELETE SET NULL,
+  INDEX idx_respostas_pergunta (pergunta_id)
 );
