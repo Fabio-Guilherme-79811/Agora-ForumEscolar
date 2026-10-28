@@ -1,22 +1,11 @@
-import { isDuplicateError, run, select, selectOne } from "./DbConnection";
-import type {
-  AlvoDenuncia,
-  IDenunciaRepository,
-} from "./interface/Idenunciarepository";
-import type { DenunciaRow } from "./Types";
+import { isDuplicateError, run, select, selectOne } from './DbConnection';
+import type { AlvoDenuncia, IDenunciaRepository } from './interface/Idenunciarepository';
+import type { DecisaoDenuncia, DenunciaRow } from './Types';
 
 export class DenunciaRepository implements IDenunciaRepository {
-  async criar(
-    denuncianteId: number,
-    tipo: AlvoDenuncia,
-    alvoId: number,
-    motivo: string,
-  ) {
+  async criar(denuncianteId: number, tipo: AlvoDenuncia, alvoId: number, motivo: string) {
     try {
-      await run(
-        "INSERT INTO denuncia (denunciante_id, alvo_tipo, alvo_id, motivo) VALUES (?, ?, ?, ?)",
-        [denuncianteId, tipo, alvoId, motivo],
-      );
+      await run('INSERT INTO denuncia (denunciante_id, alvo_tipo, alvo_id, motivo) VALUES (?, ?, ?, ?)', [denuncianteId, tipo, alvoId, motivo]);
       return true;
     } catch (e) {
       if (isDuplicateError(e)) return false; // 1 denúncia por usuário/alvo: impede "3 denúncias" forjadas por 1 pessoa
@@ -25,9 +14,7 @@ export class DenunciaRepository implements IDenunciaRepository {
   }
   async contarPendentesPorAlvo(tipo: AlvoDenuncia, alvoId: number) {
     const r = await selectOne<{ total: number }>(
-      "SELECT COUNT(*) AS total FROM denuncia WHERE alvo_tipo = ? AND alvo_id = ? AND status = 'pendente'",
-      [tipo, alvoId],
-    );
+      "SELECT COUNT(*) AS total FROM denuncia WHERE alvo_tipo = ? AND alvo_id = ? AND status = 'pendente'", [tipo, alvoId]);
     return r?.total ?? 0;
   }
   /** Fila do professor, restrita às turmas dele. */
@@ -43,7 +30,10 @@ export class DenunciaRepository implements IDenunciaRepository {
       [t],
     );
   }
-  async resolver(id: number, status: "mantida" | "removida") {
-    await run("UPDATE denuncia SET status = ? WHERE id = ?", [status, id]);
+  async resolver(id: number, decisao: DecisaoDenuncia, revisorId: number) {
+    await run(
+      "UPDATE denuncia SET status = 'revisada', decisao = ?, revisada_por = ?, revisada_em = NOW() WHERE id = ? AND status = 'pendente'",
+      [decisao, revisorId, id],
+    );
   }
 }
