@@ -4,7 +4,7 @@ import {
   select,
   selectOne,
   withTransaction,
-} from "./DbConnection";
+} from "./Dbconnection";
 import type { IRespostaRepository } from "./interface/Irespostarepository";
 import type { RespostaDetalhe, RespostaRow } from "./Types";
 

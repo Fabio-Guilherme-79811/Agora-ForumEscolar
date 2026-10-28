@@ -1,4 +1,4 @@
-import { run, select, selectOne } from './DbConnection';
+import { run, select, selectOne } from './Dbconnection';
 import type { IRegistroPontosRepository } from './interface/Iregistropontosrepository';
 import type { MotivoPontos, RegistroPontosRow } from './Types';
 
