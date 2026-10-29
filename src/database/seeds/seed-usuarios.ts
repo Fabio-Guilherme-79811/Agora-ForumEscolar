@@ -9,9 +9,8 @@ async function seedUsuarios() {
       ('Ana Beatriz', 'ana.aluna@agora.com', ?, 'aluno'),
       ('Carlos Souza', 'carlos.aluno@agora.com', ?, 'aluno'),
       ('Fernanda Lima', 'fernanda.monitora@agora.com', ?, 'monitor'),
-      ('Prof. Ricardo', 'ricardo.professor@agora.com', ?, 'professor'),
-      ('Admin Sistema', 'admin@agora.com', ?, 'admin')`,
-    [senhaHash, senhaHash, senhaHash, senhaHash, senhaHash],
+      ('Prof. Ricardo', 'ricardo.professor@agora.com', ?, 'professor')`,
+    [senhaHash, senhaHash, senhaHash, senhaHash]
   );
 
   console.log("Usuários de demonstração inseridos.");
