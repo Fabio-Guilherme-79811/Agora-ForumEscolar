@@ -1,7 +1,8 @@
-import type { MateriaRow } from "../Types";
+import type { MateriaRow } from '../Types';
 
 export interface IMateriaRepository {
-  criar(nome: string): Promise<number>;
+  criar(nome: string, turmaId: number): Promise<number>;
   buscarPorId(id: number): Promise<MateriaRow | null>;
-  listar(): Promise<MateriaRow[]>;
+  /** Só as matérias das turmas informadas (RN-02). */
+  listar(turmaIds: number[]): Promise<MateriaRow[]>;
 }
