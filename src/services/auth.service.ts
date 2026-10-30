@@ -12,7 +12,7 @@ import {
 } from "../entities/Usuario";
 import type { ITurmaRepository } from "../entities/models/interface/Iturmarepository";
 import type { IUsuarioRepository } from "../entities/models/interface/Iusuariosrepository";
-import { PERFIS } from "../entities/models/middlewares/types/auth";
+import { PERFIS } from "../middlewares/types/auth";
 import { ErroDeAutenticacao } from "./erros.service";
 import { usuarioDeRow } from "./mapeadores.service";
 
