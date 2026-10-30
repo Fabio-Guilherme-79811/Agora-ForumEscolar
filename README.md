@@ -105,7 +105,7 @@ Agora-ForumEscolar/
 │   ├── entities/        # Classes OOP (Usuario, Turma, Materia, Pergunta, Resposta, ...)
 │   ├── models/          # Repositories           [A IMPLEMENTAR]
 │   ├── services/        # Regras de negócio      [A IMPLEMENTAR]
-│   ├── routes/          # Rotas Express          [A IMPLEMENTAR]
+│   ├── routes/          # Rotas do MVP, container (injeção) e apresentadores (back → views)
 │   ├── middlewares/     # auth, role, upload     [A IMPLEMENTAR]
 │   ├── views/           # Templates EJS          [A IMPLEMENTAR]
 │   ├── app.ts
@@ -157,10 +157,50 @@ Relações: UC-13 *include* UC-16; UC-09 *extend* UC-15 (a partir da 3ª denúnc
 [PENDENTE: diagrama de casos de uso visual, de classes e de sequência ainda não produzidos.]
 
 ## Tabela de Rotas da API
-[PENDENTE: rotas ainda não definidas/implementadas.]
+Autenticação: JWT em cookie `token` (httpOnly, SameSite=Lax, 8 h) ou `Authorization: Bearer <token>`. Rotas protegidas passam por `authGuard` + `carregarUsuario` (o perfil vem sempre do banco). Quem usa `fetch` envia `Accept: application/json` e recebe JSON; navegação comum recebe HTML (EJS) ou redirect. Erros: 400 validação, 401 não autenticado, 403 sem permissão, 404 não encontrado, 409 regra de negócio, 429 login bloqueado.
+
+| Método | URL | Descrição | Acesso | Resposta |
+| :--- | :--- | :--- | :--- | :--- |
+| GET | `/` | Landing (logado vai para `/perguntas`) | Público | HTML |
+| GET | `/login` | Tela de login | Público | HTML |
+| POST | `/login` | Autentica (`email`, `senha`), grava o cookie | Público | 302 `/perguntas`; 401 ou 429 com a tela e a mensagem |
+| GET | `/cadastro` | Tela de cadastro | Público | HTML |
+| POST | `/cadastro` | Cria aluno e autentica (`nome`, `email`, `senha` mín. 8, `codigoTurma`) | Público | 302 `/perguntas`; 400 ou 409 com erros por campo |
+| POST | `/logout` | Descarta o cookie | Público | 302 `/` |
+| GET | `/perguntas` | Feed; filtros `q`, `materia`, `status` (aberta, respondida, validada), `minhas=1` | Logado | HTML |
+| GET | `/perguntas/nova` | Formulário de nova pergunta | Logado | HTML |
+| GET | `/perguntas/similares?titulo=&materia=` | Perguntas parecidas enquanto digita (RN-23) | Logado | `{ similares: [...] }` |
+| POST | `/perguntas` | Publica (multipart: `titulo`, `materia`, `descricao`, `anexo` opcional JPG/PNG/WEBP/PDF até 5 MB) | Logado | 201 `{ redirect }`; 400 `{ erros }`; 409 `{ erro }` (limite de 5 por dia) |
+| GET | `/perguntas/:id` | Pergunta com respostas | Logado, mesma turma | HTML; 404 |
+| POST | `/perguntas/:id/tambem-tenho` | Marca ou desmarca "também tenho essa dúvida" | Logado, exceto o autor | `{ ativo, total, destaque }` |
+| POST | `/perguntas/:id/respostas` | Responde (`{ conteudo }`) | Logado, mesma turma | 201 `{ ok, id }`; 400 `{ erros: { conteudo } }` |
+| POST | `/respostas/:id/util` | Marca ou desmarca voto útil | Logado, exceto o autor | `{ ativo, total }` |
+| PUT | `/respostas/:id/validacao` | Valida a resposta (máx. 1 por pergunta) | Professor, Monitor | `{ ok }`; 409 se já houver validada |
+| DELETE | `/respostas/:id/validacao` | Retira a validação | Professor | `{ ok }` |
+| GET | `/disciplinas` | Lista de disciplinas com dúvidas abertas | Logado | HTML |
+| GET | `/disciplinas/:id` | Abre o feed filtrado pela disciplina | Logado | 302 `/perguntas?materia=:id`; 404 |
+| GET | `/termometro` | Frio, Morno e Quente por disciplina nos últimos 7 dias (aluno e monitor só agregados) | Logado | HTML ou JSON `{ itens }` |
+| GET | `/configuracoes` | Preferências de tema | Logado | HTML |
+| GET | `/admin` | Painel: professor vê fila, indicadores, membros e código (`?turma=<id>`); monitor vê só as próprias perguntas em aberto | Professor, Monitor | HTML |
+| PUT | `/admin/monitores/:id` | Promove aluno a Monitor | Professor | `{ ok }` |
+| DELETE | `/admin/monitores/:id` | Rebaixa Monitor a aluno | Professor | `{ ok }` |
+| POST | `/admin/turma/codigo` | Gera ou regenera o código da turma (`?turma=<id>`) | Professor | `{ codigo }` |
+
+Fora do MVP (sem rota): editar perfil, pontuação no perfil, denúncia e moderação, editar/excluir pergunta, marcar como resolvida.
 
 ## Guia de Navegação do Sistema
-[PENDENTE: telas ainda não definidas/implementadas.]
+| Rota | View (`src/views`) | Acesso |
+| :--- | :--- | :--- |
+| `/` | `pages/home/index.ejs` | Público |
+| `/login`, `/cadastro` | `pages/auth/login.ejs`, `cadastro.ejs` | Público |
+| `/perguntas` | `pages/perguntas/index.ejs` | Logado |
+| `/perguntas/nova` | `pages/perguntas/criar.ejs` | Logado |
+| `/perguntas/:id` | `pages/perguntas/detalhes.ejs` | Logado |
+| `/disciplinas` | `pages/disciplinas/index.ejs` | Logado |
+| `/termometro` | `pages/termometro/index.ejs` (a criar) | Logado |
+| `/admin` | `pages/admin/painel.ejs` | Professor, Monitor |
+| `/configuracoes` | `pages/config/index.ejs` | Logado |
+| 404 e 500 | `errors/404.ejs`, `errors/500.ejs` (a criar; sem elas, a resposta é texto simples) | Todos |
 
 ## Prints do Sistema
 [PENDENTE: nenhuma tela implementada até o momento. Mínimo: login, feed, painel do professor.]
@@ -218,5 +258,6 @@ npx jest --coverage      # cobertura
 
 ## Situação Atual do Projeto
 - **Concluído:** migrations, seeds, entities, conexão com MySQL.
-- **Em andamento / a fazer:** repositories, services, middlewares, rotas, views e testes.
+- **Concluído também:** repositories, services, middlewares e rotas do MVP (testados ponta a ponta contra o banco).
+- **Em andamento / a fazer:** páginas do termômetro e de erro, scripts `admin-fetch.js` e `search-debounce.js`, ajustes de CSS e testes automatizados (Jest).
 - **Decisões fechadas:** nome Ágora; MySQL; autenticação JWT; Monitor no MVP; Grupos de Estudo fora do escopo.
