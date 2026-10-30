@@ -1,4 +1,4 @@
-import { isDuplicateError, run, select, selectOne, withTransaction } from './DbConnection';
+import { isDuplicateError, run, select, selectOne, withTransaction } from './Dbconnection';
 import type { IRespostaRepository } from './interface/Irespostarepository';
 import type { RespostaDetalhe, RespostaRow } from './Types';
 

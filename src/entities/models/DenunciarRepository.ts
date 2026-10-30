@@ -1,4 +1,4 @@
-import { isDuplicateError, run, select, selectOne } from './DbConnection';
+import { isDuplicateError, run, select, selectOne } from './Dbconnection';
 import type { AlvoDenuncia, IDenunciaRepository } from './interface/Idenunciarepository';
 import type { DenunciaRow } from './Types';
 

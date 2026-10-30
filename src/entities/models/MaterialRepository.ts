@@ -1,4 +1,4 @@
-import { run, select, selectOne } from './DbConnection';
+import { run, select, selectOne } from './Dbconnection';
 import type { IMateriaRepository } from './interface/Imaterialrepository';
 import type { MateriaRow } from './Types';
 

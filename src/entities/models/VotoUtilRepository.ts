@@ -1,4 +1,4 @@
-import { isDuplicateError, run, selectOne } from './DbConnection';
+import { isDuplicateError, run, selectOne } from './Dbconnection';
 import type { IVotoUtilRepository } from './interface/Ivotoutilrepository';
 
 export class VotoUtilRepository implements IVotoUtilRepository {

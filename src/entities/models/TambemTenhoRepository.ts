@@ -1,4 +1,4 @@
-import { isDuplicateError, run, selectOne } from './DbConnection';
+import { isDuplicateError, run, selectOne } from './Dbconnection';
 import type { ITambemTenhoRepository } from './interface/Itambemtenhorepository';
 
 export class TambemTenhoRepository implements ITambemTenhoRepository {

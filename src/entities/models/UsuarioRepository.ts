@@ -1,4 +1,4 @@
-import { run, select, selectOne } from './DbConnection';
+import { run, select, selectOne } from './Dbconnection';
 import type { IUsuarioRepository } from './interface/Iusuariosrepository';
 import type { NovoUsuario, Perfil, UsuarioRow } from './Types';
 

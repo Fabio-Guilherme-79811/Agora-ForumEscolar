@@ -1,4 +1,4 @@
-import { run, select, selectOne } from './DbConnection';
+import { run, select, selectOne } from './Dbconnection';
 import type { ITurmaRepository } from './interface/Iturmarepository';
 import type { TurmaRow } from './Types';
 

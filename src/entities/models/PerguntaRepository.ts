@@ -1,4 +1,4 @@
-import { run, select, selectOne } from './DbConnection';
+import { run, select, selectOne } from './Dbconnection';
 import type { IPerguntaRepository } from './interface/Iperguntarepository';
 import type { FiltroPerguntas, NovaPergunta, PerguntaFeed, PerguntaRow, StatusPergunta, TemperaturaMateria } from './Types';
 
