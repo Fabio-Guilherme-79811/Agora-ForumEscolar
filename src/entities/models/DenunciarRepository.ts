@@ -1,6 +1,6 @@
-import { isDuplicateError, run, select, selectOne } from './DbConnection';
+import { isDuplicateError, run, select, selectOne } from './Dbconnection';
 import type { AlvoDenuncia, IDenunciaRepository } from './interface/Idenunciarepository';
-import type { DenunciaRow } from './Types';
+import type { DecisaoDenuncia, DenunciaRow } from './Types';
 
 export class DenunciaRepository implements IDenunciaRepository {
   async criar(denuncianteId: number, tipo: AlvoDenuncia, alvoId: number, motivo: string) {
@@ -30,7 +30,10 @@ export class DenunciaRepository implements IDenunciaRepository {
       [t],
     );
   }
-  async resolver(id: number, status: 'mantida' | 'removida') {
-    await run('UPDATE denuncia SET status = ? WHERE id = ?', [status, id]);
+  async resolver(id: number, decisao: DecisaoDenuncia, revisorId: number) {
+    await run(
+      "UPDATE denuncia SET status = 'revisada', decisao = ?, revisada_por = ?, revisada_em = NOW() WHERE id = ? AND status = 'pendente'",
+      [decisao, revisorId, id],
+    );
   }
 }

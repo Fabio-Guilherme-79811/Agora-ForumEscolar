@@ -3,7 +3,7 @@ import {PERFIS, PERFIS_VALIDADORES, paraData} from './tipos';
 
 export const MAX_TENTATIVAS_LOGIN = 5;
 export const MINUTOS_BLOQUEIO_LOGIN = 10;
-export const TAMANHO_MINIMO_SENHA = 5;
+export const TAMANHO_MINIMO_SENHA = 8;
 
 export type Perfil = (typeof PERFIS)[number];
 
@@ -128,7 +128,7 @@ export class Usuario {
     if (!REGEX_EMAIL.test(this._email)) erros.push('E-mail inválido.');
     if (!REGEX_HASH_BCRYPT.test(this._senhaHash)) erros.push('A senha deve ser armazenada como hash bcrypt, nunca em texto puro.');
     if (!PERFIS.includes(this._perfil)) erros.push('Perfil inválido.');
-    // Todo aluno/monitor pertence a uma turma (professor/admin podem ter várias via ProfessorTurma)
+    // Todo aluno/monitor pertence a uma turma (o professor pode ter várias via ProfessorTurma)
     if ((this._perfil === 'aluno' || this._perfil === 'monitor') && !this._turmaId) {
       erros.push('Alunos e monitores precisam pertencer a uma turma.');
     }

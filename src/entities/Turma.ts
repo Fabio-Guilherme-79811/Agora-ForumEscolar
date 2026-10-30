@@ -1,6 +1,6 @@
-import { genSaltSync } from 'bcryptjs';
-import { lancarSeInvalido } from './erros';
-import { paraData } from './tipos';
+import { genSaltSync } from "bcryptjs";
+import { lancarSeInvalido } from "./erros";
+import { paraData } from "./tipos";
 
 export interface TurmaProps {
   id?: number | undefined;
@@ -10,7 +10,7 @@ export interface TurmaProps {
   criadoEm?: Date | string;
 }
 
-const ALFABETO = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; /*(evita confusão)*/
+const ALFABETO = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; /*(evita confusão)*/
 const FORMATO_CODIGO = /^[A-Z0-9]{6,10}$/;
 
 export class Turma {
@@ -22,22 +22,36 @@ export class Turma {
 
   constructor(p: TurmaProps) {
     this._id = p.id;
-    this._nome = (p.nome ?? '').trim();
-    this._codigo = (p.codigo ?? '').trim().toUpperCase();
+    this._nome = (p.nome ?? "").trim();
+    this._codigo = (p.codigo ?? "").trim().toUpperCase();
     this._codigoGeradoEm = paraData(p.codigoGeradoEm) ?? new Date();
     this._criadoEm = paraData(p.criadoEm) ?? new Date();
   }
 
-  get id(): number | undefined { return this._id; }
-  set id(v: number | undefined) { this._id = v; }
-  get nome(): string { return this._nome; }
-  set nome(v: string) { this._nome = (v ?? '').trim(); }
-  get codigo(): string { return this._codigo; }
-  get codigoGeradoEm(): Date { return this._codigoGeradoEm; }
-  get criadoEm(): Date { return this._criadoEm; }
+  get id(): number | undefined {
+    return this._id;
+  }
+  set id(v: number | undefined) {
+    this._id = v;
+  }
+  get nome(): string {
+    return this._nome;
+  }
+  set nome(v: string) {
+    this._nome = (v ?? "").trim();
+  }
+  get codigo(): string {
+    return this._codigo;
+  }
+  get codigoGeradoEm(): Date {
+    return this._codigoGeradoEm;
+  }
+  get criadoEm(): Date {
+    return this._criadoEm;
+  }
 
   static gerarCodigo(tamanho = 8): string {
-    let codigo = '';
+    let codigo = "";
     while (codigo.length < tamanho) {
       const aleatorio = genSaltSync(4).slice(7).toUpperCase();
       for (const caractere of aleatorio) {
@@ -55,21 +69,25 @@ export class Turma {
 
   /* código inválido bloqueia o cadastro. */
   aceitaCodigo(codigoInformado: string): boolean {
-    return (codigoInformado ?? '').trim().toUpperCase() === this._codigo;
+    return (codigoInformado ?? "").trim().toUpperCase() === this._codigo;
   }
 
   validar(): void {
     const erros: string[] = [];
     if (this._nome.length < 2 || this._nome.length > 60) {
-      erros.push('O nome da turma deve ter entre 2 e 60 caracteres.');
+      erros.push("O nome da turma deve ter entre 2 e 60 caracteres.");
     }
     if (!FORMATO_CODIGO.test(this._codigo)) {
-      erros.push('O código da turma deve ter de 6 a 10 caracteres alfanuméricos.');
+      erros.push(
+        "O código da turma deve ter de 6 a 10 caracteres alfanuméricos.",
+      );
     }
     lancarSeInvalido(erros);
   }
 
-  static fromJSON(json: TurmaProps): Turma { return new Turma(json); }
+  static fromJSON(json: TurmaProps): Turma {
+    return new Turma(json);
+  }
   toJSON() {
     return {
       id: this._id,

@@ -1,4 +1,4 @@
-import type { TurmaRow } from '../Types';
+import type { TurmaRow } from "../Types";
 
 export interface ITurmaRepository {
   criar(nome: string, codigo: string): Promise<number>;

@@ -1,4 +1,4 @@
-import { run, select, selectOne } from './DbConnection';
+import { run, select, selectOne } from './Dbconnection';
 import type { IPerguntaRepository } from './interface/Iperguntarepository';
 import type { FiltroPerguntas, NovaPergunta, PerguntaFeed, PerguntaRow, StatusPergunta, TemperaturaMateria } from './Types';
 
@@ -85,11 +85,17 @@ export class PerguntaRepository implements IPerguntaRepository {
   }
 
   async atualizar(id: number, d: Partial<Pick<PerguntaRow, 'titulo' | 'descricao' | 'materia_id' | 'anexo'>>) {
-    await run(
-      `UPDATE perguntas SET titulo = COALESCE(?, titulo), descricao = COALESCE(?, descricao),
-         materia_id = COALESCE(?, materia_id), anexo = COALESCE(?, anexo) WHERE id = ?`,
-      [d.titulo ?? null, d.descricao ?? null, d.materia_id ?? null, d.anexo ?? null, id],
-    );
+    // atualiza só as chaves informadas; anexo: null remove o anexo (COALESCE não permitia)
+    const sets: string[] = [];
+    const params: unknown[] = [];
+    for (const coluna of ['titulo', 'descricao', 'materia_id', 'anexo'] as const) {
+      if (d[coluna] !== undefined) {
+        sets.push(`${coluna} = ?`);
+        params.push(d[coluna]);
+      }
+    }
+    if (sets.length === 0) return;
+    await run(`UPDATE perguntas SET ${sets.join(', ')} WHERE id = ?`, [...params, id]);
   }
 
   async excluir(id: number) {
@@ -123,8 +129,8 @@ export class PerguntaRepository implements IPerguntaRepository {
            WHERE p.materia_id = m.id AND p.turma_id IN (?) AND p.oculta = 0 AND p.criado_em >= ?) AS perguntas,
          (SELECT COUNT(*) FROM tambemtenho t JOIN perguntas p ON p.id = t.pergunta_id
            WHERE p.materia_id = m.id AND p.turma_id IN (?) AND p.oculta = 0 AND t.criado_em >= ?) AS tambem_tenho
-       FROM materias m ORDER BY m.nome`,
-      [ids(turmaIds), desde, ids(turmaIds), desde],
+       FROM materias m WHERE m.turma_id IN (?) ORDER BY m.nome`, // WHERE: só matérias das turmas visíveis (RN-02)
+      [ids(turmaIds), desde, ids(turmaIds), desde, ids(turmaIds)],
     );
   }
 

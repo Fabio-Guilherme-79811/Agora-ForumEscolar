@@ -14,6 +14,12 @@ async function seedTurmasMaterias() {
     [turmaId, turmaId, turmaId]
   );
 
+  // aluno e monitor pertencem à turma (RN-02); o professor entra pela tabela professor_turma
+  await Conexao.obterPool().query(
+    `UPDATE usuarios SET turma_id = ? WHERE perfil IN ('aluno', 'monitor')`,
+    [turmaId]
+  );
+
   const [[professor]]: any = await Conexao.obterPool().query( 
     `SELECT id FROM usuarios WHERE email = 'ricardo.professor@agora.com'`
   );
