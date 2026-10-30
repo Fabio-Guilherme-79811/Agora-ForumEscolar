@@ -11,7 +11,7 @@ export type Executor = Pick<PoolConnection, "query">;
 export async function select<T>(
   sql: string,
   params: unknown[] = [],
-  ex: Executor = Conexao.pool,
+  ex: Executor = Conexao.obterPool(),
 ): Promise<T[]> {
   const [rows] = await ex.query<RowDataPacket[]>(sql, params);
   return rows as unknown as T[];
@@ -20,7 +20,7 @@ export async function select<T>(
 export async function selectOne<T>(
   sql: string,
   params: unknown[] = [],
-  ex: Executor = Conexao.pool,
+  ex: Executor = Conexao.obterPool(),
 ): Promise<T | null> {
   const rows = await select<T>(sql, params, ex);
   return rows[0] ?? null;
@@ -29,7 +29,7 @@ export async function selectOne<T>(
 export async function run(
   sql: string,
   params: unknown[] = [],
-  ex: Executor = Conexao.pool,
+  ex: Executor = Conexao.obterPool(),
 ): Promise<ResultSetHeader> {
   const [res] = await ex.query<ResultSetHeader>(sql, params);
   return res;
@@ -47,7 +47,7 @@ export function isDuplicateError(e: unknown): boolean {
 export async function withTransaction<T>(
   fn: (conn: PoolConnection) => Promise<T>,
 ): Promise<T> {
-  const conn = await Conexao.pool.getConnection();
+  const conn = await Conexao.obterPool().getConnection();
   try {
     await conn.beginTransaction();
     const result = await fn(conn);
