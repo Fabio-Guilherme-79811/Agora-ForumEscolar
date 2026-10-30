@@ -14,7 +14,6 @@
 
 import express, { Request, Response, NextFunction, Application } from 'express';
 import routes from './routes/index-routes';
-import { carregarUsuarioOpcional } from './middlewares/auth-middleware';
 
 /**
  * Instância principal da aplicação Express.
