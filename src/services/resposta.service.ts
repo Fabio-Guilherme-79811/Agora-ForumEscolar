@@ -71,6 +71,20 @@ export class RespostaService {
     return this.respostaRepo.listarPorPergunta(perguntaId);
   }
 
+  async votosDoUsuario(
+    usuarioId: number,
+    respostaIds: number[],
+  ): Promise<Set<number>> {
+    const votos = await Promise.all(
+      respostaIds.map(async (respostaId) =>
+        (await this.votoRepo.existe(usuarioId, respostaId))
+          ? respostaId
+          : null,
+      ),
+    );
+    return new Set(votos.filter((id): id is number => id !== null));
+  }
+
   async publicar(
     ator: Ator,
     perguntaId: number,

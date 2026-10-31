@@ -12,12 +12,12 @@ import {
 } from "../entities/Usuario";
 import type { ITurmaRepository } from "../entities/models/interface/Iturmarepository";
 import type { IUsuarioRepository } from "../entities/models/interface/Iusuariosrepository";
-import { PERFIS } from "../entities/models/middlewares/types/auth";
-import { ErroDeAutenticacao } from "./erros.service";
+import { PERFIS } from "../middlewares/types/auth";
+import { ErroDeAutenticacao, ErroDeBloqueio } from "./erros.service";
 import { usuarioDeRow } from "./mapeadores.service";
 
 const SALT_ROUNDS = 10;
-const EXPIRACAO_TOKEN_SEGUNDOS = 8 * 60 * 60; // 8 horas
+export const EXPIRACAO_TOKEN_SEGUNDOS = 8 * 60 * 60; // 8 horas
 const MENSAGEM_CREDENCIAIS = "E-mail ou senha inválidos.";
 
 export interface DadosCadastro {
@@ -113,31 +113,27 @@ export class AuthService {
       const restanteMs =
         (usuario.bloqueadoAte as Date).getTime() - agora.getTime();
       const minutos = Math.max(1, Math.ceil(restanteMs / 60_000));
-      throw new ErroDeAutenticacao(
+      throw new ErroDeBloqueio(
         `Acesso bloqueado por tentativas inválidas. Tente novamente em ${minutos} minuto(s).`,
       );
     }
-    // bloqueio expirado: recomeça a contagem (o UPDATE do repository só incrementa)
-    if (row.bloqueado_ate !== null)
-      await this.usuarioRepo.zerarFalhasLogin(row.id);
-    const tentativasAntes =
-      row.bloqueado_ate !== null ? 0 : row.tentativas_login;
-
     if (!(await compare(senha ?? "", row.senha_hash))) {
-      await this.usuarioRepo.registrarFalhaLogin(
+      // o repository recomeça a contagem se um bloqueio anterior já expirou
+      const falha = await this.usuarioRepo.registrarFalhaLogin(
         row.id,
         MAX_TENTATIVAS_LOGIN,
         MINUTOS_BLOQUEIO_LOGIN,
       );
-      if (tentativasAntes + 1 >= MAX_TENTATIVAS_LOGIN) {
-        throw new ErroDeAutenticacao(
+      if (falha.bloqueado) {
+        throw new ErroDeBloqueio(
           `Muitas tentativas inválidas. Acesso bloqueado por ${MINUTOS_BLOQUEIO_LOGIN} minutos.`,
         );
       }
       throw new ErroDeAutenticacao(MENSAGEM_CREDENCIAIS);
     }
 
-    if (tentativasAntes > 0) await this.usuarioRepo.zerarFalhasLogin(row.id);
+    if (row.tentativas_login > 0 || row.bloqueado_ate !== null)
+      await this.usuarioRepo.zerarFalhasLogin(row.id);
     return {
       token: this.gerarToken(row.id, usuario.perfil, usuario.turmaId),
       usuario: usuario.toJSON(),
