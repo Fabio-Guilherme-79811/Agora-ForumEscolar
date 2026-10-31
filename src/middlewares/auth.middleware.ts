@@ -31,6 +31,24 @@ function payloadValido(p: unknown): p is UsuarioAutenticado {
   );
 }
 
+/** Lê o usuário do token SEM bloquear a requisição (usado na landing, login e cadastro). */
+export function usuarioDoToken(req: Request): UsuarioAutenticado | null {
+  const segredo = process.env.JWT_SECRET;
+  const token = extrairToken(req);
+  if (!segredo || !token) return null;
+  try {
+    const payload = verify(token, segredo, { algorithms: ["HS256"] });
+    if (!payloadValido(payload)) return null;
+    return {
+      id: payload.id,
+      perfil: payload.perfil,
+      turma_id: payload.turma_id,
+    };
+  } catch {
+    return null;
+  }
+}
+
 function querJson(req: Request): boolean {
   return req.xhr || (req.get("Accept") ?? "").includes("application/json");
 }

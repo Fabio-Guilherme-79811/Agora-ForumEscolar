@@ -2,6 +2,7 @@
 import { compare, hash } from "bcryptjs";
 import { ErroDeRegraDeNegocio } from "../entities/erros";
 import { Usuario } from "../entities/Usuario";
+import type { UsuarioRow } from "../entities/models/Types";
 import type { IUsuarioRepository } from "../entities/models/interface/Iusuariosrepository";
 import { AcessoTurmaService } from "./acesso-turma.service";
 import { ErroDeAutenticacao } from "./erros.service";
@@ -92,6 +93,16 @@ export class UsuarioService {
     const entidade = await this.usuarioDaTurmaDoProfessor(ator, monitorId);
     entidade.rebaixarParaAluno(ator.perfil);
     await this.usuarioRepo.atualizarPerfilAcesso(monitorId, entidade.perfil);
+  }
+
+  async listarMembros(
+    ator: Ator,
+    turmaId: number,
+  ): Promise<Array<Pick<UsuarioRow, "id" | "nome" | "perfil">>> {
+    exigirProfessor(ator);
+    await this.acesso.garantirAcesso(ator, turmaId);
+    const membros = await this.usuarioRepo.listarPorTurma(turmaId);
+    return membros.map(({ id, nome, perfil }) => ({ id, nome, perfil }));
   }
 
   /** UC-17 fluxo 1a: aluno de fora das turmas do professor não pode ser gerenciado. */

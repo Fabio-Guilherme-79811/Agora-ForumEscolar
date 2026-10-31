@@ -7,14 +7,16 @@
  * - Configuração dos middlewares de leitura de JSON;
  * - Configuração de dados enviados por formulários;
  * - Disponibilização de arquivos estáticos da pasta public;
- * - Registro das rotas principais da aplicação.
+ * - Registro das rotas principais da aplicação;
+ * - Tratamento de rota inexistente (404) e de erros.
  *
  * O servidor HTTP é iniciado separadamente no arquivo server.ts.
  */
 
-import express, { Request, Response, NextFunction, Application } from 'express';
-import routes from './routes/index-routes';
-import { carregarUsuarioOpcional } from './middlewares/auth-middleware';
+/// <reference path="./middlewares/types/express.d.ts" />
+import express, { Application } from "express";
+import routes from "./routes/index.routes";
+import { rotaNaoEncontrada, tratarErros } from "./middlewares/erros.middleware";
 
 /**
  * Instância principal da aplicação Express.
@@ -26,8 +28,8 @@ const app: Application = express();
  */
 app.use(express.json());
 //Vizualizar ejs//
-app.set('view engine', 'ejs');
-app.set('views', './src/views');
+app.set("view engine", "ejs");
+app.set("views", "./src/views");
 /**
  * Permite receber dados enviados por formulários HTML.
  */
@@ -40,17 +42,16 @@ app.use(express.urlencoded({ extended: true }));
  * /css/style.css
  * /images/logo.png
  */
-app.use(express.static('public'));
+app.use(express.static("public"));
 
 /**
- * Lê o cookie de sessão (se existir) em TODA requisição e disponibiliza
- * `res.locals.usuario` para as views EJS (ex: nav.ejs decide se mostra
- * "Entrar/Cadastrar" ou o menu do usuário logado). Não bloqueia rotas
- * públicas — para isso, usar `isAuthenticated` na rota específica.
+ * Rotas do MVP (src/routes). Cada rota protegida usa `autenticado`, que valida o JWT
+ * (cookie ou Bearer) e recarrega o usuário do banco para as views (`res.locals.usuario`).
  */
-//app.use(carregarUsuarioOpcional);
+app.use("/", routes);
 
-/*Rota para as páginas*/
-app.use('/', routes);
+/** Rota inexistente (404) e tratamento central de erros: nunca expõe stack trace ao usuário. */
+app.use(rotaNaoEncontrada);
+app.use(tratarErros);
 
 export default app;

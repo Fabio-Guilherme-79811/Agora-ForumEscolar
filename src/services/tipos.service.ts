@@ -1,6 +1,6 @@
 /** Tipos e helpers compartilhados pelos services. */
 import { ErroDePermissao } from '../entities/erros';
-import type { UsuarioAutenticado } from '../entities/models/middlewares/types/auth';
+import type { UsuarioAutenticado } from '../middlewares/types/auth';
 import { ErroDeNaoEncontrado } from './erros.service';
 
 /** Usuário autenticado: é exatamente o req.usuario preenchido pelo authGuard (payload do JWT). */
