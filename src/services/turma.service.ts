@@ -3,6 +3,7 @@ import { ErroDeRegraDeNegocio } from "../entities/erros";
 import { Turma } from "../entities/Turma";
 import type { ITurmaRepository } from "../entities/models/interface/Iturmarepository";
 import { AcessoTurmaService } from "./acesso-turma.service";
+import type { TurmaRow } from "../entities/models/Types";
 import { Ator, exigir, exigirProfessor } from "./tipos.service";
 
 const MAX_TENTATIVAS_UNICIDADE = 5;
@@ -12,6 +13,16 @@ export class TurmaService {
     private readonly turmaRepo: ITurmaRepository,
     private readonly acesso: AcessoTurmaService,
   ) {}
+
+  async obterTurmaDoPainel(
+    ator: Ator,
+    turmaId?: number,
+  ): Promise<TurmaRow | null> {
+    exigirProfessor(ator);
+    const turmas = await this.turmaRepo.listarPorProfessor(ator.id);
+    if (turmaId === undefined) return turmas[0] ?? null;
+    return turmas.find((turma) => turma.id === turmaId) ?? null;
+  }
 
   async gerarCodigo(
     ator: Ator,

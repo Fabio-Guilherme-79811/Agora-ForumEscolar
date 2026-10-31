@@ -1,50 +1,26 @@
-/** Voto "útil" e validação de respostas (UC-07, UC-13, UC-14). */
+/** Lista disciplinas disponíveis e abre o feed filtrado por disciplina. */
 import { Router } from "express";
 import { idDaRota, usuarioLogado } from "../middlewares/http";
-import {
-  apenasProfessor,
-  professorOuMonitor,
-} from "../middlewares/role.middleware";
-import { autenticado, respostaService } from "./container";
+import { ErroDeNaoEncontrado } from "../services/erros.service";
+import { autenticado, perguntaService } from "./container";
 
-export const respostasRoutes = Router();
+export const disciplinasRoutes = Router();
 
-respostasRoutes.post(
-  "/respostas/:id/util",
-  ...autenticado,
-  async (req, res) => {
-    const r = await respostaService.alternarVotoUtil(
-      usuarioLogado(req),
-      idDaRota(req.params["id"]),
-    );
-    res.json({ ativo: r.votado, total: r.total });
-  },
-);
+disciplinasRoutes.get("/", ...autenticado, async (req, res) => {
+  const disciplinas = await perguntaService.listarDisciplinas(usuarioLogado(req));
+  res.render("pages/disciplinas/index", {
+    disciplinas: disciplinas.map((disciplina) => ({
+      ...disciplina,
+      totalTopicos: 0,
+    })),
+  });
+});
 
-/** RN-17: só Professor ou Monitor validam, no máximo 1 por pergunta. */
-respostasRoutes.put(
-  "/respostas/:id/validacao",
-  ...autenticado,
-  professorOuMonitor,
-  async (req, res) => {
-    await respostaService.validar(
-      usuarioLogado(req),
-      idDaRota(req.params["id"]),
-    );
-    res.json({ ok: true });
-  },
-);
-
-/** RN-20: só o Professor retira a validação. */
-respostasRoutes.delete(
-  "/respostas/:id/validacao",
-  ...autenticado,
-  apenasProfessor,
-  async (req, res) => {
-    await respostaService.retirarValidacao(
-      usuarioLogado(req),
-      idDaRota(req.params["id"]),
-    );
-    res.json({ ok: true });
-  },
-);
+disciplinasRoutes.get("/:id", ...autenticado, async (req, res) => {
+  const id = idDaRota(req.params["id"]);
+  const disciplinas = await perguntaService.listarDisciplinas(usuarioLogado(req));
+  if (!disciplinas.some((disciplina) => disciplina.id === id)) {
+    throw new ErroDeNaoEncontrado("Disciplina não encontrada.");
+  }
+  res.redirect(`/perguntas?materia=${id}`);
+});

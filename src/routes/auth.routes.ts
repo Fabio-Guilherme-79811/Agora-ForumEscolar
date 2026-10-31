@@ -1,5 +1,5 @@
 /** Login, cadastro e logout (UC-01, UC-02). Formulários comuns: o JWT vai num cookie httpOnly e o usuário é redirecionado. */
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import { ErroDeRegraDeNegocio, ErroDeValidacao } from "../entities/erros";
 import { usuarioDoToken } from "../middlewares/auth.middleware";
 import { encerrarSessao, gravarSessao, texto } from "../middlewares/http";

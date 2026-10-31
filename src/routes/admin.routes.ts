@@ -1,5 +1,5 @@
 /** Painel do professor/monitor (UC-16 a UC-19): fila, indicadores, membros, monitores e código da turma. */
-import { Router } from "express";
+import { Router, Request, Response} from "express";
 import { idDaRota, inteiro, usuarioLogado } from "../middlewares/http";
 import { apenasProfessor, escopoPainel } from "../middlewares/role.middleware";
 import { ErroDeNaoEncontrado } from "../services/erros.service";

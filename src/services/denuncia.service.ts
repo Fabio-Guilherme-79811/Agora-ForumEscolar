@@ -121,9 +121,8 @@ export class DenunciaService {
   }
 
   /**
-   * Professor restaura o conteúdo ou o mantém oculto; todas as denúncias pendentes do item são encerradas.
-   * Mapeamento para o status do banco: restaurada → 'mantida' (conteúdo mantido no fórum);
-   * mantida_oculta → 'removida' (conteúdo continua fora do ar).
+   * "mantida" deixa o conteúdo visível; "removida" mantém o conteúdo oculto.
+   * Todas as denúncias pendentes do item são encerradas com a decisão do professor.
    */
   async revisar(
     ator: Ator,
@@ -144,11 +143,12 @@ export class DenunciaService {
       );
     }
 
-    const restaurar = dto.decisao === "restaurada";
+    const restaurar = dto.decisao === "mantida";
     for (const d of pendentes)
       await this.denunciaRepo.resolver(
         d.id,
-        restaurar ? "mantida" : "removida",
+        dto.decisao,
+        ator.id,
       );
     await this.definirOculta(dto.tipoAlvo, dto.alvoId, !restaurar);
   }

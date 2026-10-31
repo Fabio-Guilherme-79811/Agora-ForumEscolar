@@ -23,6 +23,10 @@ export class DuvidaCompartilhadaService {
     private readonly acesso: AcessoTurmaService,
   ) {}
 
+  jaMarcou(usuarioId: number, perguntaId: number): Promise<boolean> {
+    return this.tambemTenhoRepo.existe(usuarioId, perguntaId);
+  }
+
   async alternar(ator: Ator, perguntaId: number): Promise<ResultadoDuvida> {
     const pergunta = exigir(
       await this.perguntaRepo.buscarPorId(perguntaId),
