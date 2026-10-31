@@ -16,6 +16,14 @@ export class ErroDeAutenticacao extends Error {
   }
 }
 
+/** Conta bloqueada por tentativas de login (RN-09). */
+export class ErroDeBloqueio extends ErroDeAutenticacao {
+  constructor(mensagem: string) {
+    super(mensagem);
+    this.name = "ErroDeBloqueio"; // HTTP 429
+  }
+}
+
 export class ErroDeNaoEncontrado extends Error {
   constructor(mensagem = "Recurso não encontrado.") {
     super(mensagem);
@@ -27,6 +35,7 @@ export class ErroDeNaoEncontrado extends Error {
 /** Traduz o erro para o status HTTP. Qualquer outro erro é falha interna (500). */
 export function statusHttpDoErro(erro: unknown): number {
   if (erro instanceof ErroDeValidacao) return 400;
+  if (erro instanceof ErroDeBloqueio) return 429;
   if (erro instanceof ErroDeAutenticacao) return 401;
   if (erro instanceof ErroDePermissao) return 403;
   if (erro instanceof ErroDeNaoEncontrado) return 404;
