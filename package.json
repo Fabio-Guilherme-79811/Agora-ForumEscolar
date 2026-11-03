@@ -14,7 +14,8 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "prepare": "husky",  
     "migrate": "tsx src/database/run-migrations.ts",
-    "seed": "tsx src/database/run-seeds.ts"
+    "seed": "tsx src/database/run-seeds.ts",
+    "dbtest": "tsx src/database/test-db.ts"
   },
   "repository": {
     "type": "git",
