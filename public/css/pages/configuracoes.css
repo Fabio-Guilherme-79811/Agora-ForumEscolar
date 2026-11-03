@@ -23,7 +23,7 @@
  .config__texto .campo__ajuda { margin: 0; }
  
  /* Botão do tema: o estado aparece em ícone + texto (nunca só cor).
-    O tema.js muda o aria-pressed, e daqui sai qual rótulo fica visível. */
+    */
  .config__tema { min-height: 44px; min-width: 9.5rem; font: inherit; font-weight: 700; cursor: pointer; }
  .config__tema .tema-estado--ligado { display: none; }
  .config__tema[aria-pressed="true"] .tema-estado--ligado { display: inline; }
@@ -33,4 +33,3 @@
  @media (max-width: 400px) {
    .config__tema { width: 100%; }
  }
- 

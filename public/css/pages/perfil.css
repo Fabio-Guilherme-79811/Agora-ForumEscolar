@@ -1,0 +1,20 @@
+/*
+ * pages/perfil.css — Perfil próprio e perfil público de colega.
+ * Complementa perguntas.css (.feed, .cartao-form), forms.css (.campo, .alerta)
+ * e usa só as variáveis de /css/global.css (tema claro e escuro).
+ */
+ .perfil__cabeca { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 20px; margin-bottom: 8px; }
+ .perfil__foto { width: 88px; height: 88px; border-radius: 50%; object-fit: cover; background: var(--blush); border: 3px solid var(--rosa); flex: none; }
+ .perfil__inicial { display: grid; place-items: center; width: 88px; height: 88px; border-radius: 50%; background: var(--rosa); color: #fff; font: 700 2.2rem var(--fonte-titulo); flex: none; }
+ .perfil__cabeca h1 { margin: 0 0 6px; font-size: clamp(1.6rem, 4vw, 2.2rem); }
+ .perfil__tags { display: flex; gap: 8px; flex-wrap: wrap; }
+ 
+ .perfil__numeros { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); margin: 20px 0; }
+ .perfil__numero { background: var(--creme); border: 1px solid var(--linha); border-radius: 12px; padding: 14px; text-align: center; margin: 0; }
+ .perfil__numero dt { font-size: .85rem; color: var(--suave); }
+ .perfil__numero dd { margin: 4px 0 0; font: 700 1.8rem var(--fonte-titulo); color: var(--rosa); }
+ 
+ .perfil__regras { font-size: .85rem; color: var(--suave); margin: 0 0 18px; }
+ .perfil__grupo { margin-top: 26px; }
+ .perfil__grupo h2 { font-size: 1.3rem; }
+ @media (max-width: 400px) { .perfil__cabeca { flex-direction: column; align-items: flex-start; } }
