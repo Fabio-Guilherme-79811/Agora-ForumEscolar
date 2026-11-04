@@ -1,5 +1,5 @@
-import { run, select, selectOne } from "./Dbconnection";
-import type { IProfessorTurmaRepository } from "./interface/Iprofessorturmarepository";
+import { run, select, selectOne } from './Dbconnection';
+import type { IProfessorTurmaRepository } from './interface/Iprofessorturmarepository';
 
 export class ProfessorTurmaRepository implements IProfessorTurmaRepository {
   async vincular(professorId: number, turmaId: number) {

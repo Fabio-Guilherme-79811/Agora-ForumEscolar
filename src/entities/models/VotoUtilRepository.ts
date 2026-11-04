@@ -1,5 +1,5 @@
-import { isDuplicateError, run, selectOne } from "./Dbconnection";
-import type { IVotoUtilRepository } from "./interface/Ivotoutilrepository";
+import { isDuplicateError, run, selectOne } from './Dbconnection';
+import type { IVotoUtilRepository } from './interface/Ivotoutilrepository';
 
 export class VotoUtilRepository implements IVotoUtilRepository {
   async adicionar(usuarioId: number, respostaId: number) {

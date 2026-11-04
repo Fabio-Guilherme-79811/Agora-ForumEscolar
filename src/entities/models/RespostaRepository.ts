@@ -1,12 +1,6 @@
-import {
-  isDuplicateError,
-  run,
-  select,
-  selectOne,
-  withTransaction,
-} from "./Dbconnection";
-import type { IRespostaRepository } from "./interface/Irespostarepository";
-import type { RespostaDetalhe, RespostaRow } from "./Types";
+import { isDuplicateError, run, select, selectOne, withTransaction } from './Dbconnection';
+import type { IRespostaRepository } from './interface/Irespostarepository';
+import type { RespostaDetalhe, RespostaRow } from './Types';
 
 export class RespostaRepository implements IRespostaRepository {
   async criar(perguntaId: number, autorId: number, conteudo: string) {

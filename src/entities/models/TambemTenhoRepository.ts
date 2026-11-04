@@ -1,5 +1,5 @@
-import { isDuplicateError, run, selectOne } from "./Dbconnection";
-import type { ITambemTenhoRepository } from "./interface/Itambemtenhorepository";
+import { isDuplicateError, run, selectOne } from './Dbconnection';
+import type { ITambemTenhoRepository } from './interface/Itambemtenhorepository';
 
 export class TambemTenhoRepository implements ITambemTenhoRepository {
   async adicionar(usuarioId: number, perguntaId: number) {

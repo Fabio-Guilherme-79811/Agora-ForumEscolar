@@ -1,6 +1,6 @@
-import { run, select, selectOne } from "./Dbconnection";
-import type { ITurmaRepository } from "./interface/Iturmarepository";
-import type { TurmaRow } from "./Types";
+import { run, select, selectOne } from './Dbconnection';
+import type { ITurmaRepository } from './interface/Iturmarepository';
+import type { TurmaRow } from './Types';
 
 export class TurmaRepository implements ITurmaRepository {
   async criar(nome: string, codigo: string) {
