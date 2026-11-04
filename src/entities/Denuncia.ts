@@ -5,7 +5,8 @@ export const LIMITE_DENUNCIAS_PARA_OCULTAR = 3;
 
 export type TipoAlvoDenuncia = 'pergunta' | 'resposta';
 export type StatusDenuncia = 'pendente' | 'revisada';
-export type DecisaoDenuncia = 'mantida_oculta' | 'restaurada';
+/** Estado de revisão: pendente → revisada. Decisão final: mantida (conteúdo visível) ou removida (continua oculto). */
+export type DecisaoDenuncia = 'mantida' | 'removida';
 
 export interface DenunciaProps {
   id?: number;

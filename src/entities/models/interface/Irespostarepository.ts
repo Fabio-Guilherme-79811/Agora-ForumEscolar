@@ -1,4 +1,4 @@
-import type { RespostaDetalhe, RespostaRow } from '../Types';
+import type { RespostaDetalhe, RespostaRow } from "../Types";
 
 export interface IRespostaRepository {
   criar(perguntaId: number, autorId: number, conteudo: string): Promise<number>;

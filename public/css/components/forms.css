@@ -1,0 +1,116 @@
+/*
+ * components/forms.css — Formulários, alertas, botões em carregamento e
+ * avisos (toasts). Usa as variáveis de /css/global.css.
+ * Os blocos .form, .campo e .alerta também existem no auth.css e podem sair
+ * de lá quando o auth.css passar a carregar este arquivo.
+ */
+ [hidden] { display: none !important; }
+
+ /* Formulário */
+ .form { display: grid; gap: 16px; margin-bottom: 1.25em; }
+ .campo { display: grid; gap: 6px; }
+ .campo__rotulo { font-weight: 700; font-size: .95rem; }
+ .campo .campo__ajuda,
+ .campo .campo__erro { font-size: .85rem; margin: 0; }
+ .campo .campo__ajuda { color: var(--suave); }
+ .campo .campo__erro { color: var(--rosa); font-weight: 700; }
+ .campo__linha { display: flex; justify-content: space-between; gap: 12px; }
+ 
+ .campo__input {
+   width: 100%;
+   min-height: 46px;
+   padding: 10px 14px;
+   font: inherit;
+   color: var(--tinta);
+   background: var(--papel);
+   border: 2px solid var(--linha);
+   border-radius: 10px;
+ }
+ textarea.campo__input { min-height: 140px; resize: vertical; line-height: 1.5; }
+ .campo__input:hover { border-color: var(--blush); }
+ .campo__input:focus { border-color: var(--rosa); outline: none; box-shadow: 0 0 0 3px rgba(211, 12, 123, .25); }
+ .campo__input[aria-invalid="true"] { border-color: var(--rosa); }
+ .campo__input:disabled { background: var(--creme); color: var(--suave); border-style: dashed; cursor: not-allowed; }
+ 
+ .campo__check { display: flex; gap: 8px; align-items: flex-start; min-height: 44px; font-weight: 500; cursor: pointer; }
+ .campo__check input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--rosa); flex: none; }
+ 
+ .form__acoes { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+ .form__acoes .btn { font: inherit; font-weight: 700; cursor: pointer; }
+ .form__acoes a:not(.btn) { color: var(--rosa); font-weight: 700; }
+ 
+ /* Alertas (ícone + texto, nunca só cor) */
+ .alerta {
+   display: flex;
+   gap: 10px;
+   align-items: flex-start;
+   margin: 0 0 1em;
+   padding: 12px 14px;
+   border-radius: 10px;
+   border: 1px solid var(--linha);
+   border-left-width: 5px;
+   background: var(--creme);
+   color: var(--tinta);
+   font-size: .95rem;
+   line-height: 1.4;
+ }
+ .alerta [aria-hidden="true"] { flex: none; font-weight: 700; }
+ .alerta--erro { border-left-color: var(--rosa); }
+ .alerta--aviso { border-left-color: #b7791f; }
+ .alerta--sucesso { border-left-color: var(--salvia); }
+ 
+ /* Botões: desativado e em carregamento (spinner) */
+ .btn:disabled { opacity: .55; cursor: not-allowed; filter: none; }
+ .btn[aria-busy="true"]:disabled { opacity: .85; cursor: progress; }
+ .btn[aria-busy="true"]::after,
+ .botao-marca[aria-busy="true"]::after {
+   content: "";
+   display: inline-block;
+   width: 1em;
+   height: 1em;
+   margin-left: .6em;
+   vertical-align: -.15em;
+   border: 2px solid currentColor;
+   border-right-color: transparent;
+   border-radius: 50%;
+   animation: girar .7s linear infinite;
+ }
+ @keyframes girar { to { transform: rotate(360deg); } }
+ @media (prefers-reduced-motion: reduce) {
+   .btn[aria-busy="true"]::after,
+   .botao-marca[aria-busy="true"]::after { animation-duration: 2s; }
+ }
+ 
+ /* Avisos (toasts) */
+ .toasts {
+   position: fixed;
+   left: 16px;
+   right: 16px;
+   bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+   z-index: 30;
+   display: grid;
+   gap: 8px;
+   justify-items: end;
+   pointer-events: none;
+ }
+ .toasts .toast {
+   pointer-events: auto;
+   display: flex;
+   gap: 10px;
+   align-items: flex-start;
+   max-width: min(420px, 100%);
+   margin: 0;
+   padding: 12px 14px;
+   border-radius: 10px;
+   border: 1px solid var(--linha);
+   border-left-width: 5px;
+   background: var(--papel);
+   color: var(--tinta);
+   box-shadow: 0 8px 24px rgba(58, 45, 50, .18);
+   font-size: .95rem;
+   line-height: 1.4;
+ }
+ .toast--sucesso { border-left-color: var(--salvia); }
+ .toast--erro { border-left-color: var(--rosa); }
+ .toast--aviso { border-left-color: #b7791f; }
+ .toast--info { border-left-color: var(--blush); }

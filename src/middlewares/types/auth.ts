@@ -1,4 +1,4 @@
-export const PERFIS = ['aluno', 'monitor', 'professor'] as const;
+export const PERFIS = ["aluno", "monitor", "professor"] as const;
 export type Perfil = (typeof PERFIS)[number];
 
 /** Payload do JWT (assinado no auth.service com JWT_SECRET). */

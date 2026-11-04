@@ -1,0 +1,213 @@
+<%
+/*
+ * admin/painel.ejs — Painel do Professor e versão restrita do Monitor (UC-16).
+ * Rota: GET /admin (exige login — RN-01). A rota deve responder 403 para
+ * Aluno. QUEM VÊ O QUÊ É DECIDIDO NO SERVIDOR: esta view só desenha o que a
+ * rota enviou, então a rota nunca deve mandar dados de Professor para Monitor.
+ * Variáveis enviadas pela rota:
+ *   usuario  (objeto) nome e perfil
+ *   visao    (texto)  'professor' ou 'monitor'. Sem ela, vale o perfil do
+ *            usuário; qualquer perfil que não seja Professor cai na visão
+ *            restrita (menor privilégio).
+ *   perguntas (array) fila a exibir, já ordenada e filtrada pela rota, no
+ *            formato do components/pergunta-card (RN-12):
+ *              Professor: todas as perguntas da turma sem resposta validada (RN-31)
+ *              Monitor:   só as perguntas em aberto dele (RN-30)
+ *   Só para a visão Professor:
+ *   indicadores (objeto) perguntasSemana (número), percentualValidadas
+ *            (0 a 100), tempoMedioMinutos (número ou null se não há
+ *            validações) e topDisciplinas (até 3 itens com id, nome e total)
+ *            — RN-33
+ *   membros  (array) alunos e monitores da turma: id, nome, perfil
+ *            ('Aluno' ou 'Monitor')
+ *   codigoTurma (texto) código atual da turma (vazio se ainda não existe)
+ * Os blocos #bloco-monitores e #bloco-codigo são atualizados pelo
+ * admin-fetch.js (promover, rebaixar e gerar código, sem recarregar).
+ * Rotas usadas pelo admin-fetch.js:
+ *   PUT    /admin/monitores/:id   promover a Monitor (só Professor)
+ *   DELETE /admin/monitores/:id   rebaixar para Aluno (só Professor)
+ *   POST   /admin/turma/codigo    gerar novo código -> { codigo } (só Professor)
+ * Estilos: /css/pages/admin.css (mais perguntas.css, forms.css, navbar.css e cards.css)
+ * Regra de segurança: apenas a tag de saída escapada do EJS. A tag sem
+ * escape aparece só nos includes, que inserem templates do projeto.
+ */
+const usuario = locals.usuario || null;
+const perguntas = locals.perguntas || [];
+const visao = locals.visao || (usuario && usuario.perfil === 'Professor' ? 'professor' : 'monitor');
+const ehProfessor = visao === 'professor';
+const indicadores = ehProfessor ? (locals.indicadores || {}) : {};
+const membros = ehProfessor ? (locals.membros || []) : [];
+const codigoTurma = ehProfessor ? (locals.codigoTurma || '') : '';
+const titulo = locals.titulo || (ehProfessor ? 'Painel do Professor' : 'Painel do Monitor') + ' — Ágora';
+
+const perguntasSemana = Number(indicadores.perguntasSemana) || 0;
+const percentual = Math.min(100, Math.max(0, Math.round(Number(indicadores.percentualValidadas) || 0)));
+const top = (indicadores.topDisciplinas || []).slice(0, 3);
+
+function formatarDuracao(minutos) {
+  const total = Math.round(Number(minutos));
+  if (minutos === null || minutos === undefined || Number.isNaN(total) || total < 0) return '';
+  if (total < 60) return total + ' min';
+  const horas = Math.floor(total / 60);
+  const resto = total % 60;
+  return horas + ' h' + (resto ? ' ' + resto + ' min' : '');
+}
+const tempoMedio = formatarDuracao(indicadores.tempoMedioMinutos);
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Painel da turma na Ágora: perguntas que ainda esperam uma resposta validada.">
+  <title><%= titulo %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/components/navbar.css">
+  <link rel="stylesheet" href="/css/components/cards.css">
+  <link rel="stylesheet" href="/css/components/forms.css">
+  <link rel="stylesheet" href="/css/pages/perguntas.css">
+  <link rel="stylesheet" href="/css/pages/admin.css">
+</head>
+<body class="feed">
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <%- include('../../partials/header', { usuario: usuario, ativo: 'admin' }) %>
+
+  <main id="conteudo" class="feed__main">
+    <%- include('../../partials/nav', { trilha: [{ rotulo: ehProfessor ? 'Painel do Professor' : 'Painel do Monitor' }] }) %>
+
+    <div class="feed__cabeca">
+      <div>
+        <h1><%= ehProfessor ? 'Painel do Professor' : 'Painel do Monitor' %></h1>
+        <p class="feed__sub">
+          <% if (ehProfessor) { %>
+            Acompanhe a turma e veja o que ainda espera uma resposta validada.
+          <% } else { %>
+            Versão restrita: aqui aparecem só as suas perguntas em aberto.
+          <% } %>
+        </p>
+      </div>
+    </div>
+
+    <% if (ehProfessor) { %>
+      <section class="painel__secao" aria-labelledby="titulo-indicadores">
+        <h2 id="titulo-indicadores">Indicadores</h2>
+        <dl class="indicadores">
+          <div class="indicador">
+            <dt>Perguntas da semana</dt>
+            <dd class="indicador__valor"><%= perguntasSemana %></dd>
+          </div>
+          <div class="indicador">
+            <dt>Perguntas validadas</dt>
+            <dd class="indicador__valor"><%= percentual %>%</dd>
+          </div>
+          <div class="indicador">
+            <dt>Tempo médio até validar</dt>
+            <dd class="indicador__valor"><%= tempoMedio || '—' %></dd>
+            <% if (!tempoMedio) { %><dd class="indicador__nota">Ainda sem validações</dd><% } %>
+          </div>
+          <div class="indicador indicador--lista">
+            <dt>Top 3 disciplinas</dt>
+            <dd>
+              <% if (top.length > 0) { %>
+                <ol class="indicador__top">
+                  <% top.forEach(function (d) { %>
+                    <li>
+                      <a href="/disciplinas/<%= d.id %>"><%= d.nome %></a>
+                      <span class="indicador__nota"><%= Number(d.total) || 0 %> <%= Number(d.total) === 1 ? 'pergunta' : 'perguntas' %></span>
+                    </li>
+                  <% }); %>
+                </ol>
+              <% } else { %>
+                <span class="indicador__nota">Sem dados nesta semana</span>
+              <% } %>
+            </dd>
+          </div>
+        </dl>
+      </section>
+    <% } %>
+
+    <section class="painel__secao" id="bloco-fila" aria-labelledby="titulo-fila">
+      <h2 id="titulo-fila">
+        <%= ehProfessor ? 'Perguntas sem resposta validada' : 'Suas perguntas em aberto' %>
+        <span class="painel__total">(<%= perguntas.length %>)</span>
+      </h2>
+
+      <% if (perguntas.length > 0) { %>
+        <ul class="lista">
+          <% perguntas.forEach(function (p) { %>
+            <li><%- include('../../components/pergunta-card', { pergunta: p }) %></li>
+          <% }); %>
+        </ul>
+      <% } else { %>
+        <div class="vazio">
+          <h3><%= ehProfessor ? 'Nenhuma pergunta esperando validação' : 'Você não tem perguntas em aberto' %></h3>
+          <p><%= ehProfessor ? 'Todas as perguntas da turma já têm uma resposta validada.' : 'Quando você tiver uma pergunta em aberto, ela aparece aqui.' %></p>
+        </div>
+      <% } %>
+    </section>
+
+    <% if (ehProfessor) { %>
+      <section class="painel__secao" id="bloco-monitores" aria-labelledby="titulo-monitores">
+        <h2 id="titulo-monitores">Monitores da turma</h2>
+        <p class="painel__ajuda">Monitores podem validar respostas. Só o Professor promove ou rebaixa.</p>
+
+        <% if (membros.length > 0) { %>
+          <ul class="membros">
+            <% membros.forEach(function (m) { %>
+              <% const ehMonitor = m.perfil === 'Monitor'; %>
+              <li class="membro">
+                <span class="membro__nome"><%= m.nome %></span>
+                <span class="tag">
+                  <% if (ehMonitor) { %><span aria-hidden="true">★</span> Monitor<% } else { %>Aluno<% } %>
+                </span>
+                <% if (ehMonitor) { %>
+                  <button
+                    class="btn btn--pequeno btn--contorno"
+                    type="button"
+                    data-acao="rebaixar-monitor"
+                    data-url="/admin/monitores/<%= m.id %>"
+                    aria-label="Rebaixar para Aluno: <%= m.nome %>"
+                  >Rebaixar para Aluno</button>
+                <% } else { %>
+                  <button
+                    class="btn btn--pequeno"
+                    type="button"
+                    data-acao="promover-monitor"
+                    data-url="/admin/monitores/<%= m.id %>"
+                    aria-label="Promover a Monitor: <%= m.nome %>"
+                  >Promover a Monitor</button>
+                <% } %>
+              </li>
+            <% }); %>
+          </ul>
+        <% } else { %>
+          <div class="vazio">
+            <h3>Ainda não há alunos na turma</h3>
+            <p>Gere o código da turma abaixo e compartilhe com os alunos.</p>
+          </div>
+        <% } %>
+      </section>
+
+      <section class="painel__secao" id="bloco-codigo" aria-labelledby="titulo-codigo">
+        <h2 id="titulo-codigo">Código da turma</h2>
+        <p class="painel__ajuda">Os alunos usam este código para se cadastrar na turma.</p>
+        <p class="codigo-turma">
+          <span class="codigo-turma__rotulo">Código atual:</span>
+          <code class="codigo-turma__valor" data-codigo-turma><%= codigoTurma || '—' %></code>
+        </p>
+        <button class="btn" type="button" data-acao="gerar-codigo" data-url="/admin/turma/codigo">Gerar novo código</button>
+      </section>
+    <% } %>
+  </main>
+
+  <%- include('../../partials/footer') %>
+  <%- include('../../partials/feedback') %>
+
+  <script src="/js/main.js" defer></script>
+  <% if (ehProfessor) { %><script src="/js/admin-fetch.js" defer></script><% } %>
+</body>
+</html>

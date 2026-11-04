@@ -1,0 +1,57 @@
+<%
+/*
+ * components/resposta-card.ejs — Cartão de uma resposta (Tela 3).
+ * Uso: include('../../components/resposta-card', { resposta: r, podeValidar: true,
+ *      podeRetirarValidacao: false, tempoDesde: funcao })
+ * Campos de resposta: id, conteudo, autor, criadaEm, totalUteis, jaVotou,
+ *   ehMinha, validada, validadaPor.
+ * O voto útil não aparece nas respostas do próprio usuário (RN-16). A
+ * validação é indicada por ícone e texto, com o nome de quem validou (RN-18).
+ * Regra de segurança: apenas a tag de saída escapada do EJS.
+ */
+const r = resposta;
+const podeValidar = Boolean(locals.podeValidar);
+const podeRetirarValidacao = Boolean(locals.podeRetirarValidacao);
+const tempo = typeof locals.tempoDesde === 'function' ? locals.tempoDesde : function () { return ''; };
+const quando = tempo(r.criadaEm);
+const totalUteis = Number(r.totalUteis) || 0;
+%>
+<article class="resposta-card<%= r.validada ? ' resposta-card--validada' : '' %>" id="resposta-<%= r.id %>">
+  <% if (r.validada) { %>
+    <p class="resposta-card__selo">
+      <span class="selo"><span aria-hidden="true">✔</span> Resposta validada por <%= r.validadaPor %></span>
+    </p>
+  <% } %>
+
+  <div class="resposta-card__texto"><%= r.conteudo %></div>
+
+  <p class="resposta-card__meta"><%= r.autor %><% if (quando) { %> · <%= quando %><% } %></p>
+
+  <div class="resposta-card__acoes">
+    <% if (r.ehMinha) { %>
+      <p class="resposta-card__votos"><%= totalUteis %> <%= totalUteis === 1 ? 'voto útil' : 'votos úteis' %></p>
+    <% } else { %>
+      <button
+        class="botao-marca"
+        type="button"
+        data-acao="votar-util"
+        data-url="/respostas/<%= r.id %>/util"
+        aria-pressed="<%= r.jaVotou ? 'true' : 'false' %>"
+      >
+        <span aria-hidden="true">👍</span> Útil (<span class="botao-marca__total"><%= totalUteis %></span>)
+      </button>
+    <% } %>
+
+    <% if (podeValidar && !r.validada) { %>
+      <button class="btn btn--pequeno" type="button" data-acao="validar" data-url="/respostas/<%= r.id %>/validacao">
+        <span aria-hidden="true">✔</span> Validar resposta
+      </button>
+    <% } %>
+
+    <% if (podeRetirarValidacao && r.validada) { %>
+      <button class="btn btn--pequeno btn--contorno" type="button" data-acao="retirar-validacao" data-url="/respostas/<%= r.id %>/validacao">
+        Retirar validação
+      </button>
+    <% } %>
+  </div>
+</article>

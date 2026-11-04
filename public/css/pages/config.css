@@ -1,0 +1,36 @@
+/*
+ * pages/configuracoes.css — Página de configurações.
+ * Complementa /css/pages/perguntas.css (.feed, .cartao-form) e forms.css
+ * (.campo__ajuda, .alerta). Só usa as variáveis de /css/global.css, então
+ * segue o tema claro e o escuro.
+ */
+ .config__grupo { margin-top: 28px; }
+ .config__grupo h2 { font-size: 1.3rem; }
+ 
+ .config__linha {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 12px 20px;
+   align-items: center;
+   justify-content: space-between;
+   background: var(--creme);
+   border: 1px solid var(--linha);
+   border-radius: 12px;
+   padding: 14px 16px;
+ }
+ .config__texto { flex: 1 1 260px; }
+ .config__nome { margin: 0 0 4px; font-weight: 700; }
+ .config__texto .campo__ajuda { margin: 0; }
+ 
+ /* Botão do tema: o estado aparece em ícone + texto (nunca só cor).
+    O tema.js muda o aria-pressed, e daqui sai qual rótulo fica visível. */
+ .config__tema { min-height: 44px; min-width: 9.5rem; font: inherit; font-weight: 700; cursor: pointer; }
+ .config__tema .tema-estado--ligado { display: none; }
+ .config__tema[aria-pressed="true"] .tema-estado--ligado { display: inline; }
+ .config__tema[aria-pressed="true"] .tema-estado--desligado { display: none; }
+ .config__tema[aria-pressed="true"] { background: var(--tinta); color: var(--creme); }
+ 
+ @media (max-width: 400px) {
+   .config__tema { width: 100%; }
+ }
+ 

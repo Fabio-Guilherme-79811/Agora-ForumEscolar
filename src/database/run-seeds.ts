@@ -1,4 +1,4 @@
-import { seedUsuarios } from "./seeds/seed-usuarios";  
+import { seedUsuarios } from "./seeds/seed-usuarios";
 import { seedTurmasMaterias } from "./seeds/seed-turmas-materias";
 import { seedPerguntasRespostas } from "./seeds/seed-perguntas-respostas";
 

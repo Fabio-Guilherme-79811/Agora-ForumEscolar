@@ -1,4 +1,4 @@
-import { lancarSeInvalido } from './erros';
+import { lancarSeInvalido } from "./erros";
 
 export const NOME_TOPICO_MIN = 2;
 export const NOME_TOPICO_MAX = 80;
@@ -22,29 +22,48 @@ export class Topico {
 
   constructor(p: TopicoProps) {
     this._id = p.id;
-    this._nome = (p.nome ?? '').trim();
+    this._nome = (p.nome ?? "").trim();
     this._materiaId = p.materiaId;
   }
 
-  get id(): number | undefined { return this._id; }
-  set id(v: number | undefined) { this._id = v; }
-  get nome(): string { return this._nome; }
-  set nome(v: string) { this._nome = (v ?? '').trim(); }
-  get materiaId(): number { return this._materiaId; }
-  set materiaId(v: number) { this._materiaId = v; }
+  get id(): number | undefined {
+    return this._id;
+  }
+  set id(v: number | undefined) {
+    this._id = v;
+  }
+  get nome(): string {
+    return this._nome;
+  }
+  set nome(v: string) {
+    this._nome = (v ?? "").trim();
+  }
+  get materiaId(): number {
+    return this._materiaId;
+  }
+  set materiaId(v: number) {
+    this._materiaId = v;
+  }
 
   validar(): void {
     const erros: string[] = [];
-    if (this._nome.length < NOME_TOPICO_MIN || this._nome.length > NOME_TOPICO_MAX) {
-      erros.push(`O nome do tópico deve ter entre ${NOME_TOPICO_MIN} e ${NOME_TOPICO_MAX} caracteres.`);
+    if (
+      this._nome.length < NOME_TOPICO_MIN ||
+      this._nome.length > NOME_TOPICO_MAX
+    ) {
+      erros.push(
+        `O nome do tópico deve ter entre ${NOME_TOPICO_MIN} e ${NOME_TOPICO_MAX} caracteres.`,
+      );
     }
     if (!Number.isInteger(this._materiaId) || this._materiaId <= 0) {
-      erros.push('O tópico precisa pertencer a uma matéria.');
+      erros.push("O tópico precisa pertencer a uma matéria.");
     }
     lancarSeInvalido(erros);
   }
 
-  static fromJSON(json: TopicoProps): Topico { return new Topico(json); }
+  static fromJSON(json: TopicoProps): Topico {
+    return new Topico(json);
+  }
   toJSON() {
     return { id: this._id, nome: this._nome, materiaId: this._materiaId };
   }

@@ -1,0 +1,169 @@
+<%
+/*
+ * perguntas/criar.ejs — Nova pergunta (Tela 4).
+ * Rota: GET /perguntas/nova (exige login — RN-01). O envio é POST /perguntas
+ * (multipart/form-data, por causa do anexo). Funciona sem JavaScript; com
+ * JavaScript, o pergunta-fetch.js mostra perguntas parecidas ao digitar o
+ * título (RN-23) e publica sem recarregar a página.
+ * Variáveis enviadas pela rota:
+ *   usuario  (objeto) nome e perfil
+ *   materias (array)  itens com id e nome (RN-04)
+ *   erro     (string) erro geral, ex.: limite de 5 perguntas por dia (RN-24)
+ *   erros    (objeto) erro por campo: titulo, materia, descricao, anexo
+ *   valores  (objeto) titulo, materia, descricao e topico (opcional) já digitados
+ * Regras: título de 10 a 120 caracteres, disciplina e descrição de no mínimo
+ * 20 caracteres (RN-21); anexo opcional, 1 arquivo de imagem ou PDF até 5 MB (RN-22).
+ * Estilos: /css/pages/perguntas.css, /css/components/forms.css, navbar.css e cards.css
+ * Regra de segurança: apenas a tag de saída escapada do EJS. A tag sem
+ * escape aparece só nos includes, que inserem templates do projeto.
+ */
+const titulo = locals.titulo || 'Nova pergunta — Ágora';
+const usuario = locals.usuario || null;
+const materias = locals.materias || [];
+const erro = locals.erro || '';
+const erros = locals.erros || {};
+const valores = locals.valores || {};
+const materiaSel = String(valores.materia || '');
+%>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Publique uma pergunta para a sua turma na Ágora.">
+  <title><%= titulo %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/components/navbar.css">
+  <link rel="stylesheet" href="/css/components/cards.css">
+  <link rel="stylesheet" href="/css/components/forms.css">
+  <link rel="stylesheet" href="/css/pages/perguntas.css">
+</head>
+<body class="feed">
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <%- include('../../partials/header', { usuario: usuario, ativo: 'perguntas' }) %>
+
+  <main id="conteudo" class="feed__main">
+    <%- include('../../partials/nav', {
+      trilha: [
+        { rotulo: 'Perguntas', href: '/perguntas' },
+        { rotulo: 'Nova pergunta' }
+      ]
+    }) %>
+
+    <section class="cartao-form" aria-labelledby="titulo-nova">
+      <h1 id="titulo-nova">Nova pergunta</h1>
+      <p class="feed__sub">Descreva sua dúvida com clareza. Antes de publicar, mostramos perguntas parecidas.</p>
+
+      <% if (erro) { %>
+        <p class="alerta alerta--erro" role="alert"><span aria-hidden="true">✖</span> <%= erro %></p>
+      <% } %>
+
+      <form class="form" id="form-pergunta" action="/perguntas" method="post" enctype="multipart/form-data" novalidate>
+        <div class="campo">
+          <label class="campo__rotulo" for="titulo">Título</label>
+          <input
+            class="campo__input"
+            type="text"
+            id="titulo"
+            name="titulo"
+            value="<%= valores.titulo || '' %>"
+            maxlength="120"
+            autocomplete="off"
+            required
+            data-similares-url="/perguntas/similares"
+            aria-invalid="<%= erros.titulo ? 'true' : 'false' %>"
+            aria-describedby="ajuda-titulo erro-titulo"
+          >
+          <div class="campo__linha">
+            <p class="campo__ajuda" id="ajuda-titulo">Entre 10 e 120 caracteres.</p>
+            <p class="campo__ajuda" id="contador-titulo" aria-hidden="true"><%= (valores.titulo || '').length %>/120</p>
+          </div>
+          <p class="campo__erro" id="erro-titulo" <%= erros.titulo ? '' : 'hidden' %>><%= erros.titulo || '' %></p>
+        </div>
+
+        <section class="similares" id="similares" aria-labelledby="titulo-similares" aria-live="polite" hidden>
+          <h2 id="titulo-similares">Perguntas parecidas</h2>
+          <p class="similares__ajuda">Veja se a sua dúvida já foi feita. Se for essa, abra a pergunta e marque “Também tenho essa dúvida”.</p>
+          <ul id="similares-lista"></ul>
+          <label class="campo__check" for="confirma-diferente">
+            <input type="checkbox" id="confirma-diferente">
+            A minha dúvida é diferente das perguntas acima.
+          </label>
+          <p class="campo__erro" id="erro-confirma-diferente" hidden></p>
+        </section>
+
+        <div class="campo">
+          <label class="campo__rotulo" for="materia">Disciplina</label>
+          <select
+            class="campo__input"
+            id="materia"
+            name="materia"
+            required
+            aria-invalid="<%= erros.materia ? 'true' : 'false' %>"
+            aria-describedby="erro-materia"
+          >
+            <option value="">Escolha a disciplina</option>
+            <% materias.forEach(function (m) { %>
+              <option value="<%= m.id %>" <%= String(m.id) === materiaSel ? 'selected' : '' %>><%= m.nome %></option>
+            <% }); %>
+          </select>
+          <p class="campo__erro" id="erro-materia" <%= erros.materia ? '' : 'hidden' %>><%= erros.materia || '' %></p>
+        </div>
+
+        <div class="campo">
+          <label class="campo__rotulo" for="descricao">Descrição</label>
+          <textarea
+            class="campo__input"
+            id="descricao"
+            name="descricao"
+            rows="6"
+            maxlength="5000"
+            required
+            aria-invalid="<%= erros.descricao ? 'true' : 'false' %>"
+            aria-describedby="ajuda-descricao erro-descricao"
+          ><%= valores.descricao || '' %></textarea>
+          <p class="campo__ajuda" id="ajuda-descricao">No mínimo 20 caracteres. Conte o que você já tentou.</p>
+          <p class="campo__erro" id="erro-descricao" <%= erros.descricao ? '' : 'hidden' %>><%= erros.descricao || '' %></p>
+        </div>
+
+        <div class="campo">
+          <label class="campo__rotulo" for="anexo">Anexo (opcional)</label>
+          <input
+            class="campo__input"
+            type="file"
+            id="anexo"
+            name="anexo"
+            accept=".png,.jpg,.jpeg,.gif,.webp,.pdf,image/png,image/jpeg,image/gif,image/webp,application/pdf"
+            data-previa="anexo-previa"
+            data-max-mb="5"
+            aria-describedby="ajuda-anexo erro-anexo"
+          >
+          <p class="campo__ajuda" id="ajuda-anexo">1 arquivo, imagem ou PDF, até 5 MB.</p>
+          <div class="anexo__previa" id="anexo-previa" hidden></div>
+          <p class="campo__erro" id="erro-anexo" <%= erros.anexo ? '' : 'hidden' %>><%= erros.anexo || '' %></p>
+        </div>
+
+        <% if (valores.topico) { %>
+          <input type="hidden" name="topico" value="<%= valores.topico %>">
+        <% } %>
+
+        <div class="form__acoes">
+          <button class="btn" type="submit">Publicar pergunta</button>
+          <a href="/perguntas">Cancelar</a>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <%- include('../../partials/footer') %>
+  <%- include('../../partials/feedback') %>
+
+  <script src="/js/main.js" defer></script>
+  <script src="/js/upload-preview.js" defer></script>
+  <script src="/js/pergunta-fetch.js" defer></script>
+</body>
+</html>

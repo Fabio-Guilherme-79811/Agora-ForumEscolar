@@ -1,4 +1,4 @@
-export const PERFIS = ['aluno', 'monitor', 'professor', 'admin'] as const;
+export const PERFIS = ['aluno', 'monitor', 'professor'] as const;
 export type Perfil = (typeof PERFIS)[number];
 
 /** RN-17: apenas Professor ou Monitor validam respostas. */

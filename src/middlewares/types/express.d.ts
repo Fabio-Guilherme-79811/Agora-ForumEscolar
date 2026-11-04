@@ -1,4 +1,4 @@
-import { UsuarioAutenticado } from './auth';
+import { UsuarioAutenticado } from "./auth";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -6,7 +6,7 @@ declare global {
     interface Request {
       usuario?: UsuarioAutenticado;
       /** Definido por escopoPainel: Monitor só enxerga a própria fila (RN-30). */
-      escopoFila?: 'completo' | 'proprio';
+      escopoFila?: "completo" | "proprio";
     }
   }
 }

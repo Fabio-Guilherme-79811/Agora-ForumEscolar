@@ -1,5 +1,5 @@
 // Linhas cruas do banco. Os services convertem para as classes de src/entities via fromJSON().
-export type Perfil = 'aluno' | 'monitor' | 'professor' | 'admin';
+export type Perfil = 'aluno' | 'monitor' | 'professor';
 export type StatusPergunta = 'aberta' | 'respondida' | 'validada';
 
 export interface UsuarioRow {
@@ -8,7 +8,7 @@ export interface UsuarioRow {
   bloqueado_ate: Date | null; criado_em: Date;
 }
 export interface TurmaRow { id: number; nome: string; codigo: string; criado_em: Date }
-export interface MateriaRow { id: number; nome: string }
+export interface MateriaRow { id: number; nome: string; turma_id: number }
 export interface PerguntaRow {
   id: number; titulo: string; descricao: string; materia_id: number; turma_id: number;
   autor_id: number; anexo: string | null; resolvida: 0 | 1; oculta: 0 | 1;
@@ -28,10 +28,15 @@ export interface RespostaRow {
 export interface RespostaDetalhe extends RespostaRow {
   autor_nome: string; validador_nome: string | null; total_uteis: number;
 }
+/** Decisão final do professor: 'mantida' = conteúdo volta/permanece visível; 'removida' = continua oculto. */
+export type DecisaoDenuncia = 'mantida' | 'removida';
 export interface DenunciaRow {
   id: number; denunciante_id: number; alvo_tipo: 'pergunta' | 'resposta'; alvo_id: number;
-  motivo: string; status: 'pendente' | 'mantida' | 'removida'; criado_em: Date;
+  motivo: string; status: 'pendente' | 'revisada'; decisao: DecisaoDenuncia | null;
+  revisada_por: number | null; revisada_em: Date | null; criado_em: Date;
 }
+export interface EstatisticasUsuario { perguntas: number; respostas: number; respostas_validadas: number }
+export interface ResultadoFalhaLogin { tentativas: number; bloqueado: boolean }
 export type MotivoPontos = 'resposta' | 'voto_util' | 'validacao';
 export interface RegistroPontosRow {
   id: number; usuario_id: number; pontos: number; motivo: MotivoPontos;
