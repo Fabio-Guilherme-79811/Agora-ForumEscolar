@@ -4,24 +4,76 @@
  * Rota: GET / (sem autenticação; as demais rotas exigem login — RN-01).
  * Se houver JWT válido, a rota redireciona para o feed (perguntas/index).
  * Estilos: /public/css/pages/landing.css
+ * Imagens: todas são placeholders em /css/uploads/materials/. O texto do alt
+ * descreve o que colocar; troque por um alt real (ou alt="" se for só decoração).
  * Regra de segurança: usar apenas a tag de saída escapada do EJS
  * (igual ao sinal de igual) para dados dinâmicos; nunca a tag sem escape.
  */
+const IMG = '/css/uploads/materials/';
+
 const passos = [
-  { titulo: 'Pergunte pela disciplina', texto: 'Escolha a matéria, escreva sua dúvida e veja se alguém já perguntou algo parecido antes de publicar.' },
-  { titulo: 'A turma ajuda', texto: 'Colegas respondem e marcam “também tenho essa dúvida”. Ninguém precisa repetir a mesma pergunta.' },
-  { titulo: 'O professor valida', texto: 'Professor ou monitor marca a resposta certa. Ela fica fixada no topo, com o nome de quem validou.' }
+  { icone: 'icone-pergunta.png', alt: 'SUGESTÃO: ícone de balão de fala com interrogação',
+    titulo: 'Pergunte pela disciplina',
+    texto: 'Tudo começa na matéria certa. Você escolhe a disciplina, escreve a dúvida e, enquanto digita o título, a Ágora mostra perguntas parecidas. Se alguém já perguntou, basta marcar que você também tem essa dúvida.' },
+  { icone: 'icone-turma.png', alt: 'SUGESTÃO: ícone de pessoas conversando',
+    titulo: 'A turma ajuda',
+    texto: 'Colegas respondem e votam nas respostas que mais ajudaram. Ninguém precisa repetir a mesma pergunta, e cada contribuição rende pontos para quem explicou.' },
+  { icone: 'icone-validada.png', alt: 'SUGESTÃO: ícone de selo ou check de verificação',
+    titulo: 'O professor valida',
+    texto: 'Professor ou monitor marca a resposta certa. Ela fica fixada no topo, com o nome de quem validou, e é nela que a turma pode confiar.' }
 ];
+
 const recursos = [
-  { titulo: 'Também tenho essa dúvida', texto: 'Um toque mostra o tamanho da dúvida da turma. Com 5 marcações sem resposta validada, a pergunta ganha destaque.' },
-  { titulo: 'Resposta validada', texto: 'Uma única resposta oficial por pergunta, sinalizada com ícone e texto. Você sabe em qual confiar.' },
-  { titulo: 'Termômetro de dúvidas', texto: 'Cada disciplina aparece como fria, morna ou quente, com base nos últimos 7 dias.' }
+  { icone: 'icone-duvida.png', alt: 'SUGESTÃO: ícone de mão levantada',
+    titulo: 'Também tenho essa dúvida',
+    texto: 'Um toque mostra o tamanho da dúvida da turma. Quando uma pergunta chega a 5 marcações sem resposta validada, ela ganha destaque e o professor recebe um alerta.' },
+  { icone: 'icone-resposta-validada.png', alt: 'SUGESTÃO: ícone de escudo com check',
+    titulo: 'Resposta validada',
+    texto: 'Cada pergunta tem no máximo uma resposta oficial, sinalizada com ícone e texto, nunca só com cor. Você sabe logo em qual confiar.' },
+  { icone: 'icone-termometro.png', alt: 'SUGESTÃO: ícone de termômetro',
+    titulo: 'Termômetro de dúvidas',
+    texto: 'Cada disciplina aparece como fria, morna ou quente, com base nos últimos 7 dias. A turma vê só números gerais; o professor vê o detalhe e sabe o que precisa ser reforçado.' },
+  { icone: 'icone-pontos.png', alt: 'SUGESTÃO: ícone de estrela ou troféu',
+    titulo: 'Pontos por ajudar',
+    texto: 'Responder vale 1 ponto, receber um voto útil vale 2 e ter a resposta validada vale 10. A pontuação nunca é negativa: aqui o incentivo é ajudar.' }
 ];
+
 const perfis = [
-  { nome: 'Aluno', texto: 'Pergunta, responde, vota nas respostas úteis e acompanha a própria pontuação.' },
-  { nome: 'Monitor', texto: 'É um aluno indicado pelo professor e pode validar respostas da turma.' },
-  { nome: 'Professor', texto: 'Enxerga o que a turma não entendeu, valida respostas, modera e gera o código da turma.' }
+  { icone: 'icone-aluno.png', alt: 'SUGESTÃO: ícone de estudante com mochila',
+    nome: 'Aluno',
+    texto: 'Pergunta, responde, vota nas respostas úteis e acompanha a própria pontuação, sempre dentro da sua turma.' },
+  { icone: 'icone-monitor.png', alt: 'SUGESTÃO: ícone de estudante com estrela',
+    nome: 'Monitor',
+    texto: 'É um aluno indicado pelo professor. Faz tudo o que um aluno faz e também pode validar respostas.' },
+  { icone: 'icone-professor.png', alt: 'SUGESTÃO: ícone de quadro-negro ou professor',
+    nome: 'Professor',
+    texto: 'Enxerga o que a turma não entendeu, valida respostas, modera conteúdo denunciado, promove monitores e gera o código da turma.' }
 ];
+
+// Cumpre RN-01, RN-06, RN-07, RN-08 e RN-05 informando o usuário antes do cadastro
+const requisitos = [
+  { icone: 'icone-codigo.png', alt: 'SUGESTÃO: ícone de chave ou ticket',
+    titulo: 'Código da turma',
+    texto: 'O cadastro só é liberado com o código fornecido pelo seu professor (RN-07). Sem ele, não é possível criar a conta.' },
+  { icone: 'icone-senha.png', alt: 'SUGESTÃO: ícone de cadeado',
+    titulo: 'Senha segura',
+    texto: 'Use no mínimo 8 caracteres (RN-06). Após 5 tentativas erradas de login, o acesso fica bloqueado por 10 minutos (RN-09).' },
+  { icone: 'icone-coordenacao.png', alt: 'SUGESTÃO: ícone de prédio ou crachá institucional',
+    titulo: 'Professor ou coordenação?',
+    texto: 'Alunos entram pelo cadastro. Professores são cadastrados pela coordenação da escola (RN-08).' },
+  { icone: 'icone-respeito.png', alt: 'SUGESTÃO: ícone de aperto de mãos ou bandeira de denúncia',
+    titulo: 'Respeito e moderação',
+    texto: 'Não existe modo visitante: só quem está logado vê as perguntas (RN-01). Conteúdo ofensivo pode ser denunciado e, com 3 denúncias, fica oculto até a revisão do professor (RN-05).' }
+];
+
+// href="#" são placeholders: troque pelos perfis reais da equipe
+const redes = [
+  { nome: 'Instagram', href: '#', icone: 'rede-instagram.png', alt: 'SUGESTÃO: logotipo do Instagram' },
+  { nome: 'GitHub',    href: '#', icone: 'rede-github.png',    alt: 'SUGESTÃO: logotipo do GitHub (repositório do projeto)' },
+  { nome: 'LinkedIn',  href: '#', icone: 'rede-linkedin.png',  alt: 'SUGESTÃO: logotipo do LinkedIn' },
+  { nome: 'E-mail',    href: '#', icone: 'rede-email.png',     alt: 'SUGESTÃO: ícone de envelope' }
+];
+
 const titulo = locals.titulo || 'Ágora — o fórum da sua turma';
 %>
 <!DOCTYPE html>
@@ -41,14 +93,17 @@ const titulo = locals.titulo || 'Ágora — o fórum da sua turma';
   <a class="pular" href="#conteudo">Pular para o conteúdo</a>
 
   <header class="topo">
-    <a class="marca" href="/" aria-label="Ágora, página inicial"><img src="/css/uploads/materials/logo.png" height="50" width="50">Ágo<span>ra</span></a>
+    <a class="marca" href="/" aria-label="Ágora, página inicial"><img src="<%= IMG %>logo.png" height="50" width="50" alt="Logo da Ágora">Ágo<span>ra</span></a>
     <nav class="topo__nav" aria-label="Principal">
-      <a href="#como-funciona">Como funciona</a>
-      <a href="#recursos">Recursos</a>
-      <a href="#perfis">Para quem</a>
-      <a class="btn btn--contorno" href="/login">Entrar</a>
+      <a class="topo__link" href="#como-funciona">Como funciona</a>
+      <a class="topo__link" href="#recursos">Recursos</a>
+      <a class="topo__link" href="#perfis">Para quem</a>
+      <a class="topo__link" href="#antes-de-entrar">Antes de entrar</a>
+      <a class="btn btn--contorno btn--topo" href="/login">Entrar</a>
       <div role="group" aria-label="Modo escuro">
-        <button class="btn btn--contorno" type="button" data-alternar-tema><img src="/css/uploads/materials/tema.png" height="35" width="30"></button>
+        <button class="btn btn--contorno btn--topo" type="button" data-alternar-tema aria-label="Alternar tema claro e escuro">
+          <img src="<%= IMG %>tema.png" height="35" width="30" alt="">
+        </button>
       </div>
     </nav>
   </header>
@@ -56,6 +111,8 @@ const titulo = locals.titulo || 'Ágora — o fórum da sua turma';
   <main id="conteudo">
     <section class="hero">
       <div class="hero__texto">
+        <img class="hero__logo" src="<%= IMG %>logo-grande.png" width="160" height="160"
+             alt="SUGESTÃO: logo da Ágora em tamanho grande, com fundo transparente">
         <h1>A dúvida da véspera da prova merece uma resposta confiável.</h1>
         <p class="hero__sub">A Ágora organiza as perguntas da turma por disciplina e destaca a resposta que o professor validou. Nada se perde no meio de centenas de mensagens.</p>
         <div class="hero__acoes">
@@ -64,58 +121,89 @@ const titulo = locals.titulo || 'Ágora — o fórum da sua turma';
         </div>
       </div>
 
-      <div class="hero__demo" aria-label="Exemplo de pergunta na Ágora">
-        <article class="pergunta">
-          <p class="pergunta__meta"><span class="tag">Banco de Dados</span> Ana Beatriz · há 2h</p>
-          <h2>Qual a diferença entre INNER JOIN e LEFT JOIN?</h2>
-          <p class="pergunta__duvida"><span aria-hidden="true">●</span> 5 colegas também têm essa dúvida</p>
-        </article>
-        <article class="pergunta pergunta--validada">
-          <p class="selo"><span aria-hidden="true">✔</span> Resposta validada por Prof. Rafael</p>
-          <p>INNER JOIN traz só as linhas que têm par nas duas tabelas. LEFT JOIN mantém todas as da esquerda, mesmo sem par.</p>
-        </article>
-      </div>
+      <figure class="hero__imagem">
+        <img src="<%= IMG %>hero-ilustracao.png" width="560" height="440"
+             alt="SUGESTÃO: ilustração de alunos de uma turma tirando dúvidas juntos, ou print da tela de pergunta com resposta validada">
+      </figure>
     </section>
 
-    <section class="secao" id="como-funciona">
-      <h2>Como funciona</h2>
-      <ol class="passos">
-        <% passos.forEach(function (p, i) { %>
-          <li class="passo">
-            <span class="passo__n" aria-hidden="true"><%= i + 1 %></span>
-            <h3><%= p.titulo %></h3>
+    <section class="secao" id="como-funciona" aria-labelledby="titulo-como-funciona">
+      <h2 id="titulo-como-funciona">Como funciona</h2>
+      <p class="secao__sub">Três passos, do problema à resposta em que dá para confiar.</p>
+      <% passos.forEach(function (p, i) { %>
+        <div class="trecho">
+          <img class="trecho__icone" src="<%= IMG %><%= p.icone %>" width="72" height="72" alt="<%= p.alt %>">
+          <div class="trecho__texto">
+            <h3><span class="trecho__n" aria-hidden="true"><%= i + 1 %>.</span> <%= p.titulo %></h3>
             <p><%= p.texto %></p>
-          </li>
-        <% }); %>
-      </ol>
+          </div>
+        </div>
+      <% }); %>
     </section>
 
-    <section class="secao secao--rosa" id="recursos">
-      <h2>Feita para o que o WhatsApp não resolve</h2>
+    <section class="secao secao--rosa" id="recursos" aria-labelledby="titulo-recursos">
+      <h2 id="titulo-recursos">Feita para o que o WhatsApp não resolve</h2>
       <p class="secao__sub">No grupo, a resposta certa se perde na rolagem. Aqui, tudo fica ligado à disciplina e ao assunto.</p>
-      <div class="recursos">
-        <% recursos.forEach(function (r) { %>
-          <article class="recurso">
+      <% recursos.forEach(function (r) { %>
+        <div class="trecho">
+          <img class="trecho__icone" src="<%= IMG %><%= r.icone %>" width="72" height="72" alt="<%= r.alt %>">
+          <div class="trecho__texto">
             <h3><%= r.titulo %></h3>
             <p><%= r.texto %></p>
-          </article>
-        <% }); %>
+          </div>
+        </div>
+      <% }); %>
+    </section>
+
+    <section class="secao" id="perfis" aria-labelledby="titulo-perfis">
+      <h2 id="titulo-perfis">Um espaço, três papéis</h2>
+      <% perfis.forEach(function (p) { %>
+        <div class="trecho">
+          <img class="trecho__icone" src="<%= IMG %><%= p.icone %>" width="72" height="72" alt="<%= p.alt %>">
+          <div class="trecho__texto">
+            <h3><%= p.nome %></h3>
+            <p><%= p.texto %></p>
+          </div>
+        </div>
+      <% }); %>
+    </section>
+
+    <section class="secao" id="antes-de-entrar" aria-labelledby="titulo-antes">
+      <h2 id="titulo-antes">Antes de entrar</h2>
+      <p class="secao__sub">O que você precisa saber para criar a sua conta com tranquilidade.</p>
+      <% requisitos.forEach(function (q) { %>
+        <div class="trecho">
+          <img class="trecho__icone" src="<%= IMG %><%= q.icone %>" width="72" height="72" alt="<%= q.alt %>">
+          <div class="trecho__texto">
+            <h3><%= q.titulo %></h3>
+            <p><%= q.texto %></p>
+          </div>
+        </div>
+      <% }); %>
+      <div class="secao__acoes">
+        <a class="btn" href="/cadastro">Tenho o código, quero me cadastrar</a>
+        <a class="btn btn--contorno" href="#contato">Não tenho o código</a>
       </div>
     </section>
 
-    <section class="secao" id="perfis">
-      <h2>Um espaço, três papéis</h2>
-      <div class="perfis">
-        <% perfis.forEach(function (p) { %>
-          <article class="perfil">
-            <h3><%= p.nome %></h3>
-            <p><%= p.texto %></p>
-          </article>
+    <section class="secao secao--contato" id="contato" aria-labelledby="titulo-contato">
+      <h2 id="titulo-contato">Fale com a gente</h2>
+      <p class="secao__sub">Sem o código da turma? Peça ao seu professor ou à coordenação. Dúvidas sobre o projeto, procure a equipe pelas redes.</p>
+      <ul class="redes">
+        <% redes.forEach(function (r) { %>
+          <li>
+            <a class="btn btn--contorno btn--rede" href="<%= r.href %>" target="_blank" rel="noopener noreferrer">
+              <img src="<%= IMG %><%= r.icone %>" width="24" height="24" alt="<%= r.alt %>">
+              <%= r.nome %>
+            </a>
+          </li>
         <% }); %>
-      </div>
+      </ul>
     </section>
 
     <section class="cta">
+      <img class="cta__imagem" src="<%= IMG %>cta-ilustracao.png" width="320" height="200"
+           alt="SUGESTÃO: ilustração de uma ágora grega com pessoas reunidas, em estilo simples e traço limpo">
       <h2>Na Grécia antiga, a ágora era onde todos se reuniam para decidir o bem comum.</h2>
       <p>A sua turma também merece um lugar assim.</p>
       <a class="btn btn--claro" href="/cadastro">Entrar na minha turma</a>
@@ -125,6 +213,7 @@ const titulo = locals.titulo || 'Ágora — o fórum da sua turma';
   <footer class="rodape">
     <p>Ágora · Fórum escolar de perguntas e respostas</p>
     <p class="rodape__nota">Coletamos o mínimo de dados pessoais, conforme a LGPD.</p>
+    <p class="rodape__nota">Projeto Integrador · Senac RN · MedioTec</p>
   </footer>
 </body>
 </html>
