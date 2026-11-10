@@ -4,8 +4,9 @@
  * Rota: GET / (sem autenticação; as demais rotas exigem login — RN-01).
  * Se houver JWT válido, a rota redireciona para o feed (perguntas/index).
  * Estilos: /public/css/pages/landing.css
- * Imagens: todas são placeholders em /css/uploads/materials/. O texto do alt
- * descreve o que colocar; troque por um alt real (ou alt="" se for só decoração).
+ * Scripts: tema.js (tema claro/escuro) e menu-landing.js (gaveta no mobile)
+ * Imagens: placeholders em /css/uploads/materials/. O texto do alt descreve
+ * o que colocar; troque por um alt real (ou alt="" se for só decoração).
  * Regra de segurança: usar apenas a tag de saída escapada do EJS
  * (igual ao sinal de igual) para dados dinâmicos; nunca a tag sem escape.
  */
@@ -50,7 +51,7 @@ const perfis = [
     texto: 'Enxerga o que a turma não entendeu, valida respostas, modera conteúdo denunciado, promove monitores e gera o código da turma.' }
 ];
 
-// Cumpre RN-01, RN-06, RN-07, RN-08 e RN-05 informando o usuário antes do cadastro
+// Informa o usuário sobre RN-01, RN-05, RN-06, RN-07, RN-08 e RN-09 antes do cadastro
 const requisitos = [
   { icone: 'icone-codigo.png', alt: 'SUGESTÃO: ícone de chave ou ticket',
     titulo: 'Código da turma',
@@ -74,6 +75,11 @@ const redes = [
   { nome: 'E-mail',    href: '#', icone: 'rede-email.png',     alt: 'SUGESTÃO: ícone de envelope' }
 ];
 
+// Itens decorativos dos letreiros (exemplos; a lista real vem das matérias da turma)
+const disciplinas = ['Banco de Dados', 'Programação', 'Matemática', 'Português', 'Desenvolvimento Web'];
+const publico = ['Senac-RN', 'MedioTec', 'Turmas técnicas', 'Alunos', 'Monitores', 'Professores'];
+// Cada letreiro repete a lista 4 vezes: a animação anda 50% e recomeça sem salto
+const repetir = function (lista) { return [].concat(lista, lista, lista, lista); };
 const titulo = locals.titulo || 'Ágora — o fórum da sua turma';
 %>
 <!DOCTYPE html>
@@ -85,9 +91,10 @@ const titulo = locals.titulo || 'Ágora — o fórum da sua turma';
   <title><%= titulo %></title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/pages/landing.css">
   <script src="/js/tema.js" defer></script>
+  <script src="/js/menu-landing.js" defer></script>
 </head>
 <body class="landing">
   <a class="pular" href="#conteudo">Pular para o conteúdo</a>
@@ -99,32 +106,92 @@ const titulo = locals.titulo || 'Ágora — o fórum da sua turma';
       <a class="topo__link" href="#recursos">Recursos</a>
       <a class="topo__link" href="#perfis">Para quem</a>
       <a class="topo__link" href="#antes-de-entrar">Antes de entrar</a>
-      <a class="btn btn--contorno btn--topo" href="/login">Entrar</a>
+      <a class="btn btn--contorno btn--topo btn--entrar" href="/login">Entrar</a>
       <div role="group" aria-label="Modo escuro">
         <button class="btn btn--contorno btn--topo" type="button" data-alternar-tema aria-label="Alternar tema claro e escuro">
           <img src="<%= IMG %>tema.png" height="35" width="30" alt="">
         </button>
       </div>
+      <button class="btn btn--contorno btn--topo btn-menu" type="button" data-menu aria-expanded="false" aria-controls="gaveta">
+        Menu
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 10l5-5 5 5"/></svg>
+      </button>
     </nav>
   </header>
 
+  <div class="gaveta" id="gaveta">
+    <button class="btn btn--contorno btn--topo gaveta__fechar" type="button" data-menu-fechar>Fechar</button>
+    <nav aria-label="Menu em tela cheia">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#recursos">Recursos</a>
+      <a href="#perfis">Para quem</a>
+      <a href="#antes-de-entrar">Antes de entrar</a>
+      <a href="#contato">Contato</a>
+      <a href="/login">Entrar</a>
+      <a href="/cadastro">Criar conta</a>
+    </nav>
+    <p class="gaveta__rodape">© 2026 Ágora · Senac-RN</p>
+  </div>
+
   <main id="conteudo">
-    <section class="hero">
-      <div class="hero__texto">
-        <img class="hero__logo" src="<%= IMG %>logo-grande.png" width="160" height="160"
-             alt="SUGESTÃO: logo da Ágora em tamanho grande, com fundo transparente">
-        <h1>A dúvida da véspera da prova merece uma resposta confiável.</h1>
-        <p class="hero__sub">A Ágora organiza as perguntas da turma por disciplina e destaca a resposta que o professor validou. Nada se perde no meio de centenas de mensagens.</p>
-        <div class="hero__acoes">
-          <a class="btn" href="/cadastro">Criar conta com código da turma</a>
-          <a class="btn btn--contorno" href="/login">Já tenho conta</a>
+    <section class="capa" aria-labelledby="titulo-capa">
+      <div class="linhas" aria-hidden="true">
+        <% for (let i = 0; i < 20; i++) { %><span class="linha linha--esq" style="--i: <%= i %>"></span><% } %>
+        <% for (let i = 0; i < 20; i++) { %><span class="linha linha--dir" style="--i: <%= i %>"></span><% } %>
+        <% for (let i = 0; i < 20; i++) { %><span class="linha linha--topo" style="--i: <%= i %>"></span><% } %>
+      </div>
+
+      <img class="capa__logo" src="<%= IMG %>logo-grande.png" width="160" height="160"
+           alt="SUGESTÃO: logo da Ágora em tamanho grande, com fundo transparente">
+
+      <div class="faixa" aria-hidden="true">
+        <div class="faixa__trilho">
+          <% repetir(disciplinas).forEach(function (d) { %><span class="faixa__item"><%= d %></span><% }); %>
         </div>
       </div>
 
-      <figure class="hero__imagem">
-        <img src="<%= IMG %>grupo.png" width="560" height="440"
-             alt="ilustração de alunos de uma turma tirando dúvidas juntos, ou print da tela de pergunta com resposta validada">
-      </figure>
+      <h1 class="capa__titulo" id="titulo-capa">A dúvida da véspera da prova merece uma <em>resposta confiável</em>.</h1>
+      <p class="capa__sub">A Ágora organiza as perguntas da turma por disciplina e destaca a resposta que o professor validou. Nada se perde no meio de centenas de mensagens.</p>
+
+      <div class="capa__acoes">
+        <a class="btn btn--grande" href="/cadastro">Criar conta com código da turma</a>
+        <a class="btn-conta" href="/login">
+          <img src="<%= IMG %>logo.png" width="40" height="40" alt="">
+          <span>
+            <span class="btn-conta__titulo">Já tenho conta</span>
+            <span class="btn-conta__sub">Entrar na minha turma</span>
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <section class="vitrine" aria-label="Exemplo de pergunta e resposta validada">
+      <div>
+        <article class="pergunta">
+          <p class="pergunta__meta"><span class="tag">Banco de Dados</span> Ana Beatriz · há 2h</p>
+          <h2>Qual a diferença entre INNER JOIN e LEFT JOIN?</h2>
+          <p class="pergunta__duvida"><span aria-hidden="true">●</span> 5 colegas também têm essa dúvida</p>
+        </article>
+        <p class="vitrine__rotulo">Pergunta // da turma</p>
+        <p class="vitrine__texto">Antes de publicar, a Ágora mostra perguntas parecidas. Se a sua já existe, basta marcar “também tenho essa dúvida”.</p>
+      </div>
+      <div>
+        <article class="pergunta pergunta--validada">
+          <p class="selo"><span aria-hidden="true">✔</span> Resposta validada por Prof. Rafael</p>
+          <p>INNER JOIN traz só as linhas que têm par nas duas tabelas. LEFT JOIN mantém todas as da esquerda, mesmo sem par.</p>
+        </article>
+        <p class="vitrine__rotulo">Resposta / validada</p>
+        <p class="vitrine__texto">Uma única resposta oficial por pergunta, fixada no topo com o nome de quem validou.</p>
+      </div>
+    </section>
+
+    <section class="parceria" aria-label="Para quem a Ágora foi criada">
+      <p class="parceria__rotulo">Feita para as turmas do Ensino Médio Técnico</p>
+      <div class="faixa" aria-hidden="true">
+        <div class="faixa__trilho">
+          <% repetir(publico).forEach(function (p) { %><span class="faixa__item"><%= p %></span><% }); %>
+        </div>
+      </div>
     </section>
 
     <section class="secao" id="como-funciona" aria-labelledby="titulo-como-funciona">
