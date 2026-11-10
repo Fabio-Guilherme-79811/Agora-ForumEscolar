@@ -4,39 +4,16 @@
  * Rota: GET / (sem autenticação; as demais rotas exigem login — RN-01).
  * Se houver JWT válido, a rota redireciona para o feed (perguntas/index).
  * Estilos: /public/css/pages/landing.css
- * Imagens: todas são placeholders em /css/uploads/materials/. O texto do alt
- * descreve o que colocar; troque por um alt real (ou alt="" se for só decoração).
+ * Scripts: tema.js (tema claro/escuro) e menu-landing.js (gaveta no mobile)
+ * Imagens: placeholders em /css/uploads/materials/. O texto do alt descreve
+ * o que colocar; troque por um alt real (ou alt="" se for só decoração).
  * Regra de segurança: usar apenas a tag de saída escapada do EJS
  * (igual ao sinal de igual) para dados dinâmicos; nunca a tag sem escape.
  */
 const IMG = '/css/uploads/materials/';
 
-const passos = [
-  { icone: 'icone-pergunta.png', alt: 'SUGESTÃO: ícone de balão de fala com interrogação',
-    titulo: 'Pergunte pela disciplina',
-    texto: 'Tudo começa na matéria certa. Você escolhe a disciplina, escreve a dúvida e, enquanto digita o título, a Ágora mostra perguntas parecidas. Se alguém já perguntou, basta marcar que você também tem essa dúvida.' },
-  { icone: 'icone-turma.png', alt: 'SUGESTÃO: ícone de pessoas conversando',
-    titulo: 'A turma ajuda',
-    texto: 'Colegas respondem e votam nas respostas que mais ajudaram. Ninguém precisa repetir a mesma pergunta, e cada contribuição rende pontos para quem explicou.' },
-  { icone: 'icone-validada.png', alt: 'SUGESTÃO: ícone de selo ou check de verificação',
-    titulo: 'O professor valida',
-    texto: 'Professor ou monitor marca a resposta certa. Ela fica fixada no topo, com o nome de quem validou, e é nela que a turma pode confiar.' }
-];
-
-const recursos = [
-  { icone: 'icone-duvida.png', alt: 'SUGESTÃO: ícone de mão levantada',
-    titulo: 'Também tenho essa dúvida',
-    texto: 'Um toque mostra o tamanho da dúvida da turma. Quando uma pergunta chega a 5 marcações sem resposta validada, ela ganha destaque e o professor recebe um alerta.' },
-  { icone: 'icone-resposta-validada.png', alt: 'SUGESTÃO: ícone de escudo com check',
-    titulo: 'Resposta validada',
-    texto: 'Cada pergunta tem no máximo uma resposta oficial, sinalizada com ícone e texto, nunca só com cor. Você sabe logo em qual confiar.' },
-  { icone: 'icone-termometro.png', alt: 'SUGESTÃO: ícone de termômetro',
-    titulo: 'Termômetro de dúvidas',
-    texto: 'Cada disciplina aparece como fria, morna ou quente, com base nos últimos 7 dias. A turma vê só números gerais; o professor vê o detalhe e sabe o que precisa ser reforçado.' },
-  { icone: 'icone-pontos.png', alt: 'SUGESTÃO: ícone de estrela ou troféu',
-    titulo: 'Pontos por ajudar',
-    texto: 'Responder vale 1 ponto, receber um voto útil vale 2 e ter a resposta validada vale 10. A pontuação nunca é negativa: aqui o incentivo é ajudar.' }
-];
+// Etapas do letreiro de "Como funciona" (decorativo, repetido 4x pelo repetir())
+const fluxo = ['Pergunta', 'Perguntas parecidas', 'Também tenho', 'Resposta da turma', 'Voto útil', 'Resposta validada', 'Termômetro'];
 
 const perfis = [
   { icone: 'icone-aluno.png', alt: 'SUGESTÃO: ícone de estudante com mochila',
@@ -50,7 +27,7 @@ const perfis = [
     texto: 'Enxerga o que a turma não entendeu, valida respostas, modera conteúdo denunciado, promove monitores e gera o código da turma.' }
 ];
 
-// Cumpre RN-01, RN-06, RN-07, RN-08 e RN-05 informando o usuário antes do cadastro
+// Informa o usuário sobre RN-01, RN-05, RN-06, RN-07, RN-08 e RN-09 antes do cadastro
 const requisitos = [
   { icone: 'icone-codigo.png', alt: 'SUGESTÃO: ícone de chave ou ticket',
     titulo: 'Código da turma',
@@ -74,6 +51,11 @@ const redes = [
   { nome: 'E-mail',    href: '#', icone: 'rede-email.png',     alt: 'SUGESTÃO: ícone de envelope' }
 ];
 
+// Itens decorativos dos letreiros (exemplos; a lista real vem das matérias da turma)
+const disciplinas = ['Banco de Dados', 'Programação', 'Matemática', 'Português', 'Desenvolvimento Web'];
+const publico = ['Senac-RN', 'MedioTec', 'Turmas técnicas', 'Alunos', 'Monitores', 'Professores'];
+// Cada letreiro repete a lista 4 vezes: a animação anda 50% e recomeça sem salto
+const repetir = function (lista) { return [].concat(lista, lista, lista, lista); };
 const titulo = locals.titulo || 'Ágora — o fórum da sua turma';
 %>
 <!DOCTYPE html>
@@ -85,9 +67,12 @@ const titulo = locals.titulo || 'Ágora — o fórum da sua turma';
   <title><%= titulo %></title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/pages/landing.css">
   <script src="/js/tema.js" defer></script>
+  <script src="/js/menu-landing.js" defer></script>
+  <script src="/js/palco-landing.js" defer></script>
+  <script src="/js/rodape-landing.js" defer></script>
 </head>
 <body class="landing">
   <a class="pular" href="#conteudo">Pular para o conteúdo</a>
@@ -97,108 +82,238 @@ const titulo = locals.titulo || 'Ágora — o fórum da sua turma';
     <nav class="topo__nav" aria-label="Principal">
       <a class="topo__link" href="#como-funciona">Como funciona</a>
       <a class="topo__link" href="#recursos">Recursos</a>
-      <a class="topo__link" href="#perfis">Para quem</a>
-      <a class="topo__link" href="#antes-de-entrar">Antes de entrar</a>
-      <a class="btn btn--contorno btn--topo" href="/login">Entrar</a>
+      <a class="topo__link" href="#como-funciona">Como funciona</a>
+      <a class="topo__link" href="#recursos">Recursos</a>
+      <a class="topo__link" href="#na-pratica">Na prática</a>
+      <a class="btn btn--contorno btn--topo btn--entrar" href="/login">Entrar</a>
       <div role="group" aria-label="Modo escuro">
         <button class="btn btn--contorno btn--topo" type="button" data-alternar-tema aria-label="Alternar tema claro e escuro">
           <img src="<%= IMG %>tema.png" height="35" width="30" alt="">
         </button>
       </div>
+      <button class="btn btn--contorno btn--topo btn-menu" type="button" data-menu aria-expanded="false" aria-controls="gaveta">
+        Menu
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 10l5-5 5 5"/></svg>
+      </button>
     </nav>
   </header>
 
+  <div class="gaveta" id="gaveta">
+    <button class="btn btn--contorno btn--topo gaveta__fechar" type="button" data-menu-fechar>Fechar</button>
+    <nav aria-label="Menu em tela cheia">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#recursos">Recursos</a>
+      <a href="#na-pratica">Na prática</a>
+      <a href="#contato">Contato</a>
+      <a href="/login">Entrar</a>
+      <a href="/cadastro">Criar conta</a>
+    </nav>
+    <p class="gaveta__rodape">© 2026 Ágora · Senac-RN</p>
+  </div>
+
   <main id="conteudo">
-    <section class="hero">
-      <div class="hero__texto">
-        <img class="hero__logo" src="<%= IMG %>logo-grande.png" width="160" height="160"
-             alt="SUGESTÃO: logo da Ágora em tamanho grande, com fundo transparente">
-        <h1>A dúvida da véspera da prova merece uma resposta confiável.</h1>
-        <p class="hero__sub">A Ágora organiza as perguntas da turma por disciplina e destaca a resposta que o professor validou. Nada se perde no meio de centenas de mensagens.</p>
-        <div class="hero__acoes">
-          <a class="btn" href="/cadastro">Criar conta com código da turma</a>
-          <a class="btn btn--contorno" href="/login">Já tenho conta</a>
+    <section class="capa" aria-labelledby="titulo-capa">
+      <div class="linhas" aria-hidden="true">
+        <% for (let i = 0; i < 20; i++) { %><span class="linha linha--esq" style="--i: <%= i %>"></span><% } %>
+        <% for (let i = 0; i < 20; i++) { %><span class="linha linha--dir" style="--i: <%= i %>"></span><% } %>
+        <% for (let i = 0; i < 20; i++) { %><span class="linha linha--topo" style="--i: <%= i %>"></span><% } %>
+      </div>
+
+      <img class="capa__logo" src="<%= IMG %>logo-grande.png" width="160" height="160"
+           alt="SUGESTÃO: logo da Ágora em tamanho grande, com fundo transparente">
+
+      <div class="faixa" aria-hidden="true">
+        <div class="faixa__trilho">
+          <% repetir(disciplinas).forEach(function (d) { %><span class="faixa__item"><%= d %></span><% }); %>
         </div>
       </div>
 
-      <figure class="hero__imagem">
-        <img src="<%= IMG %>grupo.png" width="560" height="440"
-             alt="ilustração de alunos de uma turma tirando dúvidas juntos, ou print da tela de pergunta com resposta validada">
-      </figure>
+      <h1 class="capa__titulo" id="titulo-capa">A dúvida da véspera da prova merece uma <em>resposta confiável</em>.</h1>
+      <p class="capa__sub">A Ágora organiza as perguntas da turma por disciplina e destaca a resposta que o professor validou. Nada se perde no meio de centenas de mensagens.</p>
+
+      <div class="capa__acoes">
+        <a class="btn btn--grande" href="/cadastro">Criar conta com código da turma</a>
+        <a class="btn-conta" href="/login">
+          <img src="<%= IMG %>logo.png" width="40" height="40" alt="">
+          <span>
+            <span class="btn-conta__titulo">Já tenho conta</span>
+            <span class="btn-conta__sub">Entrar na minha turma</span>
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <section class="vitrine" aria-label="Exemplo de pergunta e resposta validada">
+      <div>
+        <article class="pergunta">
+          <p class="pergunta__meta"><span class="tag">Banco de Dados</span> Ana Beatriz · há 2h</p>
+          <h2>Qual a diferença entre INNER JOIN e LEFT JOIN?</h2>
+          <p class="pergunta__duvida"><span aria-hidden="true">●</span> 5 colegas também têm essa dúvida</p>
+        </article>
+        <p class="vitrine__rotulo">Pergunta // da turma</p>
+        <p class="vitrine__texto">Antes de publicar, a Ágora mostra perguntas parecidas. Se a sua já existe, basta marcar “também tenho essa dúvida”.</p>
+      </div>
+      <div>
+        <article class="pergunta pergunta--validada">
+          <p class="selo"><span aria-hidden="true">✔</span> Resposta validada por Prof. Rafael</p>
+          <p>INNER JOIN traz só as linhas que têm par nas duas tabelas. LEFT JOIN mantém todas as da esquerda, mesmo sem par.</p>
+        </article>
+        <p class="vitrine__rotulo">Resposta / validada</p>
+        <p class="vitrine__texto">Uma única resposta oficial por pergunta, fixada no topo com o nome de quem validou.</p>
+      </div>
+    </section>
+
+    <section class="parceria" aria-label="Para quem a Ágora foi criada">
+      <p class="parceria__rotulo">Feita para as turmas do Ensino Médio Técnico</p>
+      <div class="faixa" aria-hidden="true">
+        <div class="faixa__trilho">
+          <% repetir(publico).forEach(function (p) { %><span class="faixa__item"><%= p %></span><% }); %>
+        </div>
+      </div>
+    </section>
+
+        <section class="palco" id="na-pratica" aria-labelledby="titulo-palco">
+      <h2 id="titulo-palco">Cada papel enxerga a turma do seu jeito</h2>
+      <p class="secao__sub">Passe o mouse, toque ou use o teclado nos cartões para ver a Ágora em ação.</p>
+
+      <div class="cartoes">
+        <article class="cartao cartao--aluno" tabindex="0" role="group" aria-label="Aluno: pergunte uma vez e a turma responde junto">
+          <div class="cartao__superficie" aria-hidden="true"></div>
+          <svg class="cartao__icone" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M5 7h22v14H15l-6 5v-5H5Z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg>
+          <span class="cartao__papel">Aluno</span>
+          <span class="pilula pilula--a">Banco de Dados</span>
+          <span class="pilula pilula--b">Programação</span>
+          <span class="pilula pilula--viva"><i class="ponto"></i>5 colegas também têm</span>
+          <span class="pilula pilula--c">+3 respostas</span>
+          <h3 class="cartao__titulo">Pergunte uma vez. A turma <strong>responde junto.</strong></h3>
+        </article>
+
+        <article class="cartao cartao--professor" tabindex="0" role="group" aria-label="Professor: veja o que a turma ainda não entendeu. Exemplo: 12 perguntas e 6 marcações em 7 dias, temperatura 18, quente">
+          <svg class="cartao__icone" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M13 5a3 3 0 0 1 6 0v13.2a6 6 0 1 1-6 0Z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg>
+          <span class="cartao__papel">Professor · 7 dias</span>
+          <div class="cena" aria-hidden="true">
+            <div class="orbita"></div>
+            <div class="esfera"></div>
+          </div>
+          <span class="pilula pilula--perg"><i class="ponto ponto--rosa"></i><span class="num" data-valor="perguntas">12</span>&nbsp;perguntas</span>
+          <span class="pilula pilula--tambem"><i class="ponto ponto--blush"></i><span class="num" data-valor="tambem">6</span>&nbsp;também tenho</span>
+          <span class="pilula pilula--temp"><span class="num" data-valor="temp">18</span>&nbsp;·&nbsp;<span data-faixa>Quente</span></span>
+          <h3 class="cartao__titulo">Veja o que a turma <strong>ainda não entendeu.</strong></h3>
+        </article>
+
+        <article class="cartao cartao--monitor" tabindex="0" role="group" aria-label="Monitor ou professor: valida a melhor resposta">
+          <svg class="cartao__icone" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 4l10 4v7c0 6-4.5 10.5-10 13C10.5 25.5 6 21 6 15V8Z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M11.5 16l3.5 3.5 6-7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="cartao__papel">Monitor · Professor</span>
+          <div class="banda" aria-hidden="true"></div>
+          <ul class="estados">
+            <li class="estado"><i class="ponto ponto--blush"></i><span>Resposta de um colega</span><em>em análise</em></li>
+            <li class="estado"><i class="ponto"></i><span>Validada por Prof. Rafael</span><em><span aria-hidden="true">✔</span> validada</em></li>
+          </ul>
+          <h3 class="cartao__titulo">Validada.</h3>
+        </article>
+      </div>
     </section>
 
     <section class="secao" id="como-funciona" aria-labelledby="titulo-como-funciona">
       <h2 id="titulo-como-funciona">Como funciona</h2>
       <p class="secao__sub">Três passos, do problema à resposta em que dá para confiar.</p>
-      <% passos.forEach(function (p, i) { %>
-        <div class="trecho">
-          <img class="trecho__icone" src="<%= IMG %><%= p.icone %>" width="72" height="72" alt="<%= p.alt %>">
-          <div class="trecho__texto">
-            <h3><span class="trecho__n" aria-hidden="true"><%= i + 1 %>.</span> <%= p.titulo %></h3>
-            <p><%= p.texto %></p>
-          </div>
+
+      <div class="faixa faixa--larga" aria-hidden="true">
+        <div class="faixa__trilho">
+          <% repetir(fluxo).forEach(function (f) { %><span class="faixa__item"><%= f %></span><% }); %>
         </div>
-      <% }); %>
+      </div>
+
+      <ol class="etapas" role="list">
+        <li class="etapa">
+          <span class="etapa__n" aria-hidden="true">1</span>
+          <h3>Pergunte pela disciplina</h3>
+          <p>Escolha a matéria e escreva a dúvida. Enquanto você digita o título, a Ágora mostra perguntas parecidas. Se alguém já perguntou, basta marcar que você também tem essa dúvida.</p>
+          <div class="etapa__demo" aria-hidden="true">
+            <span class="chip">Banco de Dados</span>
+            <span class="chip chip--viva"><i class="ponto"></i>1 pergunta parecida</span>
+          </div>
+        </li>
+        <li class="etapa">
+          <span class="etapa__n" aria-hidden="true">2</span>
+          <h3>A turma ajuda</h3>
+          <p>Colegas respondem e votam nas respostas que mais ajudaram. Ninguém repete a mesma pergunta, e cada contribuição rende pontos.</p>
+          <div class="etapa__demo" aria-hidden="true">
+            <span class="chip chip--viva"><i class="ponto"></i>5 colegas também têm</span>
+            <span class="chip">Útil (4)</span>
+          </div>
+        </li>
+        <li class="etapa">
+          <span class="etapa__n" aria-hidden="true">3</span>
+          <h3>O professor valida</h3>
+          <p>Professor ou monitor marca a resposta certa. Ela fica fixada no topo, com o nome de quem validou, e é nela que a turma pode confiar.</p>
+          <div class="etapa__demo" aria-hidden="true">
+            <span class="selo"><span aria-hidden="true">✔</span> Validada</span>
+            <span class="chip">Prof. Rafael</span>
+          </div>
+        </li>
+      </ol>
     </section>
 
-    <section class="secao secao--rosa" id="recursos" aria-labelledby="titulo-recursos">
+    <section class="secao secao--rosa secao--recursos" id="recursos" aria-labelledby="titulo-recursos">
+      <div class="linhas" aria-hidden="true">
+        <% for (let i = 0; i < 12; i++) { %><span class="linha linha--esq" style="--i: <%= i %>"></span><% } %>
+        <% for (let i = 0; i < 12; i++) { %><span class="linha linha--dir" style="--i: <%= i %>"></span><% } %>
+        <% for (let i = 0; i < 12; i++) { %><span class="linha linha--topo" style="--i: <%= i %>"></span><% } %>
+      </div>
+
       <h2 id="titulo-recursos">Feita para o que o WhatsApp não resolve</h2>
       <p class="secao__sub">No grupo, a resposta certa se perde na rolagem. Aqui, tudo fica ligado à disciplina e ao assunto.</p>
-      <% recursos.forEach(function (r) { %>
-        <div class="trecho">
-          <img class="trecho__icone" src="<%= IMG %><%= r.icone %>" width="72" height="72" alt="<%= r.alt %>">
-          <div class="trecho__texto">
-            <h3><%= r.titulo %></h3>
-            <p><%= r.texto %></p>
-          </div>
-        </div>
-      <% }); %>
-    </section>
 
-    <section class="secao" id="perfis" aria-labelledby="titulo-perfis">
-      <h2 id="titulo-perfis">Um espaço, três papéis</h2>
-      <% perfis.forEach(function (p) { %>
-        <div class="trecho">
-          <img class="trecho__icone" src="<%= IMG %><%= p.icone %>" width="72" height="72" alt="<%= p.alt %>">
-          <div class="trecho__texto">
-            <h3><%= p.nome %></h3>
-            <p><%= p.texto %></p>
+      <div class="vidros">
+        <article class="vidro">
+          <p class="vidro__rotulo">Recurso // 01</p>
+          <h3>Também tenho essa dúvida</h3>
+          <p>Um toque mostra o tamanho da dúvida da turma. Com 5 marcações sem resposta validada, a pergunta ganha destaque e o professor recebe um alerta.</p>
+          <div class="vidro__demo" aria-hidden="true">
+            <span class="marcas">
+              <% for (let i = 0; i < 5; i++) { %><i class="marca" style="--i: <%= i %>"></i><% } %>
+            </span>
+            <span class="chip chip--rosa"><span aria-hidden="true">▲</span> Muita gente com essa dúvida</span>
           </div>
-        </div>
-      <% }); %>
-    </section>
+        </article>
 
-    <section class="secao" id="antes-de-entrar" aria-labelledby="titulo-antes">
-      <h2 id="titulo-antes">Antes de entrar</h2>
-      <p class="secao__sub">O que você precisa saber para criar a sua conta com tranquilidade.</p>
-      <% requisitos.forEach(function (q) { %>
-        <div class="trecho">
-          <img class="trecho__icone" src="<%= IMG %><%= q.icone %>" width="72" height="72" alt="<%= q.alt %>">
-          <div class="trecho__texto">
-            <h3><%= q.titulo %></h3>
-            <p><%= q.texto %></p>
+        <article class="vidro">
+          <p class="vidro__rotulo">Recurso // 02</p>
+          <h3>Resposta validada</h3>
+          <p>No máximo uma resposta oficial por pergunta, sinalizada com ícone e texto, nunca só com cor. Você sabe logo em qual confiar.</p>
+          <div class="vidro__demo vidro__demo--coluna" aria-hidden="true">
+            <span class="selo"><span aria-hidden="true">✔</span> Resposta validada por Prof. Rafael</span>
+            <span class="barra" style="width: 90%"></span>
+            <span class="barra" style="width: 60%"></span>
           </div>
-        </div>
-      <% }); %>
-      <div class="secao__acoes">
-        <a class="btn" href="/cadastro">Tenho o código, quero me cadastrar</a>
-        <a class="btn btn--contorno" href="#contato">Não tenho o código</a>
+        </article>
+
+        <article class="vidro">
+          <p class="vidro__rotulo">Recurso // 03</p>
+          <h3>Termômetro de dúvidas</h3>
+          <p>Cada disciplina aparece como fria, morna ou quente, com base nos últimos 7 dias. A turma vê só números gerais; o professor vê o detalhe.</p>
+          <div class="vidro__demo" aria-hidden="true">
+            <div class="termo">
+              <span class="termo__faixa termo__faixa--frio">Frio 0–4</span>
+              <span class="termo__faixa termo__faixa--morno">Morno 5–14</span>
+              <span class="termo__faixa termo__faixa--quente">Quente 15+</span>
+              <i class="termo__marcador"></i>
+            </div>
+          </div>
+        </article>
+
+        <article class="vidro">
+          <p class="vidro__rotulo">Recurso // 04</p>
+          <h3>Pontos por ajudar</h3>
+          <p>Responder vale 1 ponto, receber um voto útil vale 2 e ter a resposta validada vale 10. A pontuação nunca é negativa: o incentivo é ajudar.</p>
+          <div class="vidro__demo" aria-hidden="true">
+            <span class="chip">+1 resposta</span>
+            <span class="chip">+2 voto útil</span>
+            <span class="chip chip--rosa">+10 validada</span>
+          </div>
+        </article>
       </div>
-    </section>
-
-    <section class="secao secao--contato" id="contato" aria-labelledby="titulo-contato">
-      <h2 id="titulo-contato">Fale com a gente</h2>
-      <p class="secao__sub">Sem o código da turma? Peça ao seu professor ou à coordenação. Dúvidas sobre o projeto, procure a equipe pelas redes.</p>
-      <ul class="redes">
-        <% redes.forEach(function (r) { %>
-          <li>
-            <a class="btn btn--contorno btn--rede" href="<%= r.href %>" target="_blank" rel="noopener noreferrer">
-              <img src="<%= IMG %><%= r.icone %>" width="24" height="24" alt="<%= r.alt %>">
-              <%= r.nome %>
-            </a>
-          </li>
-        <% }); %>
-      </ul>
     </section>
 
     <section class="cta">
@@ -210,10 +325,100 @@ const titulo = locals.titulo || 'Ágora — o fórum da sua turma';
     </section>
   </main>
 
-  <footer class="rodape">
-    <p>Ágora · Fórum escolar de perguntas e respostas</p>
-    <p class="rodape__nota">Coletamos o mínimo de dados pessoais, conforme a LGPD.</p>
-    <p class="rodape__nota">Projeto Integrador · Senac RN · MedioTec</p>
+  <footer class="rodape-camadas">
+    <svg class="rodape-camadas__defs" aria-hidden="true" focusable="false">
+      <defs>
+        <filter id="efeito-vidro" x="-50%" y="-50%" width="200%" height="200%">
+          <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.25" result="outer-shadow"/>
+          <feComponentTransfer in="SourceAlpha" result="alpha"><feFuncA type="linear" slope="1"/></feComponentTransfer>
+          <feOffset in="alpha" dx="0" dy="4" result="offset-white"/>
+          <feGaussianBlur in="offset-white" stdDeviation="4" result="blur-white"/>
+          <feComposite in="alpha" in2="blur-white" operator="out" result="inner-white-mask"/>
+          <feFlood flood-color="#ffffff" flood-opacity="0.25" result="white-fill"/>
+          <feComposite in="white-fill" in2="inner-white-mask" operator="in" result="inner-white-final"/>
+          <feGaussianBlur in="alpha" stdDeviation="6" result="blur-black"/>
+          <feComposite in="alpha" in2="blur-black" operator="out" result="inner-black-mask"/>
+          <feFlood flood-color="#000000" flood-opacity="0.25" result="black-fill"/>
+          <feComposite in="black-fill" in2="inner-black-mask" operator="in" result="inner-black-final"/>
+          <feMerge>
+            <feMergeNode in="outer-shadow"/>
+            <feMergeNode in="SourceGraphic"/>
+            <feMergeNode in="inner-white-final"/>
+            <feMergeNode in="inner-black-final"/>
+          </feMerge>
+        </filter>
+      </defs>
+    </svg>
+
+    <div class="rodape-camadas__corpo">
+      <div class="rodape-camadas__caixa">
+        <div class="rodape-camadas__marca-bloco">
+          <a class="rodape-camadas__marca" href="/" aria-label="Ágora, página inicial">
+            <span class="rodape-camadas__logo"><img src="<%= IMG %>logo.png" width="24" height="24" alt=""></span>
+            <span>Ágo<span class="rodape-camadas__ra">ra</span></span>
+          </a>
+          <p class="rodape-camadas__descricao">Fórum escolar de perguntas e respostas, com a resposta certa validada pelo professor.</p>
+          <ul class="rodape-camadas__redes">
+            <li>
+              <a class="rodape-camadas__rede" href="#" aria-label="Instagram da Ágora" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5"/></svg>
+              </a>
+            </li>
+            <li>
+              <a class="rodape-camadas__rede" href="#" aria-label="GitHub do projeto" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+              </a>
+            </li>
+            <li>
+              <a class="rodape-camadas__rede" href="#" aria-label="LinkedIn da equipe" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+              </a>
+            </li>
+            <li>
+              <a class="rodape-camadas__rede" href="#" aria-label="E-mail da equipe" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <nav class="rodape-camadas__coluna" aria-labelledby="rodape-explorar">
+          <h2 class="rodape-camadas__titulo" id="rodape-explorar">Explorar</h2>
+          <ul>
+            <li><a href="#como-funciona">Como funciona</a></li>
+            <li><a href="#recursos">Recursos</a></li>
+            <li><a href="#na-pratica">Na prática</a></li>
+          </ul>
+        </nav>
+
+        <nav class="rodape-camadas__coluna" aria-labelledby="rodape-acesso">
+          <h2 class="rodape-camadas__titulo" id="rodape-acesso">Acesso</h2>
+          <ul>
+            <li><a href="/login">Entrar</a></li>
+            <li><a href="/cadastro">Criar conta</a></li>
+            <li><a href="#contato">Fale com a gente</a></li>
+          </ul>
+        </nav>
+
+        <div class="rodape-camadas__coluna">
+          <h2 class="rodape-camadas__titulo" id="rodape-projeto">Projeto</h2>
+          <ul aria-labelledby="rodape-projeto">
+            <li>Senac-RN</li>
+            <li>MedioTec</li>
+            <li>Projeto Integrador</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="rodape-camadas__legal">
+        <p>© 2026 Ágora · Senac RN · MedioTec</p>
+        <div class="rodape-camadas__legal-direita">
+          <p>Coletamos o mínimo de dados pessoais, conforme a LGPD.</p>
+          <span class="rodape-camadas__separador" aria-hidden="true"></span>
+          <a href="#">Voltar ao topo</a>
+        </div>
+      </div>
+    </div>
   </footer>
 </body>
 </html>
