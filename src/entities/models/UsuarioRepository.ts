@@ -1,4 +1,4 @@
-import { run, select, selectOne } from './Dbconnection';
+import { run, select, selectOne, withTransaction } from './Dbconnection';
 import type { IUsuarioRepository } from './interface/Iusuariosrepository';
 import type { EstatisticasUsuario, NovoUsuario, Perfil, ResultadoFalhaLogin, UsuarioRow } from './Types';
 
