@@ -24,6 +24,16 @@ import { rotaNaoEncontrada, tratarErros } from "./middlewares/erros.middleware";
 const app: Application = express();
 
 /**
+ * Para poder todas as páginas trabalharem com a IMG do footer
+ */
+
+app.use((req, res, next) => {
+  res.locals.IMG = '/img/'; 
+  next();
+});
+
+
+/**
  * Permite receber requisições com corpo em formato JSON.
  */
 app.use(express.json());
