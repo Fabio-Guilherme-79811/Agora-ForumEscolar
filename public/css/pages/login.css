@@ -1,0 +1,114 @@
+/*
+ * pages/auth.css — Estilos das telas de login e cadastro da Ágora.
+ * Usa as variáveis e componentes de /css/global.css (.btn, .topo, .rodape, .pular).
+ */ 
+ body.auth {
+   margin: 0;
+   min-height: 100vh;
+   display: flex;
+   flex-direction: column;
+   background: var(--creme);
+   color: var(--tinta);
+   font: 400 1rem/1.6 var(--fonte-texto);
+ }
+ .auth h1,
+ .auth h2,
+ .auth h3 {
+   font-family: var(--fonte-titulo);
+   line-height: 1.15;
+   margin: 0 0 .5em;
+ }
+ .auth p { margin: 0 0 1em; }
+ .auth :focus-visible { outline: 3px solid var(--rosa); outline-offset: 3px; }
+ 
+ /* Área central */
+ .auth__main {
+   flex: 1;
+   display: grid;
+   place-items: center;
+   padding: clamp(24px, 6vw, 64px) clamp(16px, 5vw, 56px);
+ }
+ 
+ /* Cartão */
+ .auth__cartao {
+   width: 100%;
+   max-width: 440px;
+   background: var(--papel);
+   border: 1px solid var(--linha);
+   border-top: 5px solid var(--rosa);
+   border-radius: 14px;
+   padding: clamp(20px, 5vw, 36px);
+   box-shadow: 0 8px 24px rgba(58, 45, 50, .08);
+ }
+ .auth__cartao h1 { font-size: clamp(1.6rem, 4vw, 2rem); }
+ .auth__sub { color: var(--suave); margin-bottom: 1.25em; }
+ 
+ /* Alertas (ícone + texto, nunca só cor) */
+ .auth__avisos:empty { display: none; }
+ .alerta {
+   display: flex;
+   gap: 10px;
+   align-items: flex-start;
+   margin: 0 0 1em;
+   padding: 12px 14px;
+   border-radius: 10px;
+   border: 1px solid var(--linha);
+   border-left-width: 5px;
+   background: var(--creme);
+   color: var(--tinta);
+   font-size: .95rem;
+   line-height: 1.4;
+ }
+ .alerta [aria-hidden="true"] { flex: none; font-weight: 700; }
+ .alerta--erro    { border-left-color: var(--rosa); }
+ .alerta--erro    [aria-hidden="true"] { color: var(--rosa); }
+ .alerta--aviso   { border-left-color: #b7791f; }
+ .alerta--aviso   [aria-hidden="true"] { color: #b7791f; }
+ .alerta--sucesso { border-left-color: var(--salvia); }
+ .alerta--sucesso [aria-hidden="true"] { color: #5d6b4a; }
+ 
+ /* Formulário */
+ .form { display: grid; gap: 16px; margin-bottom: 1.25em; }
+ .campo { display: grid; gap: 6px; }
+ .campo__rotulo { font-weight: 700; font-size: .95rem; }
+ .campo__ajuda { font-size: .85rem; color: var(--suave); margin: 0; }
+ .campo__erro { font-size: .85rem; color: var(--rosa); font-weight: 700; margin: 0; }
+ 
+ .campo__input {
+   width: 100%;
+   min-height: 46px;
+   padding: 10px 14px;
+   font: inherit;
+   color: var(--tinta);
+   background: var(--papel);
+   border: 2px solid var(--linha);
+   border-radius: 10px;
+ }
+ .campo__input::placeholder { color: var(--suave); opacity: .8; }
+ .campo__input:hover { border-color: var(--blush); }
+ .campo__input:focus { border-color: var(--rosa); outline: none; box-shadow: 0 0 0 3px rgba(211, 12, 123, .25); }
+ .campo__input:user-invalid,
+ .campo__input[aria-invalid="true"] { border-color: var(--rosa); }
+ .campo__input:disabled {
+   background: var(--creme);
+   color: var(--suave);
+   border-style: dashed;
+   cursor: not-allowed;
+ }
+ 
+ /* Botão de largura total */
+ .btn--bloco { display: block; width: 100%; min-height: 46px; font: inherit; font-weight: 700; cursor: pointer; }
+ .btn:disabled,
+ .btn[disabled] { opacity: .55; cursor: not-allowed; filter: none; }
+ 
+ /* Link de troca login <-> cadastro */
+ .auth__troca { text-align: center; color: var(--suave); margin: 0; font-size: .95rem; }
+ .auth__troca a { color: var(--rosa); font-weight: 700; }
+ 
+ /* Mobile (a partir de 360px) */
+ @media (max-width: 400px) {
+   .auth__cartao { border-radius: 10px; padding: 18px 16px; }
+ }
+ @media (prefers-reduced-motion: reduce) {
+   .campo__input { transition: none; }
+ }

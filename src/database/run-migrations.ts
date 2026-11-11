@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { Conexao } from "./config/conexao-database"; 
+import { Conexao } from "./config/conexao-database";
 
 async function runMigrations() {
   const dir = path.join(__dirname, "migrations");
@@ -9,7 +9,7 @@ async function runMigrations() {
   for (const arquivo of arquivos) {
     const sql = fs.readFileSync(path.join(dir, arquivo), "utf-8");
     console.log(`Executando ${arquivo}...`);
-    await Conexao.obterPool().query(sql); 
+    await Conexao.obterPool().query(sql);
   }
 
   console.log("Todas as migrations foram executadas.");

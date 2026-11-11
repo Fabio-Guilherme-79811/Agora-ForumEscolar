@@ -1,0 +1,85 @@
+<%
+/*
+ * partials/header.ejs — Cabeçalho flutuante em pílula da Ágora, com gaveta
+ * de navegação para o mobile. Serve às páginas públicas e às logadas.
+ * Parâmetros (todos opcionais):
+ *   usuario  (objeto)  nome e perfil. Sem usuário, vale o modo público:
+ *                      links da landing, "Entrar" e "Criar conta".
+ *   ativo    (texto)   marca o link atual: 'perguntas', 'disciplinas',
+ *                      'termometro', 'admin', 'login' ou 'cadastro'.
+ *   sobrepor (boolean) true só na landing: a barra flutua sobre a capa.
+ * O link do painel aparece para Professor, Monitor e Admin (RN-30); quem
+ * decide o que cada perfil vê no painel é a rota.
+ * Carrega tema.js e menu-landing.js: não repita esses scripts nas páginas.
+ * Estilos: /css/components/cabeca-rodape.css
+ * Regra de segurança: apenas a tag de saída escapada do EJS.
+ */
+const IMG = '/css/uploads/materials/';
+const usuario = locals.usuario || null;
+const ativo = locals.ativo || '';
+const sobrepor = Boolean(locals.sobrepor);
+const podeVerPainel = Boolean(usuario) && ['Professor', 'Monitor', 'Admin'].includes(usuario.perfil);
+const links = usuario
+  ? [
+      { chave: 'perguntas', href: '/perguntas', rotulo: 'Perguntas' },
+      { chave: 'disciplinas', href: '/disciplinas', rotulo: 'Disciplinas' },
+      { chave: 'termometro', href: '/termometro', rotulo: 'Termômetro' }
+    ].concat(podeVerPainel ? [{ chave: 'admin', href: '/admin', rotulo: 'Painel' }] : [])
+  : [
+      { chave: 'na-pratica', href: '/#na-pratica', rotulo: 'Na prática' },
+      { chave: 'como-funciona', href: '/#como-funciona', rotulo: 'Como funciona' },
+      { chave: 'recursos', href: '/#recursos', rotulo: 'Recursos' }
+    ];
+%>
+<header class="cabeca<%= sobrepor ? ' cabeca--sobre' : '' %>">
+  <div class="cabeca__barra">
+    <a class="marca" href="/" aria-label="Ágora, página inicial"><img src="<%= IMG %>logo.png" height="36" width="36" alt="">Ágo<span>ra</span></a>
+
+    <nav class="cabeca__nav" aria-label="Principal">
+      <% links.forEach(function (l) { %>
+        <a class="cabeca__link" href="<%= l.href %>" aria-current="<%= l.chave === ativo ? 'page' : 'false' %>"><%= l.rotulo %></a>
+      <% }); %>
+    </nav>
+
+    <div class="cabeca__acoes">
+      <% if (usuario) { %>
+        <a class="cabeca__usuario" href="/perfil"><%= usuario.nome %></a>
+        <form class="cabeca__form" action="/logout" method="post">
+          <button class="cabeca__entrar" type="submit">Sair</button>
+        </form>
+      <% } else { %>
+        <a class="cabeca__entrar" href="/login" aria-current="<%= ativo === 'login' ? 'page' : 'false' %>">Entrar</a>
+        <a class="cabeca__cta" href="/cadastro" aria-current="<%= ativo === 'cadastro' ? 'page' : 'false' %>">Criar conta</a>
+      <% } %>
+      <button class="cabeca__tema" type="button" data-alternar-tema aria-label="Alternar tema claro e escuro">
+        <img src="<%= IMG %>tema.png" height="22" width="19" alt="">
+      </button>
+      <button class="cabeca__menu" type="button" data-menu aria-expanded="false" aria-controls="gaveta">
+        Menu
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 10l5-5 5 5"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="gaveta" id="gaveta">
+  <button class="btn btn--contorno btn--topo gaveta__fechar" type="button" data-menu-fechar>Fechar</button>
+  <nav aria-label="Menu em tela cheia">
+    <% links.forEach(function (l) { %>
+      <a href="<%= l.href %>"><%= l.rotulo %></a>
+    <% }); %>
+    <% if (usuario) { %>
+      <a href="/perfil"><%= usuario.nome %></a>
+      <form class="gaveta__form" action="/logout" method="post">
+        <button class="gaveta__sair" type="submit">Sair</button>
+      </form>
+    <% } else { %>
+      <a href="/login">Entrar</a>
+      <a href="/cadastro">Criar conta</a>
+    <% } %>
+  </nav>
+  <p class="gaveta__rodape">© 2026 Ágora · Senac-RN</p>
+</div>
+
+<script src="/js/tema.js" defer></script>
+<script src="/js/menu-landing.js" defer></script>

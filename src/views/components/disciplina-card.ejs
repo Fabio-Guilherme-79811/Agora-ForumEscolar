@@ -1,0 +1,18 @@
+<%
+/*
+ * components/disciplina-card.ejs — Cartão de uma disciplina.
+ * Uso: include('../../components/disciplina-card', { disciplina: d })
+ * Campos esperados: id, nome, totalTopicos, totalAbertas (dúvidas abertas).
+ * Regra de segurança: apenas a tag de saída escapada do EJS.
+ */
+const d = disciplina;
+const totalTopicos = Number(d.totalTopicos) || 0;
+const totalAbertas = Number(d.totalAbertas) || 0;
+%>
+<article class="cartao-nav">
+  <h2 class="cartao-nav__titulo"><a href="/disciplinas/<%= d.id %>"><%= d.nome %></a></h2>
+  <p class="cartao-nav__meta"><%= totalTopicos %> <%= totalTopicos === 1 ? 'tópico' : 'tópicos' %></p>
+  <p class="cartao-nav__duvidas">
+    <span aria-hidden="true">●</span> <%= totalAbertas %> <%= totalAbertas === 1 ? 'dúvida aberta' : 'dúvidas abertas' %>
+  </p>
+</article>

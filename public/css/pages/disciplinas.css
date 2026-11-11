@@ -1,0 +1,71 @@
+/*
+ * pages/disciplinas.css — Estilos das telas de disciplinas e tópicos da Ágora.
+ * Usa as variáveis e componentes de /css/global.css (.btn, .topo, .rodape, .pular).
+ * Trilha e topo logado: /css/components/navbar.css. Cartões: /css/components/cards.css.
+ */
+body.disciplinas {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--creme);
+  color: var(--tinta);
+  font: 400 1rem/1.6 var(--fonte-texto);
+}
+.disciplinas h1,
+.disciplinas h2,
+.disciplinas h3 {
+  font-family: var(--fonte-titulo);
+  line-height: 1.15;
+  margin: 0 0 .5em;
+}
+.disciplinas p { margin: 0 0 1em; }
+.disciplinas :focus-visible { outline: 3px solid var(--rosa); outline-offset: 3px; }
+
+/* Área central */
+.pagina__main {
+  flex: 1;
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: clamp(20px, 5vw, 48px) clamp(16px, 5vw, 32px);
+}
+.pagina__cabeca {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px 20px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.pagina__cabeca h1 { font-size: clamp(1.6rem, 4vw, 2.1rem); margin: 0; }
+.pagina__sub { color: var(--suave); margin: 0; }
+.pagina__acoes { display: flex; gap: 12px 20px; align-items: center; flex-wrap: wrap; }
+.pagina__link { color: var(--rosa); font-weight: 700; }
+
+/* Grades e listas */
+.grade {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+.lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+
+/* Estado vazio */
+.vazio {
+  text-align: center;
+  background: var(--papel);
+  border: 2px dashed var(--linha);
+  border-radius: 14px;
+  padding: clamp(24px, 6vw, 40px) 20px;
+}
+.vazio h2 { font-size: 1.3rem; }
+.vazio p { color: var(--suave); max-width: 46ch; margin: 0 auto 1.25em; }
+
+/* Mobile (a partir de 360px) */
+@media (max-width: 400px) {
+  .pagina__acoes, .pagina__acoes .btn { width: 100%; }
+}
