@@ -20,7 +20,7 @@
   justify-content: center;
   gap: 24px;
   text-align: center;
-  padding: clamp(72px, 10vw, 120px) 36px 160px;
+  padding: clamp(140px, 18vw, 188px) 36px 160px;
   background:
     radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--blush) 35%, transparent) 0%, transparent 60%),
     var(--creme);
@@ -159,7 +159,7 @@
 
 /* Mobile (a partir de 360px) */
 @media (max-width: 810px) {
-  .capa { min-height: 760px; padding: 96px 24px 120px; }
+  .capa { min-height: 760px; padding: 164px 24px 120px; }
   .linha--esq, .linha--dir { display: none; }
   .linha--topo { display: block; }
   .capa__acoes { flex-direction: column; width: 100%; max-width: 320px; }
@@ -510,4 +510,235 @@
 
 @media (prefers-reduced-motion: reduce) {
   .rodape-camadas__vidro, .rodape-camadas__rede, .rodape-camadas a { transition: none; }
+}
+
+/* Cabeçalho flutuante: barra em pílula com vidro.
+ * O wrapper é transparente e sobrepõe o topo da capa (margin-bottom negativo),
+ * então a capa precisa de padding-top extra (veja o ajuste logo abaixo). */
+.cabeca {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 10;
+  margin-bottom: -68px;
+  padding: 12px clamp(12px, 3vw, 36px) 0;
+  pointer-events: none;
+}
+.cabeca__barra {
+  pointer-events: auto;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 8px 10px 8px 16px;
+  border: 1px solid color-mix(in srgb, var(--barra-texto) 14%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--barra) 82%, transparent);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--barra-texto) 10%, transparent), 0 8px 24px rgba(58, 45, 50, .22);
+  color: var(--barra-texto);
+}
+.cabeca .marca { font-size: 1.4rem; }
+.cabeca .marca img { width: 36px; height: 36px; margin-right: 8px; }
+
+/* Links em pílula, centralizados */
+.cabeca__nav { display: flex; gap: 4px; justify-self: center; }
+.cabeca__link {
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: .875rem;
+  font-weight: 500;
+  color: color-mix(in srgb, var(--barra-texto) 75%, transparent);
+  text-decoration: none;
+  transition: background-color .2s, color .2s;
+}
+.cabeca__link:hover { background: color-mix(in srgb, var(--barra-texto) 12%, transparent); color: var(--barra-texto); }
+
+/* Ações à direita */
+.cabeca__acoes { display: flex; align-items: center; gap: 8px; }
+.cabeca__entrar {
+  display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px;
+  border: 1px solid color-mix(in srgb, var(--barra-texto) 28%, transparent);
+  border-radius: 999px;
+  font-size: .875rem; font-weight: 500;
+  color: var(--barra-texto); text-decoration: none;
+  transition: background-color .2s;
+}
+.cabeca__entrar:hover { background: color-mix(in srgb, var(--barra-texto) 12%, transparent); }
+.cabeca__cta {
+  display: inline-flex; align-items: center; min-height: 40px; padding: 0 18px;
+  border-radius: 999px;
+  background: var(--rosa);
+  color: var(--papel);
+  font-size: .875rem; font-weight: 700; text-decoration: none;
+  transition: transform .2s, box-shadow .2s;
+}
+.cabeca__cta:hover { transform: translateY(-1px); box-shadow: 0 4px 20px color-mix(in srgb, var(--rosa) 45%, transparent); }
+/* No tema escuro o rosa é mais claro: o texto precisa escurecer para manter contraste */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cabeca__cta { color: var(--creme); }
+}
+:root[data-theme="dark"] .cabeca__cta { color: var(--creme); }
+
+.cabeca__tema {
+  display: grid; place-items: center; width: 40px; height: 40px;
+  border: 1px solid color-mix(in srgb, var(--barra-texto) 28%, transparent);
+  border-radius: 50%;
+  background: transparent; cursor: pointer;
+  transition: background-color .2s;
+}
+.cabeca__tema:hover { background: color-mix(in srgb, var(--barra-texto) 12%, transparent); }
+.cabeca__tema img { width: auto; height: 22px; }
+
+/* Botão Menu: pílula clara sobre a barra escura (só no mobile) */
+.cabeca__menu {
+  display: none; align-items: center; gap: 6px; min-height: 40px; padding: 0 16px;
+  border: 0; border-radius: 999px;
+  background: var(--barra-texto); color: var(--barra);
+  font: inherit; font-size: .875rem; font-weight: 500; cursor: pointer;
+}
+.cabeca__menu svg { transition: transform .2s; }
+.cabeca__menu[aria-expanded="true"] svg { transform: rotate(180deg); }
+
+@media (max-width: 810px) {
+  .cabeca__barra { grid-template-columns: 1fr auto; }
+  .cabeca__nav, .cabeca__entrar, .cabeca__cta { display: none; }
+  .cabeca__menu { display: inline-flex; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cabeca__link, .cabeca__entrar, .cabeca__cta, .cabeca__tema, .cabeca__menu svg { transition: none; }
+}
+
+/* Chamada final: seção cheia em rosa, conteúdo centralizado e cena de arcos.
+ * Sobrescreve o .cta do global.css (que continua valendo nas outras telas). */
+.cta {
+  --cta-fundo: var(--rosa);
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  padding: 0;
+  background: var(--cta-fundo);
+  color: #fff; /* branco puro: é o que dá contraste de 4,8:1 sobre o rosa */
+}
+/* No tema escuro o --rosa fica mais claro; escurecemos o fundo para o texto branco continuar legível */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cta { --cta-fundo: color-mix(in srgb, var(--rosa) 70%, var(--barra)); }
+}
+:root[data-theme="dark"] .cta { --cta-fundo: color-mix(in srgb, var(--rosa) 70%, var(--barra)); }
+
+.cta__conteudo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: clamp(64px, 10vw, 120px) 32px clamp(32px, 5vw, 64px);
+  text-align: center;
+  position: relative;
+  z-index: 3;
+}
+.cta__logo {
+  display: grid;
+  place-items: center;
+  width: 80px;
+  height: 80px;
+  margin-bottom: clamp(24px, 4vw, 48px);
+  border-radius: 50%;
+  background: var(--barra);
+}
+.cta .cta__missao {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 32px;
+  font: 400 1rem/1.6 var(--fonte-texto);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.cta .cta__assinatura {
+  margin: 0 0 32px;
+  font: 400 clamp(4.5rem, 14vw, 7.5rem)/1 var(--fonte-titulo);
+  letter-spacing: -.04em;
+}
+.cta .cta__texto {
+  width: 400px;
+  max-width: 100%;
+  margin: 0 0 24px;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.cta .cta__botao {
+  margin-top: 16px;
+  background: var(--barra-texto);
+  border-color: var(--barra-texto);
+  color: var(--barra);
+}
+
+/* Cena: arcos concêntricos (ágora vista de frente), com degradê de 100px no topo */
+.cta__cena {
+  position: relative;
+  flex: none;
+  width: 100%;
+  height: clamp(300px, 52vw, 700px);
+  overflow: hidden;
+  background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--barra) 35%, var(--cta-fundo)));
+}
+.cta__cena::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 70% at 50% 100%, color-mix(in srgb, var(--barra-texto) 35%, transparent), transparent 70%);
+}
+.cta__cena::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(to bottom, var(--cta-fundo), transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+.cta__arco {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0 auto;
+  width: calc(18% + var(--i) * 14%);
+  aspect-ratio: 2 / 1;
+  border: 2.5px solid color-mix(in srgb, var(--barra-texto) 70%, transparent);
+  border-bottom: 0;
+  border-radius: 999px 999px 0 0;
+  transform-origin: 50% 100%;
+  opacity: .15;
+  animation: arco 5s ease-in-out infinite;
+  animation-delay: calc(var(--i) * .4s);
+}
+@keyframes arco {
+  0%, 100% { opacity: .15; transform: scale(.96); }
+  50%      { opacity: .7;  transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cta__arco { animation: none; opacity: .4; }
+}
+
+/* PNG da chamada final: fica embaixo do botão, apoiado no pé da cena,
+ * com os arcos animados ao fundo. */
+.cta__arcos { position: absolute; inset: 0; }
+.cta__png {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  z-index: 3;
+  transform: translateX(-50%);
+  width: min(96%, 1100px);   /* tamanho desejado, mesmo se o arquivo for pequeno */
+  max-width: none;
+  height: auto;
+  max-height: 100%;          /* nunca passa da altura da cena */
+  object-fit: contain;       /* sem distorcer se a altura limitar */
 }

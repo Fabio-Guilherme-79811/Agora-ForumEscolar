@@ -77,25 +77,28 @@ const titulo = locals.titulo || 'Ágora — o fórum da sua turma';
 <body class="landing">
   <a class="pular" href="#conteudo">Pular para o conteúdo</a>
 
-  <header class="topo">
-    <a class="marca" href="/" aria-label="Ágora, página inicial"><img src="<%= IMG %>logo.png" height="50" width="50" alt="Logo da Ágora">Ágo<span>ra</span></a>
-    <nav class="topo__nav" aria-label="Principal">
-      <a class="topo__link" href="#como-funciona">Como funciona</a>
-      <a class="topo__link" href="#recursos">Recursos</a>
-      <a class="topo__link" href="#como-funciona">Como funciona</a>
-      <a class="topo__link" href="#recursos">Recursos</a>
-      <a class="topo__link" href="#na-pratica">Na prática</a>
-      <a class="btn btn--contorno btn--topo btn--entrar" href="/login">Entrar</a>
-      <div role="group" aria-label="Modo escuro">
-        <button class="btn btn--contorno btn--topo" type="button" data-alternar-tema aria-label="Alternar tema claro e escuro">
-          <img src="<%= IMG %>tema.png" height="35" width="30" alt="">
+  <header class="cabeca">
+    <div class="cabeca__barra">
+      <a class="marca" href="/" aria-label="Ágora, página inicial"><img src="<%= IMG %>logo.png" height="36" width="36" alt="">Ágo<span>ra</span></a>
+
+      <nav class="cabeca__nav" aria-label="Principal">
+        <a class="cabeca__link" href="#na-pratica">Na prática</a>
+        <a class="cabeca__link" href="#como-funciona">Como funciona</a>
+        <a class="cabeca__link" href="#recursos">Recursos</a>
+      </nav>
+
+      <div class="cabeca__acoes">
+        <a class="cabeca__entrar" href="/login">Entrar</a>
+        <a class="cabeca__cta" href="/cadastro">Criar conta</a>
+        <button class="cabeca__tema" type="button" data-alternar-tema aria-label="Alternar tema claro e escuro">
+          <img src="<%= IMG %>tema.png" height="22" width="19" alt="">
+        </button>
+        <button class="cabeca__menu" type="button" data-menu aria-expanded="false" aria-controls="gaveta">
+          Menu
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 10l5-5 5 5"/></svg>
         </button>
       </div>
-      <button class="btn btn--contorno btn--topo btn-menu" type="button" data-menu aria-expanded="false" aria-controls="gaveta">
-        Menu
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 10l5-5 5 5"/></svg>
-      </button>
-    </nav>
+    </div>
   </header>
 
   <div class="gaveta" id="gaveta">
@@ -316,13 +319,20 @@ const titulo = locals.titulo || 'Ágora — o fórum da sua turma';
       </div>
     </section>
 
-    <section class="cta">
-      <img class="cta__imagem" src="<%= IMG %>cta-ilustracao.png" width="320" height="200"
-           alt="SUGESTÃO: ilustração de uma ágora grega com pessoas reunidas, em estilo simples e traço limpo">
-      <h2>Na Grécia antiga, a ágora era onde todos se reuniam para decidir o bem comum.</h2>
-      <p>A sua turma também merece um lugar assim.</p>
-      <a class="btn btn--claro" href="/cadastro">Entrar na minha turma</a>
+    <section class="cta" aria-labelledby="titulo-cta">
+      <div class="cta__conteudo">
+        <span class="cta__logo"><img src="<%= IMG %>logo.png" width="56" height="56" alt=""></span>
+        <h2 class="cta__missao" id="titulo-cta">Na Grécia antiga, a ágora era onde todos se reuniam para decidir o bem comum</h2>
+        <p class="cta__texto">A sua turma também merece um lugar assim.</p>
+        <a class="btn btn--grande cta__botao" href="/cadastro">Entrar na minha turma</a>
+      </div>
+      <div class="cta__cena" aria-hidden="true">
+        <img class="cta__png" src="<%= IMG %>cta-imagem.png"
+          alt="SUGESTÃO: descreva o que o PNG mostra (ou use alt="" se for só decoração)">
+        <% for (let i = 0; i < 7; i++) { %><span class="cta__arco" style="--i: <%= i %>"></span><% } %>
+      </div>
     </section>
+    
   </main>
 
   <footer class="rodape-camadas">
