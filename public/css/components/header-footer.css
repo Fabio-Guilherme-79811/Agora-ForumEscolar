@@ -1,0 +1,259 @@
+/*
+ * components/header-footer.css — Cabeçalho flutuante, gaveta de navegação
+ * (mobile) e rodapé em camadas da Ágora.
+ * Usado por partials/header.ejs e partials/footer.ejs, ou seja, por todas as
+ * páginas. Depende das variáveis e da classe .marca de /css/global.css.
+ */
+
+/* ===== Cabeçalho ===== */
+.cabeca {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 10;
+  margin-bottom: 12px;
+  padding: 12px clamp(12px, 3vw, 36px) 0;
+  pointer-events: none;
+}
+/* Na landing a barra flutua sobre o topo da capa (a capa compensa com padding-top) */
+.cabeca--sobre { margin-bottom: -68px; }
+.cabeca__barra {
+  pointer-events: auto;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 8px 10px 8px 16px;
+  border: 1px solid color-mix(in srgb, var(--barra-texto) 14%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--barra) 82%, transparent);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--barra-texto) 10%, transparent), 0 8px 24px rgba(58, 45, 50, .22);
+  color: var(--barra-texto);
+}
+.cabeca .marca { font-size: 1.4rem; }
+.cabeca .marca img { width: 36px; height: 36px; margin-right: 8px; }
+
+/* Links em pílula, centralizados */
+.cabeca__nav { display: flex; gap: 4px; justify-self: center; }
+.cabeca__link,
+.cabeca__usuario {
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: .875rem;
+  font-weight: 500;
+  color: color-mix(in srgb, var(--barra-texto) 75%, transparent);
+  text-decoration: none;
+  transition: background-color .2s, color .2s;
+}
+.cabeca__link:hover,
+.cabeca__usuario:hover,
+.cabeca__link[aria-current="page"] {
+  background: color-mix(in srgb, var(--barra-texto) 12%, transparent);
+  color: var(--barra-texto);
+}
+.cabeca__usuario { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Ações à direita */
+.cabeca__acoes { display: flex; align-items: center; gap: 8px; }
+.cabeca__form { margin: 0; }
+.cabeca__entrar {
+  display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px;
+  border: 1px solid color-mix(in srgb, var(--barra-texto) 28%, transparent);
+  border-radius: 999px;
+  font-size: .875rem; font-weight: 500;
+  color: var(--barra-texto); text-decoration: none;
+  transition: background-color .2s;
+}
+button.cabeca__entrar { background: transparent; font: inherit; font-size: .875rem; font-weight: 500; cursor: pointer; }
+.cabeca__entrar:hover,
+.cabeca__entrar[aria-current="page"] { background: color-mix(in srgb, var(--barra-texto) 12%, transparent); }
+.cabeca__cta {
+  display: inline-flex; align-items: center; min-height: 40px; padding: 0 18px;
+  border-radius: 999px;
+  background: var(--rosa);
+  color: var(--papel);
+  font-size: .875rem; font-weight: 700; text-decoration: none;
+  transition: transform .2s, box-shadow .2s;
+}
+.cabeca__cta:hover { transform: translateY(-1px); box-shadow: 0 4px 20px color-mix(in srgb, var(--rosa) 45%, transparent); }
+.cabeca__cta[aria-current="page"] { box-shadow: 0 0 0 2px color-mix(in srgb, var(--barra-texto) 60%, transparent); }
+/* No tema escuro o rosa é mais claro: o texto precisa escurecer para manter contraste */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cabeca__cta { color: var(--creme); }
+}
+:root[data-theme="dark"] .cabeca__cta { color: var(--creme); }
+
+.cabeca__tema {
+  display: grid; place-items: center; width: 40px; height: 40px;
+  border: 1px solid color-mix(in srgb, var(--barra-texto) 28%, transparent);
+  border-radius: 50%;
+  background: transparent; cursor: pointer;
+  transition: background-color .2s;
+}
+.cabeca__tema:hover { background: color-mix(in srgb, var(--barra-texto) 12%, transparent); }
+.cabeca__tema img { width: auto; height: 22px; }
+
+/* Botão Menu: pílula clara sobre a barra escura (só no mobile) */
+.cabeca__menu {
+  display: none; align-items: center; gap: 6px; min-height: 40px; padding: 0 16px;
+  border: 0; border-radius: 999px;
+  background: var(--barra-texto); color: var(--barra);
+  font: inherit; font-size: .875rem; font-weight: 500; cursor: pointer;
+}
+.cabeca__menu svg { transition: transform .2s; }
+.cabeca__menu[aria-expanded="true"] svg { transform: rotate(180deg); }
+
+/* ===== Gaveta de navegação (mobile) ===== */
+.gaveta {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--creme);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .4s, visibility .4s;
+}
+.gaveta--aberta { opacity: 1; visibility: visible; }
+.gaveta nav { display: grid; justify-items: center; gap: 4px; }
+.gaveta a,
+.gaveta__sair {
+  padding: 6px 0;
+  font: 400 clamp(2rem, 8vw, 3rem) var(--fonte-titulo);
+  letter-spacing: -.04em;
+  color: var(--tinta);
+  text-decoration: none;
+}
+.gaveta__form { margin: 0; }
+.gaveta__sair { background: none; border: 0; cursor: pointer; }
+.gaveta a:hover, .gaveta__sair:hover { color: var(--rosa); }
+.gaveta__fechar { position: absolute; top: 16px; right: 16px; color: var(--tinta); border-color: var(--tinta); font: inherit; font-weight: 700; cursor: pointer; }
+.gaveta .gaveta__rodape { position: absolute; bottom: 24px; margin: 0; font-size: .85rem; color: var(--suave); }
+
+@media (max-width: 810px) {
+  .cabeca__barra { grid-template-columns: 1fr auto; }
+  .cabeca__nav, .cabeca__entrar, .cabeca__cta, .cabeca__usuario, .cabeca__form { display: none; }
+  .cabeca__menu { display: inline-flex; }
+}
+@media (min-width: 811px) {
+  .gaveta { display: none; }
+}
+
+/* ===== Rodapé em camadas ===== */
+.rodape-camadas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: clamp(24px, 5vw, 64px) clamp(16px, 4vw, 56px) clamp(16px, 3vw, 36px);
+  overflow: hidden;
+  background: var(--creme);
+  color: var(--tinta);
+}
+.rodape-camadas--vidro { padding-bottom: 0; }
+.rodape-camadas__defs { position: absolute; width: 0; height: 0; }
+
+.rodape-camadas__corpo {
+  width: 100%;
+  max-width: 1152px;
+  overflow: hidden;
+  background: var(--linha);
+  border: 1px solid var(--blush);
+  border-radius: 48px;
+  box-shadow: 0 1px 2px rgba(58, 45, 50, .08);
+}
+.rodape-camadas__caixa {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+  margin: 8px;
+  padding: clamp(32px, 5vw, 48px);
+  background: var(--papel);
+  border-radius: 40px;
+  box-shadow: 0 1px 2px rgba(58, 45, 50, .08);
+}
+@media (min-width: 700px) {
+  .rodape-camadas__caixa { grid-template-columns: repeat(3, 1fr); }
+  .rodape-camadas__marca-bloco { grid-column: 1 / -1; }
+}
+@media (min-width: 1024px) {
+  .rodape-camadas__caixa { grid-template-columns: 2fr repeat(3, 1fr); }
+  .rodape-camadas__marca-bloco { grid-column: auto; }
+}
+
+.rodape-camadas__marca-bloco { display: grid; gap: 28px; align-content: start; }
+.rodape-camadas__marca { display: inline-flex; align-items: center; gap: 10px; width: fit-content; font: 400 1.6rem var(--fonte-titulo); letter-spacing: -.04em; color: var(--tinta); text-decoration: none; }
+.rodape-camadas__ra { color: var(--rosa); }
+.rodape-camadas__logo { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 8px; background: var(--barra); }
+.rodape-camadas .rodape-camadas__descricao { max-width: 320px; margin: 0; font-size: 1rem; line-height: 1.6; color: var(--suave); }
+.rodape-camadas__redes { display: flex; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.rodape-camadas__rede {
+  display: grid; place-items: center; width: 44px; height: 44px;
+  border: 1px solid var(--linha); border-radius: 12px;
+  background: var(--papel); color: var(--tinta);
+  box-shadow: 0 1px 2px rgba(58, 45, 50, .06);
+  transition: background-color .2s, transform .2s;
+}
+.rodape-camadas__rede:hover { background: var(--creme); color: var(--rosa); }
+.rodape-camadas__rede:active { transform: scale(.95); }
+.rodape-camadas__rede svg { width: 20px; height: 20px; }
+
+.rodape-camadas__coluna { display: grid; gap: 24px; align-content: start; }
+.rodape-camadas .rodape-camadas__titulo { margin: 0; font: 500 .875rem var(--fonte-texto); letter-spacing: 0; color: var(--suave); }
+.rodape-camadas__coluna ul { display: grid; gap: 16px; margin: 0; padding: 0; list-style: none; }
+.rodape-camadas__coluna li { font-size: .9375rem; font-weight: 500; color: var(--tinta); }
+.rodape-camadas__coluna a { color: var(--tinta); text-decoration: none; transition: color .2s; }
+.rodape-camadas__coluna a:hover { color: var(--rosa); }
+
+.rodape-camadas__legal {
+  display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 24px;
+  padding: 20px clamp(24px, 5vw, 80px);
+  font-size: .9375rem; font-weight: 500; color: var(--suave);
+}
+.rodape-camadas .rodape-camadas__legal p { margin: 0; }
+.rodape-camadas__legal a { color: var(--suave); text-decoration: none; transition: color .2s; }
+.rodape-camadas__legal a:hover { color: var(--tinta); }
+.rodape-camadas__legal-direita { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 32px; }
+.rodape-camadas__separador { width: 1px; height: 16px; background: var(--blush); }
+@media (min-width: 700px) {
+  .rodape-camadas__legal { flex-direction: row; }
+}
+@media (max-width: 699px) {
+  .rodape-camadas__separador { display: none; }
+}
+
+/* "Ágora" gigante com efeito de vidro (só com vidro: true; usa o filtro #efeito-vidro) */
+.rodape-camadas__vidro {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  user-select: none;
+  transition: opacity 1.8s cubic-bezier(.16, 1, .3, 1), transform 1.8s cubic-bezier(.16, 1, .3, 1);
+}
+.rodape-camadas__vidro--oculto { opacity: 0; transform: scale(.98); }
+.rodape-camadas .rodape-camadas__vidro-texto {
+  margin: 0;
+  padding: .12em 1rem .04em;
+  font-family: var(--fonte-titulo);
+  font-weight: 400;
+  font-size: min(24vw, 320px);
+  line-height: 1;
+  letter-spacing: -.04em;
+  color: var(--papel);
+  filter: url(#efeito-vidro);
+}
+
+/* Foco visível em todo o cabeçalho, gaveta e rodapé */
+.cabeca :focus-visible,
+.gaveta :focus-visible,
+.rodape-camadas :focus-visible { outline: 3px solid var(--rosa); outline-offset: 3px; border-radius: 6px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cabeca__link, .cabeca__usuario, .cabeca__entrar, .cabeca__cta, .cabeca__tema, .cabeca__menu svg,
+  .gaveta, .rodape-camadas__vidro, .rodape-camadas__rede, .rodape-camadas a { transition: none; }
+}

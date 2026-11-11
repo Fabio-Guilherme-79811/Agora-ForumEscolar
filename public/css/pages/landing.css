@@ -1,12 +1,11 @@
-@import url('/css/global.css');
-
 /*
  * pages/landing.css — Estilos exclusivos da landing page da Ágora.
  * Reaproveita variáveis e componentes de /css/global.css (.btn, .topo,
  * .pergunta, .selo, .tag, .secao...). Aqui ficam só a capa (hero), os
  * letreiros, a vitrine e a gaveta de navegação do mobile.
  */
-@import url('/css/global.css');
+@import url('/css/global.css'); 
+@import url('/css/components/cabeca-rodape.css');
 
 /* Capa */
 .capa {

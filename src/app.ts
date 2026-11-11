@@ -32,7 +32,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
 /**
  * Permite receber requisições com corpo em formato JSON.
  */

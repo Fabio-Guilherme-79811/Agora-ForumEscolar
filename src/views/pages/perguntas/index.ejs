@@ -49,22 +49,7 @@ const statusOpcoes = [
 <body class="feed">
   <a class="pular" href="#conteudo">Pular para o conteúdo</a>
 
-  <header class="topo">
-    <a class="marca" href="/perguntas" aria-label="Ágora, feed de perguntas">Ágo<span>ra</span></a>
-    <nav class="topo__nav" aria-label="Principal">
-      <a href="/perguntas" aria-current="page">Perguntas</a>
-      <a href="/termometro">Termômetro</a>
-      <% if (podeVerPainel) { %>
-        <a href="/admin">Painel</a>
-      <% } %>
-      <% if (usuario) { %>
-        <a href="/perfil"><%= usuario.nome %></a>
-        <form action="/logout" method="post">
-          <button class="btn btn--contorno" type="submit">Sair</button>
-        </form>
-      <% } %>
-    </nav>
-  </header>
+  <%- include('../../partials/header', { usuario: usuario, ativo: 'perguntas' }) %>
 
   <main id="conteudo" class="feed__main">
     <div class="feed__cabeca">
@@ -160,10 +145,7 @@ const statusOpcoes = [
     </div>
   </main>
 
-  <footer class="rodape">
-    <p>Ágora · Fórum escolar de perguntas e respostas</p>
-    <p class="rodape__nota">Coletamos o mínimo de dados pessoais, conforme a LGPD.</p>
-  </footer>
+   <%- include('../../partials/footer') %>
 
   <script src="/js/search-debounce.js" defer></script>
 </body>
